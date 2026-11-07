@@ -29,6 +29,15 @@ uses it to test the owner's idea that fresh higher-timeframe signals work better
 | `vwap_reclaim` | 13:00–20:00 UTC; with the 1h trend, the 5m close crosses back over the daily VWAP on volume; 2R target; flat at the UTC day end |
 | `rsi2_reversion` | 15m RSI(2) < 10 (or > 90) in the direction of the 1h EMA200 trend; exit on the 5-bar average or after 12 bars |
 
+## Slow trend following (daily / 4h)
+| id | Rule |
+|---|---|
+| `tsmom_daily` | long if the daily close is above the close n days ago, short if below; flips with the sign |
+| `turtle_daily` | close beyond the prior n-day high or low; exit on the n/2-day opposite channel; 2-3 ATR stop |
+| `ema_cross_4h` | 4h EMA(fast) vs EMA(4 x fast); long or short with the cross |
+
+Each also runs long-only, since crypto has tended to drift up.
+
 ## What the first tournament (2026-11-07) taught
 - On 5m and 15m entries, round-trip costs (about 0.16% plus funding) are 0.2–0.5R per trade against stops near 0.5%.
   The raw edge before costs was only about +0.03R, so every fast strategy lost money after costs.

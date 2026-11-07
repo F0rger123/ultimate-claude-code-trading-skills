@@ -20,7 +20,8 @@ Check items off as they land. Every phase ends with its check passing. Blueprint
 ## Phase 2: Real backtests (check: report written from real data)
 - [x] Download 2 years of 5m BTC, ETH, SOL
 - [x] Run the tournament, write `reports/tournament-latest.md`
-- [ ] Owner sends the real TradingView indicator name and settings; swap the stand-in
+- [x] Long-history tournament (2019+, hourly): 9 near misses moved to shadow forward-testing
+- [ ] Owner sends the real TradingView indicator name and settings; swap the stand-in (optional)
 
 ## Phase 3: Paper trading (check: paper loop runs 24h without error)
 - [x] Risk guard and `rules.json`

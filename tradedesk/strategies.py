@@ -399,6 +399,106 @@ class EMAPullback1h(EMAPullback):
     max_bars = 576
 
 
+D1 = 86400
+
+
+class _Slow(Strategy):
+    """Shared helpers for daily/4h trend strategies. long_only = 1 skips shorts (crypto drifts up)."""
+    tf = D1
+
+    def prepare(self):
+        self.f = self.m.frame(self.tf)
+        self.a = self.atr_tf(self.tf, 20)
+        key = (self.id, tuple(sorted(self.p.items())))
+        self.dirs = self.f.memo(key, self.direction)
+
+    def direction(self):
+        return [None] * len(self.f.t)
+
+    def _j(self, i):
+        if not self.m.closes_tf(self.tf, i):
+            return None
+        j = self.m.maps[self.tf][i]
+        return j if j >= 1 else None
+
+    def entry(self, i):
+        j = self._j(i)
+        if j is None or self.dirs[j] is None or self.dirs[j - 1] is None or self.a[j] is None:
+            return None
+        d = self.dirs[j]
+        if d == self.dirs[j - 1] or d == 0:
+            return None
+        if d == -1 and self.p.get("long_only"):
+            return None
+        c = self.f.c[j]
+        return {"side": d, "stop": c - d * self.p["stop_atr"] * self.a[j], "target": None}
+
+    def exit(self, i, pos):
+        j = self._j(i)
+        return j is not None and self.dirs[j] is not None and self.dirs[j] != pos["side"]
+
+
+class TSMOMDaily(_Slow):
+    """Time-series momentum: long if the daily close is above the close n days ago, short if below."""
+    id = "tsmom_daily"
+    name = "Time-series momentum, daily"
+    family = "trend"
+    source = "Moskowitz, Ooi and Pedersen (2012), time-series momentum"
+    defaults = {"n": 30, "stop_atr": 4.0, "long_only": 0}
+    grid = {"n": [20, 60], "stop_atr": [3.0, 5.0], "long_only": [0, 1]}
+
+    def direction(self):
+        c, n = self.f.c, self.p["n"]
+        return [None if k < n else (1 if c[k] > c[k - n] else -1) for k in range(len(c))]
+
+
+class TurtleDaily(_Slow):
+    """Turtle-style: close beyond the prior n-day high (low); exit on the n/2-day opposite channel."""
+    id = "turtle_daily"
+    name = "Turtle breakout, daily"
+    family = "trend"
+    source = "Turtle trading rules (20/55-day breakouts, 2N stops) as published by Curtis Faith"
+    defaults = {"n": 20, "stop_atr": 2.0, "long_only": 0}
+    grid = {"n": [20, 55], "stop_atr": [2.0, 3.0], "long_only": [0, 1]}
+
+    def direction(self):
+        f, n = self.f, self.p["n"]
+        hi, lo = I.donchian(f.h, f.l, n)
+        xhi, xlo = I.donchian(f.h, f.l, max(2, n // 2))
+        out, d = [None] * len(f.c), 0
+        for k in range(len(f.c)):
+            if hi[k] is None:
+                continue
+            if f.c[k] > hi[k]:
+                d = 1
+            elif f.c[k] < lo[k]:
+                d = -1
+            elif d == 1 and f.c[k] < xlo[k]:
+                d = 0
+            elif d == -1 and f.c[k] > xhi[k]:
+                d = 0
+            out[k] = d
+        return out
+
+
+class EMACross4h(_Slow):
+    """4-hour EMA cross: fast above slow = long, below = short. Slow = 4 x fast."""
+    id = "ema_cross_4h"
+    name = "EMA cross, 4h"
+    family = "trend"
+    source = "Classic moving-average crossover trend following"
+    tf = 14400
+    defaults = {"fast": 20, "stop_atr": 4.0, "long_only": 0}
+    grid = {"fast": [12, 30], "stop_atr": [3.0, 5.0], "long_only": [0, 1]}
+
+    def direction(self):
+        c, n = self.f.c, self.p["fast"]
+        a, b = I.ema(c, n), I.ema(c, 4 * n)
+        return [None if a[k] is None or b[k] is None else (1 if a[k] > b[k] else -1) for k in range(len(c))]
+
+
+SLOW = [TSMOMDaily, TurtleDaily, EMACross4h]
+
 ALL = [MTFQuick, MTFSwing, MTFTrend, DonchianBreakout, Donchian1h, Donchian4h, EMAPullback, EMAPullback1h,
-       VWAPReclaim, RSI2Reversion]
+       VWAPReclaim, RSI2Reversion] + SLOW
 BY_ID = {s.id: s for s in ALL}

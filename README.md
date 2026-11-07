@@ -24,6 +24,23 @@ Not financial advice. Most people who trade with leverage lose money.
 
 ## Honest results so far
 
+**Long history (2019 to 2026, hourly bars, train 1 year / test the next 3 months).** Slow trend following is where
+an edge shows up, the same family trend-following funds use. Out-of-sample results:
+
+| Coin | Strategy | OOS trades | Profit factor | Return | Max DD | Gate |
+|---|---|---|---|---|---|---|
+| ETH | Trend breakout, 1h | 470 | 1.55 | +315% | 24.5% | near miss (drawdown) |
+| BTC | Turtle breakout, daily | 51 | 3.95 | +83% | 6.7% | near miss (too few trades) |
+| BTC | EMA cross, 4h | 108 | 2.79 | +95% | 9.0% | near miss (uneven windows) |
+| BTC | Time-series momentum, daily | 112 | 2.48 | +24% | 8.0% | near miss (uneven windows) |
+| ETH | EMA cross, 4h | 120 | 2.15 | +86% | 18.1% | near miss (uneven windows) |
+
+None passes every check yet, so none trades paper money. The 9 near misses (profit factor ≥ 1.3, ≥ 50 trades) run
+in **shadow**: the desk records their signals on live prices with no money, so evidence builds up. Full table:
+[`reports/tournament-long-history.md`](reports/tournament-long-history.md).
+
+**Short history (2 years, 5-minute bars):**
+
 Out-of-sample results from the first tournament (2026-11-07), on BTC, ETH and SOL. The best rows are below; the
 full table is in [`reports/tournament-latest.md`](reports/tournament-latest.md).
 

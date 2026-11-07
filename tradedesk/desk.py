@@ -21,7 +21,7 @@ from .journal import Journal
 from .market import Market
 
 BAR = 300
-WARMUP_DAYS = 12  # 200 x 1h EMA needs ~8.3 days; percentile rank needs 7 days of 5m bars
+WARMUP_DAYS = 90  # daily strategies need ~60 days; 200 x 1h EMA ~8.3 days
 
 
 def day_start(t):
@@ -60,7 +60,7 @@ class Desk:
         self.ladder = L.Ladder(self.ladder.path)
         for cls in S.ALL:
             e = self.ladder.get(cls.id, sym)
-            if e["stage"] in ("forward", "paper", "small_live", "scaled"):
+            if e["stage"] in ("shadow", "forward", "paper", "small_live", "scaled"):
                 out.append((cls, e.get("params") or {}, e["stage"]))
         return out
 
@@ -106,7 +106,7 @@ class Desk:
         i = len(bars) - 1
         bar = bars[i]
         for cls, params, stage in self.active(sym):
-            mode = "forward" if stage == "forward" else "paper" if stage == "paper" else (
+            mode = "forward" if stage in ("shadow", "forward") else "paper" if stage == "paper" else (
                 "live" if self.live_unlocked(rules) else "paper")
             strat = cls(mkt, **params)
             opens = [x for x in self.j.open_trades(mode) if x["strategy"] == cls.id and x["symbol"] == sym]

@@ -19,7 +19,7 @@ def score(trades, min_trades=15):
 
 
 def walk_forward(strat_cls, mkt, train_days=180, test_days=60, costs=None, entry_filter=None,
-                 log=None):
+                 log=None, min_trades=15):
     combos = list(strat_cls.combos()) or [{}]
     runs = []
     for p in combos:
@@ -35,7 +35,7 @@ def walk_forward(strat_cls, mkt, train_days=180, test_days=60, costs=None, entry
         tr0, te0, te1 = t - train_days * DAY, t, t + test_days * DAY
         best, best_s = None, -1e18
         for p, trades in runs:
-            s = score([x for x in trades if tr0 <= x["t0"] < te0])
+            s = score([x for x in trades if tr0 <= x["t0"] < te0], min_trades)
             if s > best_s:
                 best, best_s = (p, trades), s
         test = [x for x in best[1] if te0 <= x["t0"] < te1] if best_s > -1e9 else []
@@ -44,7 +44,7 @@ def walk_forward(strat_cls, mkt, train_days=180, test_days=60, costs=None, entry
                         "train_score": best_s, "test_trades": len(test), "test_R": r})
         oos.extend(test)
         t += test_days * DAY
-    full = max(runs, key=lambda pr: score(pr[1]))
+    full = max(runs, key=lambda pr: score(pr[1], min_trades))
     return {"strategy": strat_cls.id, "oos": oos, "windows": windows, "combos": len(combos),
             "in_sample_best": {"params": full[0], "trades": len(full[1]),
                                "avg_R": (sum(x["R"] for x in full[1]) / len(full[1])) if full[1] else 0.0},

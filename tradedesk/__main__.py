@@ -27,18 +27,25 @@ def main(argv=None):
     p.add_argument("--host", default="127.0.0.1")
     p.add_argument("--port", type=int, default=8787)
     p.add_argument("--token-file", default=None)
+    p.add_argument("--gran", type=int, default=300, help="base bar seconds: 300 or 3600")
+    p.add_argument("--train-days", type=int, default=180)
+    p.add_argument("--test-days", type=int, default=60)
+    p.add_argument("--tag", default="latest")
+    p.add_argument("--min-train-trades", type=int, default=15)
     a = p.parse_args(argv)
     syms = [s.strip().upper() for s in a.symbols.split(",") if s.strip()]
 
     if a.cmd == "data":
         from . import data as D
         for s in syms:
-            b = D.update_cache(a.data, D.PERPS[s]["spot"], 300, days=a.days)
-            print("%s: %d bars, %d missing" % (s, len(b), D.gaps(b, 300)))
+            b = D.update_cache(a.data, D.PERPS[s]["spot"], a.gran, days=a.days)
+            print("%s: %d bars, %d missing" % (s, len(b), D.gaps(b, a.gran)))
     elif a.cmd == "tournament":
         from . import tournament
-        tournament.run(a.data, a.reports, a.state, syms, [x for x in a.strategies.split(",") if x] or None)
-        print("report: %s" % os.path.join(a.reports, "tournament-latest.md"))
+        tournament.run(a.data, a.reports, a.state, syms, [x for x in a.strategies.split(",") if x] or None,
+                       base=a.gran, train_days=a.train_days, test_days=a.test_days, tag=a.tag,
+                       min_train_trades=a.min_train_trades)
+        print("report: %s" % os.path.join(a.reports, "tournament-%s.md" % a.tag))
     elif a.cmd == "learn":
         from . import data as D, learn as LN, strategies as S, walkforward as W
         from .market import Market

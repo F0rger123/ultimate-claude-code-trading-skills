@@ -3,6 +3,13 @@
 Newest first. Each entry says what was decided, why, and who decided it.
 
 ## 2026-11-07
+- **Shadow stage for near misses.** Strategies that fail the backtest gate but have profit factor ≥ 1.3 on ≥ 50 OOS
+  trades get forward-tested on live data with no money. Shadow never promotes on its own: a strategy still has to
+  pass the backtest gate. The gate itself is unchanged. (Claude's call; the owner asked to keep finding and testing
+  strategies.)
+- **Long-history tournament (2019+, hourly bars, train 365 / test 90 days, training minimum 8 trades).** Slow
+  strategies trade about 10 times a year, so 15 training trades per 180 days would choose nothing. Desk warm-up is
+  90 days so daily signals exist. (Claude's call.)
 - **The learning loop judges ideas only on later trades.** Proposals come from the first half of the OOS trades and
   are scored on the second half. The first version found and scored ideas on the same trades and "promoted" five,
   including "skip Tuesdays". Under the split, all five were rejected. (Claude's call, after catching the bias.)

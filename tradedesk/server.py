@@ -45,7 +45,7 @@ class Api:
             peak = max(peak, e)
             mdd = max(mdd, (peak - e) / peak if peak else 0)
         lad = L.Ladder(os.path.join(self.dir, "ladder.json"))
-        running = sum(1 for v in lad.d.values() if v.get("stage") in ("forward", "paper", "small_live", "scaled"))
+        running = sum(1 for v in lad.d.values() if v.get("stage") in ("shadow", "forward", "paper", "small_live", "scaled"))
         return {"mode": mode, "balance": start + pnl, "pnl_all": pnl, "pnl_all_pct": pnl / start if start else 0,
                 "pnl_today": today, "win_rate": len(wins) / len(closed) if closed else None,
                 "profit_factor": (gw / gl) if gl > 0 else None, "max_drawdown": mdd,
@@ -108,7 +108,7 @@ class Api:
                 live = self.j.q("SELECT COUNT(*) AS n, COALESCE(SUM(pnl_usd),0) AS p FROM trades WHERE strategy=? "
                                 "AND symbol=? AND status='closed' AND mode IN ('forward','paper','live')", (sid, sym))[0]
                 out.append({"id": sid, "symbol": sym, "name": cls.name, "family": cls.family,
-                            "stage": v.get("stage"), "stage_index": L.STAGES.index(v.get("stage", "backtest")),
+                            "stage": v.get("stage"), "stage_index": L.STAGES.index(v["stage"]) if v.get("stage") in L.STAGES else 0,
                             "backtest": v.get("backtest"), "tracked_trades": live["n"], "tracked_pnl": live["p"],
                             "history": v.get("history", [])[-5:]})
         return {"stages": L.STAGES, "gates": L.GATES, "strategies": out}

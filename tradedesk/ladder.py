@@ -15,6 +15,9 @@ GATES = {
     "small_live": {"min_days": 90, "min_pf": 1.15, "max_slip_ratio": 1.5, "owner_approval": True},
 }
 DEMOTE = {"last_n": 50, "min_pf": 0.90}
+# Near misses: failed the backtest gate but strong enough to watch on live data with no money.
+# Shadow signals are journaled as forward tests; they never count toward promotion by themselves.
+SHADOW = {"min_trades": 50, "min_pf": 1.30}
 
 
 def check_backtest(m, mc, windows):
