@@ -3,6 +3,9 @@
 Newest first. Each entry says what was decided, why, and who decided it.
 
 ## 2026-11-07
+- **The learning loop judges ideas only on later trades.** Proposals come from the first half of the OOS trades and
+  are scored on the second half. The first version found and scored ideas on the same trades and "promoted" five,
+  including "skip Tuesdays". Under the split, all five were rejected. (Claude's call, after catching the bias.)
 - **Venue: Coinbase Financial Markets.** This is the only US-regulated perp venue where official docs confirm API
   trading with brackets. BloFin and Hyperliquid bar US persons, so we won't build for them, VPNs included. (Owner
   agreed to a US-regulated venue; Claude picked Coinbase from the verified docs.)

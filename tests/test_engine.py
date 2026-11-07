@@ -179,6 +179,12 @@ class Learn(unittest.TestCase):
         props = LN.propose(tr)
         self.assertTrue(any(p["skip_field"] == "hour_utc" and p["skip_value"] == 15 for p in props))
 
+    def test_proposals_come_from_first_half_only(self):
+        tr = [{"t0": k, "R": 1.0, "feat": {"hour_utc": 3}} for k in range(100)] +              [{"t0": 100 + k, "R": -1.0, "feat": {"hour_utc": 15}} for k in range(100)]
+        props, cut = LN.propose_first_half(tr)
+        self.assertEqual(cut, 100)
+        self.assertFalse(any(p["skip_value"] == 15 for p in props))
+
 
 class Server(unittest.TestCase):
     def test_token_and_live_confirm(self):

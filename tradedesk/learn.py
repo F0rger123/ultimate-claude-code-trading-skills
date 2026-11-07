@@ -5,6 +5,9 @@
 3. Each flag becomes a proposal: the same strategy with a filter that skips that group.
 4. A proposal is promoted only if walk-forward out-of-sample results beat the parent by >= 0.05R
    expectancy while keeping >= 70% of the trades. Nothing changes live settings directly.
+
+No peeking: proposals are found on the first half of the out-of-sample trades (by time) and judged
+only on the second half, so an idea is never scored on the trades that suggested it.
 """
 import json
 
@@ -64,13 +67,26 @@ def _filter(p):
     return f
 
 
-def evaluate(strat_cls, mkt, proposal, parent_wf=None):
+def split_time(trades):
+    ts = sorted(t["t0"] for t in trades)
+    return ts[len(ts) // 2] if ts else 0
+
+
+def propose_first_half(trades):
+    cut = split_time(trades)
+    return propose([t for t in trades if t["t0"] < cut]), cut
+
+
+def evaluate(strat_cls, mkt, proposal, parent_wf=None, cut=0):
+    """Compare parent and filtered child on OOS trades entered at or after `cut` only."""
     parent = parent_wf or W.walk_forward(strat_cls, mkt)
     child = W.walk_forward(strat_cls, mkt, entry_filter=_filter(proposal))
-    pn, cn = len(parent["oos"]), len(child["oos"])
-    pr = sum(t["R"] for t in parent["oos"]) / pn if pn else 0.0
-    cr = sum(t["R"] for t in child["oos"]) / cn if cn else 0.0
+    p_oos = [t for t in parent["oos"] if t["t0"] >= cut]
+    c_oos = [t for t in child["oos"] if t["t0"] >= cut]
+    pn, cn = len(p_oos), len(c_oos)
+    pr = sum(t["R"] for t in p_oos) / pn if pn else 0.0
+    cr = sum(t["R"] for t in c_oos) / cn if cn else 0.0
     keep = cn / pn if pn else 0.0
     ok = (cr - pr) >= MIN_GAIN_R and keep >= MIN_KEEP and not proposal.get("diagnostic")
-    return {"proposal": proposal, "parent_oos_trades": pn, "parent_avg_R": pr, "child_oos_trades": cn,
+    return {"proposal": proposal, "judged_from": cut, "parent_oos_trades": pn, "parent_avg_R": pr, "child_oos_trades": cn,
             "child_avg_R": cr, "kept": keep, "promote": ok}

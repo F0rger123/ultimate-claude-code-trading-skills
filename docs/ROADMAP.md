@@ -25,7 +25,7 @@ Check items off as they land. Every phase ends with its check passing. Blueprint
 ## Phase 3: Paper trading (check: paper loop runs 24h without error)
 - [x] Risk guard and `rules.json`
 - [x] Journal (SQLite)
-- [x] Paper loop on live Coinbase perp candles
+- [x] Paper loop on live Coinbase perp candles (one live cycle verified)
 - [x] Phone API server with token
 - [ ] Run on the always-on PC as a scheduled task (owner's PC)
 
@@ -36,14 +36,14 @@ Check items off as they land. Every phase ends with its check passing. Blueprint
 - [ ] Owner installs Tailscale on the PC and phone
 
 ## Phase 5: Live, small (check: owner unlock, read-only connection check passes)
-- [x] Coinbase CFM adapter: balance, positions, bracket order, close, cancel (gated)
+- [x] Coinbase CFM adapter: balance, positions, bracket order, close, cancel (gated; written against the official SDK, not yet run on a real account)
 - [x] `tradedesk check-live`: read-only connection test
 - [ ] Owner creates a CDP key (view and trade) and sets env vars
 - [ ] A strategy passes the paper gate
 - [ ] Owner unlocks live in the app
 
 ## Phase 6: Learning and growth
-- [x] Journal analysis and filter proposals (`learn.py`)
+- [x] Journal analysis and filter proposals (`learn.py`), judged only on later unseen trades. First run: 0 of 10 ideas promoted
 - [ ] Monthly re-fit scheduled
 - [ ] Funding-rate history collector (needed for a funding strategy)
 - [ ] News-only strategy experiment

@@ -46,11 +46,12 @@ def main(argv=None):
             mkt = Market(D.load(D.cache_path(a.data, D.PERPS[s]["spot"], 300)), s)
             for cls in ([S.BY_ID[x] for x in a.strategies.split(",") if x] or S.ALL):
                 wf = W.walk_forward(cls, mkt)
-                for prop in LN.propose(wf["oos"])[:5]:
-                    r = LN.evaluate(cls, mkt, prop, wf)
+                props, cut = LN.propose_first_half(wf["oos"])
+                for prop in props[:5]:
+                    r = LN.evaluate(cls, mkt, prop, wf, cut)
                     r.update(strategy=cls.id, symbol=s)
                     out.append(r)
-                    print("%s %s skip %s=%s: parent %+.3fR (%d) -> child %+.3fR (%d) %s" % (
+                    print("%s %s skip %s=%s (judged on 2nd half): parent %+.3fR (%d) -> child %+.3fR (%d) %s" % (
                         s, cls.id, prop["skip_field"], prop["skip_value"], r["parent_avg_R"], r["parent_oos_trades"],
                         r["child_avg_R"], r["child_oos_trades"], "PROMOTE" if r["promote"] else "reject"))
         os.makedirs(a.reports, exist_ok=True)

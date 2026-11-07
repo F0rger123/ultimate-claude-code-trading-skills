@@ -1,0 +1,191 @@
+[
+ {
+  "proposal": {
+   "skip_field": "trend_1h",
+   "skip_value": 1,
+   "group_trades": 47,
+   "group_avg_R": -0.28067633662049163,
+   "overall_avg_R": -0.11535108784676408,
+   "diagnostic": true
+  },
+  "judged_from": 1767373200,
+  "parent_oos_trades": 77,
+  "parent_avg_R": -0.004879722763440026,
+  "child_oos_trades": 30,
+  "child_avg_R": 0.34513740302579865,
+  "kept": 0.38961038961038963,
+  "promote": false,
+  "strategy": "donchian_1h",
+  "symbol": "BTC"
+ },
+ {
+  "proposal": {
+   "skip_field": "htf_age_h",
+   "skip_value": "<6h",
+   "group_trades": 42,
+   "group_avg_R": -0.1841901705890829,
+   "overall_avg_R": -0.02113670584784254,
+   "diagnostic": true
+  },
+  "judged_from": 1773129600,
+  "parent_oos_trades": 112,
+  "parent_avg_R": 0.007980788459834463,
+  "child_oos_trades": 64,
+  "child_avg_R": -0.29235606383201806,
+  "kept": 0.5714285714285714,
+  "promote": false,
+  "strategy": "mtf_trend",
+  "symbol": "BTC"
+ },
+ {
+  "proposal": {
+   "skip_field": "htf_age_h",
+   "skip_value": "6-24h",
+   "group_trades": 88,
+   "group_avg_R": -0.5151511601704243,
+   "overall_avg_R": -0.28111298703372084,
+   "diagnostic": true
+  },
+  "judged_from": 1771768800,
+  "parent_oos_trades": 327,
+  "parent_avg_R": -0.1669337336791528,
+  "child_oos_trades": 240,
+  "child_avg_R": -0.3721875762593907,
+  "kept": 0.7339449541284404,
+  "promote": false,
+  "strategy": "mtf_quick",
+  "symbol": "BTC"
+ },
+ {
+  "proposal": {
+   "skip_field": "weekday",
+   "skip_value": 2,
+   "group_trades": 50,
+   "group_avg_R": -0.5752385825902933,
+   "overall_avg_R": -0.28111298703372084,
+   "diagnostic": true
+  },
+  "judged_from": 1771768800,
+  "parent_oos_trades": 327,
+  "parent_avg_R": -0.1669337336791528,
+  "child_oos_trades": 283,
+  "child_avg_R": -0.08127851045744146,
+  "kept": 0.8654434250764526,
+  "promote": false,
+  "strategy": "mtf_quick",
+  "symbol": "BTC"
+ },
+ {
+  "proposal": {
+   "skip_field": "weekday",
+   "skip_value": 5,
+   "group_trades": 49,
+   "group_avg_R": -0.628625074307072,
+   "overall_avg_R": -0.28111298703372084,
+   "diagnostic": true
+  },
+  "judged_from": 1771768800,
+  "parent_oos_trades": 327,
+  "parent_avg_R": -0.1669337336791528,
+  "child_oos_trades": 300,
+  "child_avg_R": -0.24642273443135537,
+  "kept": 0.9174311926605505,
+  "promote": false,
+  "strategy": "mtf_quick",
+  "symbol": "BTC"
+ },
+ {
+  "proposal": {
+   "skip_field": "htf_age_h",
+   "skip_value": "<6h",
+   "group_trades": 56,
+   "group_avg_R": -0.29230815098026686,
+   "overall_avg_R": 0.12002111813678919
+  },
+  "judged_from": 1767859200,
+  "parent_oos_trades": 146,
+  "parent_avg_R": -0.016538604167953688,
+  "child_oos_trades": 96,
+  "child_avg_R": -0.12317421200257483,
+  "kept": 0.6575342465753424,
+  "promote": false,
+  "strategy": "mtf_trend",
+  "symbol": "ETH"
+ },
+ {
+  "proposal": {
+   "skip_field": "vol_regime",
+   "skip_value": 0,
+   "group_trades": 122,
+   "group_avg_R": -0.18281392744480723,
+   "overall_avg_R": -0.027717463091992318,
+   "diagnostic": true
+  },
+  "judged_from": 1765893600,
+  "parent_oos_trades": 426,
+  "parent_avg_R": -0.05118025148474628,
+  "child_oos_trades": 383,
+  "child_avg_R": -0.0532796326160561,
+  "kept": 0.8990610328638498,
+  "promote": false,
+  "strategy": "mtf_quick",
+  "symbol": "ETH"
+ },
+ {
+  "proposal": {
+   "skip_field": "weekday",
+   "skip_value": 0,
+   "group_trades": 79,
+   "group_avg_R": -0.20422039253189259,
+   "overall_avg_R": -0.027717463091992318,
+   "diagnostic": true
+  },
+  "judged_from": 1765893600,
+  "parent_oos_trades": 426,
+  "parent_avg_R": -0.05118025148474628,
+  "child_oos_trades": 361,
+  "child_avg_R": 0.040112193101567016,
+  "kept": 0.8474178403755869,
+  "promote": false,
+  "strategy": "mtf_quick",
+  "symbol": "ETH"
+ },
+ {
+  "proposal": {
+   "skip_field": "weekday",
+   "skip_value": 6,
+   "group_trades": 42,
+   "group_avg_R": -0.4681547438974242,
+   "overall_avg_R": -0.027717463091992318,
+   "diagnostic": true
+  },
+  "judged_from": 1765893600,
+  "parent_oos_trades": 426,
+  "parent_avg_R": -0.05118025148474628,
+  "child_oos_trades": 408,
+  "child_avg_R": -0.04848833625785073,
+  "kept": 0.9577464788732394,
+  "promote": false,
+  "strategy": "mtf_quick",
+  "symbol": "ETH"
+ },
+ {
+  "proposal": {
+   "skip_field": "vol_regime",
+   "skip_value": 0,
+   "group_trades": 113,
+   "group_avg_R": -0.3110006541720978,
+   "overall_avg_R": -0.1589860507067567,
+   "diagnostic": true
+  },
+  "judged_from": 1770784200,
+  "parent_oos_trades": 403,
+  "parent_avg_R": -0.2555011042299306,
+  "child_oos_trades": 312,
+  "child_avg_R": -0.24641103358053124,
+  "kept": 0.7741935483870968,
+  "promote": false,
+  "strategy": "mtf_quick",
+  "symbol": "SOL"
+ }
+]
