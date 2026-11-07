@@ -26,6 +26,7 @@ def main(argv=None):
     p.add_argument("--strategies", default="")
     p.add_argument("--host", default="127.0.0.1")
     p.add_argument("--port", type=int, default=8787)
+    p.add_argument("--token-file", default=None)
     a = p.parse_args(argv)
     syms = [s.strip().upper() for s in a.symbols.split(",") if s.strip()]
 
@@ -62,7 +63,7 @@ def main(argv=None):
         Desk(a.state).run()
     elif a.cmd == "serve":
         from .server import serve
-        serve(a.state, a.host, a.port)
+        serve(a.state, a.host, a.port, a.token_file)
     elif a.cmd == "check-live":
         from .broker_coinbase import CoinbaseCFM, LiveDisabled
         try:

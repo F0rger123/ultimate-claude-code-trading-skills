@@ -187,10 +187,13 @@ def make_handler(api, token):
     return H
 
 
-def serve(state_dir="state", host="127.0.0.1", port=8787):
+def serve(state_dir="state", host="127.0.0.1", port=8787, token_file=None):
     token = os.environ.get("TRADEDESK_API_TOKEN", "")
+    if not token and token_file and os.path.exists(token_file):
+        with open(token_file, encoding="utf-8") as f:
+            token = f.read().strip()
     if len(token) < 24:
-        raise SystemExit("set TRADEDESK_API_TOKEN to a random string of 24+ characters first")
+        raise SystemExit("set TRADEDESK_API_TOKEN (or --token-file) to a random string of 24+ characters first")
     httpd = ThreadingHTTPServer((host, port), make_handler(Api(state_dir), token))
     print("tradedesk API on http://%s:%d (token required)" % (host, port))
     httpd.serve_forever()
