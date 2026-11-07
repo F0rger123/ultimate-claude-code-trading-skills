@@ -1,0 +1,15 @@
+# Ultimate Claude Code Trading Skills
+
+> Claude Code skills plus a standard-library Python engine ("tradedesk") that backtests crypto perp strategies with real costs and walk-forward testing, runs forward and paper trading, promotes strategies up a ladder only when they pass gates, learns from its own trades, and can trade Coinbase US perp-style futures live only after the owner unlocks it. Not financial advice.
+
+## Start here
+- [AI agent guide](https://raw.githubusercontent.com/F0rger123/ultimate-claude-code-trading-skills/main/AGENTS.md): what to ask, how to set up, what never to do
+- [README](https://raw.githubusercontent.com/F0rger123/ultimate-claude-code-trading-skills/main/README.md)
+- [Blueprint](https://raw.githubusercontent.com/F0rger123/ultimate-claude-code-trading-skills/main/docs/BLUEPRINT.md): the source of truth
+- [Roadmap](https://raw.githubusercontent.com/F0rger123/ultimate-claude-code-trading-skills/main/docs/ROADMAP.md)
+
+## Reference
+- [Verified API facts](https://raw.githubusercontent.com/F0rger123/ultimate-claude-code-trading-skills/main/docs/VERIFIED_APIS.md)
+- [Strategies](https://raw.githubusercontent.com/F0rger123/ultimate-claude-code-trading-skills/main/docs/STRATEGIES.md)
+- [Latest tournament report](https://raw.githubusercontent.com/F0rger123/ultimate-claude-code-trading-skills/main/reports/tournament-latest.md)
+- [Decisions](https://raw.githubusercontent.com/F0rger123/ultimate-claude-code-trading-skills/main/docs/DECISIONS.md)

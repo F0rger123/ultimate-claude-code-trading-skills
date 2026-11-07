@@ -1,0 +1,11 @@
+{
+  "name": "ultimate-claude-code-trading-skills",
+  "description": "Eight Claude Code skills and a standard-library Python engine for honest crypto perp trading: walk-forward backtests with real costs, forward and paper testing, a promotion ladder, a self-learning loop, always-on guardrails, and gated live trading on Coinbase US perps.",
+  "version": "0.1.0",
+  "author": { "name": "F0rger123", "url": "https://github.com/F0rger123" },
+  "homepage": "https://github.com/F0rger123/ultimate-claude-code-trading-skills",
+  "repository": "https://github.com/F0rger123/ultimate-claude-code-trading-skills",
+  "license": "MIT",
+  "keywords": ["claude-code", "claude-skills", "trading", "backtesting", "walk-forward", "paper-trading", "perpetual-futures", "coinbase"],
+  "skills": "./skills/"
+}

@@ -1,0 +1,16 @@
+Ultimate Claude Code Trading Skills
+Copyright (c) 2026 F0rger123. MIT License.
+
+No third-party code is copied into this repository. Ideas and references, with thanks:
+
+- Day Trader skill by Jake Schincariol, MIT
+  https://github.com/Jakeschincariol/day-trader-skill
+  Inspired the "replay before you risk a dollar" approach and the pipeline layout
+  (scanner -> entry -> exit -> time machine -> budget -> risk -> broker).
+- Coinbase Advanced Trade API and the official Python SDK coinbase-advanced-py, Apache-2.0
+  https://github.com/coinbase/coinbase-advanced-py  (optional dependency for live trading only)
+- Coinbase public market data endpoints (no key), used for candles.
+- Strategy families are classic, public ideas: Donchian channel breakouts (Turtle-style),
+  SuperTrend, EMA pullbacks, VWAP reclaims, Connors-style RSI(2) mean reversion.
+
+Not financial advice. Trading with leverage can lose more than you put in.

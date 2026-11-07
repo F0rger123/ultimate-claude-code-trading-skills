@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+data/
+state/
+state-*/
+reports-*/
+*.sqlite
+*.sqlite-journal
+.env
+.venv/

@@ -1,0 +1,2108 @@
+[
+ {
+  "symbol": "BTC",
+  "strategy": "mtf_quick",
+  "name": "4-TF alignment (quick)",
+  "source": "Owner's TradingView method; SuperTrend stands in for the unnamed indicator",
+  "metrics": {
+   "trades": 653,
+   "win_rate": 0.26339969372128635,
+   "avg_R": -0.22393593366933554,
+   "profit_factor": 0.707955445173205,
+   "avg_win_R": 2.0609399384497236,
+   "avg_loss_R": -1.0409809440736548,
+   "longest_losing_streak": 14,
+   "avg_hours": 8.471286370597246,
+   "long_share": 0.48238897396630936,
+   "return": -0.7955456966716321,
+   "max_drawdown": 0.8303137787688073,
+   "days": 539.71875,
+   "cagr": -0.6582005901521826,
+   "liquidations": 0,
+   "sharpe": -2.06619673658854
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.9140895747313369,
+   "median_return": -0.8017699602221321,
+   "p95_drawdown": 0.9216323818923498
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    653
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.71
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "83.0%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "11%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-91.4%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "st_mult": 3.0,
+    "stop_atr": 2.5,
+    "vol_k": 1.2
+   },
+   "trades": 753,
+   "avg_R": -0.20624277794921808
+  },
+  "params": {
+   "st_mult": 3.0,
+   "stop_atr": 2.5,
+   "vol_k": 1.2
+  },
+  "secs": 57.7
+ },
+ {
+  "symbol": "BTC",
+  "strategy": "mtf_swing",
+  "name": "1h + 30m alignment (swing)",
+  "source": "Owner's TradingView method; SuperTrend stands in for the unnamed indicator",
+  "metrics": {
+   "trades": 541,
+   "win_rate": 0.28650646950092423,
+   "avg_R": -0.1545923805101299,
+   "profit_factor": 0.7240385102214771,
+   "avg_win_R": 1.4156856731454255,
+   "avg_loss_R": -0.7851444486878785,
+   "longest_losing_streak": 12,
+   "avg_hours": 14.555760936537274,
+   "long_share": 0.4898336414048059,
+   "return": -0.594173227170701,
+   "max_drawdown": 0.6570549851463067,
+   "days": 540.0208333333334,
+   "cagr": -0.45640239535526383,
+   "liquidations": 0,
+   "sharpe": -2.1161948903712813
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.7622492872853897,
+   "median_return": -0.6036793866301317,
+   "p95_drawdown": 0.7758224020716308
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    541
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.72
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "65.7%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "44%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-76.2%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "st_mult": 3.0,
+    "stop_atr": 3.5
+   },
+   "trades": 614,
+   "avg_R": -0.10817169517579657
+  },
+  "params": {
+   "st_mult": 3.0,
+   "stop_atr": 3.5
+  },
+  "secs": 3.0
+ },
+ {
+  "symbol": "BTC",
+  "strategy": "mtf_trend",
+  "name": "4h + 1h alignment (trend)",
+  "source": "Owner's TradingView method; SuperTrend stands in for the unnamed indicator",
+  "metrics": {
+   "trades": 224,
+   "win_rate": 0.32589285714285715,
+   "avg_R": -0.006577958694004036,
+   "profit_factor": 0.9858983608753611,
+   "avg_win_R": 1.411168417974595,
+   "avg_loss_R": -0.6919785248980287,
+   "longest_losing_streak": 15,
+   "avg_hours": 35.574404761904766,
+   "long_share": 0.4642857142857143,
+   "return": -0.04421033546599695,
+   "max_drawdown": 0.20764071103634257,
+   "days": 539.5416666666666,
+   "cagr": -0.030126453688748,
+   "liquidations": 0,
+   "sharpe": -0.07522965363768484
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.34139754692465774,
+   "median_return": -0.062085821953481,
+   "p95_drawdown": 0.38838756001567354
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    224
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.99
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "20.8%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "56%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-34.1%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "st_mult": 3.0,
+    "stop_atr": 3.5
+   },
+   "trades": 270,
+   "avg_R": -0.012709979723414143
+  },
+  "params": {
+   "st_mult": 2.0,
+   "stop_atr": 3.5
+  },
+  "secs": 1.7
+ },
+ {
+  "symbol": "BTC",
+  "strategy": "donchian_breakout",
+  "name": "Trend breakout (Donchian)",
+  "source": "Classic channel breakout (Turtle-style)",
+  "metrics": {
+   "trades": 482,
+   "win_rate": 0.22406639004149378,
+   "avg_R": -0.2465836341441952,
+   "profit_factor": 0.6887243874773594,
+   "avg_win_R": 2.434937940247857,
+   "avg_loss_R": -1.0209267625782643,
+   "longest_losing_streak": 19,
+   "avg_hours": 8.466459197787003,
+   "long_share": 0.5103734439834025,
+   "return": -0.7104923380100616,
+   "max_drawdown": 0.7138719139542695,
+   "days": 539.4166666666666,
+   "cagr": -0.5677563957349188,
+   "liquidations": 0,
+   "sharpe": -2.535164417210775
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.8471590607444586,
+   "median_return": -0.7099985058416982,
+   "p95_drawdown": 0.8570579579346104
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    482
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.69
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "71.4%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "33%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-84.7%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "n": 48,
+    "stop_atr": 2.5
+   },
+   "trades": 597,
+   "avg_R": -0.25236763649126603
+  },
+  "params": {
+   "n": 48,
+   "stop_atr": 2.5
+  },
+  "secs": 2.3
+ },
+ {
+  "symbol": "BTC",
+  "strategy": "donchian_1h",
+  "name": "Trend breakout, 1h (Donchian)",
+  "source": "Classic channel breakout (Turtle-style)",
+  "metrics": {
+   "trades": 154,
+   "win_rate": 0.2532467532467532,
+   "avg_R": -0.060115405305102045,
+   "profit_factor": 0.9034862067356584,
+   "avg_win_R": 2.2221533956757944,
+   "avg_loss_R": -0.8341022160725363,
+   "longest_losing_streak": 14,
+   "avg_hours": 33.80357142857144,
+   "long_share": 0.564935064935065,
+   "return": -0.12076403694955573,
+   "max_drawdown": 0.20994321985942807,
+   "days": 538.625,
+   "cagr": -0.08352003778080586,
+   "liquidations": 0,
+   "sharpe": -0.4751736988690881
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.4050250876920449,
+   "median_return": -0.1396366968930497,
+   "p95_drawdown": 0.4400900289439912
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    154
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.9
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "21.0%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "44%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-40.5%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "n": 24,
+    "stop_atr": 3.0
+   },
+   "trades": 251,
+   "avg_R": 0.016016257160756327
+  },
+  "params": {
+   "n": 24,
+   "stop_atr": 3.0
+  },
+  "secs": 1.2
+ },
+ {
+  "symbol": "BTC",
+  "strategy": "donchian_4h",
+  "name": "Trend breakout, 4h (Donchian)",
+  "source": "Classic channel breakout (Turtle-style)",
+  "metrics": {
+   "trades": 71,
+   "win_rate": 0.323943661971831,
+   "avg_R": -0.07137282790562363,
+   "profit_factor": 0.8676576406200932,
+   "avg_win_R": 1.444484679115869,
+   "avg_loss_R": -0.7977212166867557,
+   "longest_losing_streak": 8,
+   "avg_hours": 96.6255868544601,
+   "long_share": 0.4788732394366197,
+   "return": -0.05700893499447246,
+   "max_drawdown": 0.09884156050555151,
+   "days": 537.8333333333334,
+   "cagr": -0.03905264509362982,
+   "liquidations": 0,
+   "sharpe": -0.9246769435670502
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.23174679337773485,
+   "median_return": -0.07013499865845474,
+   "p95_drawdown": 0.2540268724465708
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    false,
+    71
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.87
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    true,
+    "9.9%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "56%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-23.2%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "n": 20,
+    "stop_atr": 3.0
+   },
+   "trades": 99,
+   "avg_R": -0.09174823428285692
+  },
+  "params": {
+   "n": 20,
+   "stop_atr": 2.0
+  },
+  "secs": 1.0
+ },
+ {
+  "symbol": "BTC",
+  "strategy": "ema_pullback",
+  "name": "EMA pullback",
+  "source": "Common day-trader pullback setup",
+  "metrics": {
+   "trades": 1229,
+   "win_rate": 0.28803905614320585,
+   "avg_R": -0.33445924824675005,
+   "profit_factor": 0.6208831222655647,
+   "avg_win_R": 1.9016411452057898,
+   "avg_loss_R": -1.239121578854976,
+   "longest_losing_streak": 18,
+   "avg_hours": 6.676091673447239,
+   "long_share": 0.5215622457282343,
+   "return": -0.984190276952888,
+   "max_drawdown": 0.9852657911518212,
+   "days": 539.9652777777778,
+   "cagr": -0.9393922822856957,
+   "liquidations": 0,
+   "sharpe": -6.118355877061892
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.9929154686683074,
+   "median_return": -0.9839735890987137,
+   "p95_drawdown": 0.9931892095066949
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    1229
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.62
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "98.5%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "0%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-99.3%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "stop_atr": 2.0,
+    "tgt_r": 2.5
+   },
+   "trades": 1640,
+   "avg_R": -0.295887114386038
+  },
+  "params": {
+   "stop_atr": 2.0,
+   "tgt_r": 2.5
+  },
+  "secs": 4.1
+ },
+ {
+  "symbol": "BTC",
+  "strategy": "ema_pullback_1h",
+  "name": "EMA pullback, 1h",
+  "source": "Common day-trader pullback setup",
+  "metrics": {
+   "trades": 317,
+   "win_rate": 0.3217665615141956,
+   "avg_R": -0.09887476530297798,
+   "profit_factor": 0.8545403203190918,
+   "avg_win_R": 1.8052380896574756,
+   "avg_loss_R": -1.0022213290516586,
+   "longest_losing_streak": 10,
+   "avg_hours": 25.801524710830677,
+   "long_share": 0.4921135646687697,
+   "return": -0.29317906939671123,
+   "max_drawdown": 0.3678020747116822,
+   "days": 539.0381944444445,
+   "cagr": -0.2093895022229455,
+   "liquidations": 0,
+   "sharpe": -1.3476507653505145
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.5349929604564894,
+   "median_return": -0.29427100182744026,
+   "p95_drawdown": 0.5679786039365162
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    317
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.85
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "36.8%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "44%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-53.5%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "stop_atr": 2.5,
+    "tgt_r": 3.0
+   },
+   "trades": 426,
+   "avg_R": -0.11670952804022089
+  },
+  "params": {
+   "stop_atr": 2.5,
+   "tgt_r": 3.0
+  },
+  "secs": 1.6
+ },
+ {
+  "symbol": "BTC",
+  "strategy": "vwap_reclaim",
+  "name": "VWAP reclaim",
+  "source": "Common intraday VWAP setup",
+  "metrics": {
+   "trades": 330,
+   "win_rate": 0.3787878787878788,
+   "avg_R": -0.32169548246017515,
+   "profit_factor": 0.6053920524582186,
+   "avg_win_R": 1.3029260777961194,
+   "avg_loss_R": -1.312318385055477,
+   "longest_losing_streak": 9,
+   "avg_hours": 2.0194444444444426,
+   "long_share": 0.49696969696969695,
+   "return": -0.6231213333587413,
+   "max_drawdown": 0.6280948946379319,
+   "days": 537.4305555555555,
+   "cagr": -0.48456476730655096,
+   "liquidations": 0,
+   "sharpe": -4.590435591009093
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.7440150168752333,
+   "median_return": -0.6223834881559677,
+   "p95_drawdown": 0.7525403510954466
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    330
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.61
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "62.8%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "0%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-74.4%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "stop_atr": 2.5,
+    "tgt_r": 2.5
+   },
+   "trades": 460,
+   "avg_R": -0.32535077768646586
+  },
+  "params": {
+   "stop_atr": 2.5,
+   "tgt_r": 2.5
+  },
+  "secs": 1.5
+ },
+ {
+  "symbol": "BTC",
+  "strategy": "rsi2_reversion",
+  "name": "RSI(2) reversion",
+  "source": "Connors-style short-term mean reversion",
+  "metrics": {
+   "trades": 1309,
+   "win_rate": 0.34530175706646293,
+   "avg_R": -0.19708681484544674,
+   "profit_factor": 0.23819367573222125,
+   "avg_win_R": 0.1784614573707352,
+   "avg_loss_R": -0.3951589490831527,
+   "longest_losing_streak": 16,
+   "avg_hours": 0.8808887191240133,
+   "long_share": 0.5255920550038197,
+   "return": -0.9219270662533634,
+   "max_drawdown": 0.9223473347306747,
+   "days": 538.46875,
+   "cagr": -0.8224651543596286,
+   "liquidations": 0,
+   "sharpe": -12.620023984585917
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.9401341775333518,
+   "median_return": -0.9216251776931005,
+   "p95_drawdown": 0.9401646945551487
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    1309
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.24
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "92.2%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "0%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-94.0%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "lo": 5,
+    "stop_atr": 3.0
+   },
+   "trades": 1780,
+   "avg_R": -0.18729951670628348
+  },
+  "params": {
+   "lo": 5,
+   "stop_atr": 3.0
+  },
+  "secs": 4.3
+ },
+ {
+  "symbol": "ETH",
+  "strategy": "mtf_quick",
+  "name": "4-TF alignment (quick)",
+  "source": "Owner's TradingView method; SuperTrend stands in for the unnamed indicator",
+  "metrics": {
+   "trades": 851,
+   "win_rate": 0.28554641598119856,
+   "avg_R": -0.0394626427104567,
+   "profit_factor": 0.9404379292195009,
+   "avg_win_R": 2.1820756355661604,
+   "avg_loss_R": -0.927347184850618,
+   "longest_losing_streak": 13,
+   "avg_hours": 6.9333137485311385,
+   "long_share": 0.5111633372502937,
+   "return": -0.43094295982639874,
+   "max_drawdown": 0.6499135862245671,
+   "days": 539.5486111111111,
+   "cagr": -0.31708759345411364,
+   "liquidations": 0,
+   "sharpe": -0.3865459367967468
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.8006497055177738,
+   "median_return": -0.4674658562335874,
+   "p95_drawdown": 0.8344770059578809
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    851
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.94
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "65.0%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "33%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-80.1%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "st_mult": 3.0,
+    "stop_atr": 2.5,
+    "vol_k": 0.0
+   },
+   "trades": 1009,
+   "avg_R": -0.05263408441760465
+  },
+  "params": {
+   "st_mult": 3.0,
+   "stop_atr": 1.5,
+   "vol_k": 1.2
+  },
+  "secs": 48.0
+ },
+ {
+  "symbol": "ETH",
+  "strategy": "mtf_swing",
+  "name": "1h + 30m alignment (swing)",
+  "source": "Owner's TradingView method; SuperTrend stands in for the unnamed indicator",
+  "metrics": {
+   "trades": 512,
+   "win_rate": 0.27734375,
+   "avg_R": -0.11202792393929818,
+   "profit_factor": 0.8448831761187342,
+   "avg_win_R": 2.2001164235509436,
+   "avg_loss_R": -0.999391430273391,
+   "longest_losing_streak": 13,
+   "avg_hours": 13.42008463541666,
+   "long_share": 0.501953125,
+   "return": -0.488651968955097,
+   "max_drawdown": 0.6094998308915458,
+   "days": 539.7916666666666,
+   "cagr": -0.3646134729953858,
+   "liquidations": 0,
+   "sharpe": -1.2137527273834103
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.7431850311225651,
+   "median_return": -0.47950444614196575,
+   "p95_drawdown": 0.7744380340035121
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    512
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.84
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "60.9%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "44%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-74.3%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "st_mult": 3.0,
+    "stop_atr": 2.5
+   },
+   "trades": 603,
+   "avg_R": -0.02014867369085427
+  },
+  "params": {
+   "st_mult": 2.0,
+   "stop_atr": 1.5
+  },
+  "secs": 3.0
+ },
+ {
+  "symbol": "ETH",
+  "strategy": "mtf_trend",
+  "name": "4h + 1h alignment (trend)",
+  "source": "Owner's TradingView method; SuperTrend stands in for the unnamed indicator",
+  "metrics": {
+   "trades": 292,
+   "win_rate": 0.2945205479452055,
+   "avg_R": 0.0517412569844177,
+   "profit_factor": 1.089094927976589,
+   "avg_win_R": 2.147504733246712,
+   "avg_loss_R": -0.8231891263095493,
+   "longest_losing_streak": 13,
+   "avg_hours": 23.895262557077622,
+   "long_share": 0.4965753424657534,
+   "return": 0.07245199710976657,
+   "max_drawdown": 0.3217975776707704,
+   "days": 539.6666666666666,
+   "cagr": 0.048445517671018345,
+   "liquidations": 0,
+   "sharpe": 0.4278909632617019
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.42754688102979344,
+   "median_return": 0.03386097716904568,
+   "p95_drawdown": 0.5091293220504536
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    292
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    1.09
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "32.2%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "56%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-42.8%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "st_mult": 2.0,
+    "stop_atr": 2.0
+   },
+   "trades": 446,
+   "avg_R": 0.052378103686358105
+  },
+  "params": {
+   "st_mult": 3.0,
+   "stop_atr": 3.5
+  },
+  "secs": 1.9
+ },
+ {
+  "symbol": "ETH",
+  "strategy": "donchian_breakout",
+  "name": "Trend breakout (Donchian)",
+  "source": "Classic channel breakout (Turtle-style)",
+  "metrics": {
+   "trades": 501,
+   "win_rate": 0.2634730538922156,
+   "avg_R": -0.04971822358394067,
+   "profit_factor": 0.9344299887126813,
+   "avg_win_R": 2.68918640541353,
+   "avg_loss_R": -1.0294889851765314,
+   "longest_losing_streak": 16,
+   "avg_hours": 7.5523952095808395,
+   "long_share": 0.5548902195608783,
+   "return": -0.3524054870994351,
+   "max_drawdown": 0.5267078306134383,
+   "days": 538.1284722222222,
+   "cagr": -0.2552485940048236,
+   "liquidations": 0,
+   "sharpe": -0.31334152517217534
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.7541431569663964,
+   "median_return": -0.39737546252836176,
+   "p95_drawdown": 0.7887489387363686
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    501
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.93
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "52.7%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "44%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-75.4%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "n": 48,
+    "stop_atr": 2.5
+   },
+   "trades": 536,
+   "avg_R": 0.0004010006109869497
+  },
+  "params": {
+   "n": 48,
+   "stop_atr": 1.5
+  },
+  "secs": 2.4
+ },
+ {
+  "symbol": "ETH",
+  "strategy": "donchian_1h",
+  "name": "Trend breakout, 1h (Donchian)",
+  "source": "Classic channel breakout (Turtle-style)",
+  "metrics": {
+   "trades": 111,
+   "win_rate": 0.26126126126126126,
+   "avg_R": 0.21467112100516905,
+   "profit_factor": 1.30983054235156,
+   "avg_win_R": 3.4736774616171244,
+   "avg_loss_R": -0.9379042921380825,
+   "longest_losing_streak": 18,
+   "avg_hours": 42.48198198198198,
+   "long_share": 0.4864864864864865,
+   "return": 0.21191962854356272,
+   "max_drawdown": 0.2446115391158463,
+   "days": 537.5,
+   "cagr": 0.13942185989843936,
+   "liquidations": 0,
+   "sharpe": 1.3709625585142764
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.23466686413658322,
+   "median_return": 0.18796534647367724,
+   "p95_drawdown": 0.33471002684078066
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    111
+   ],
+   [
+    "profit factor >= 1.20",
+    true,
+    1.31
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "24.5%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "56%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-23.5%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "n": 72,
+    "stop_atr": 2.0
+   },
+   "trades": 139,
+   "avg_R": 0.19575944176769108
+  },
+  "params": {
+   "n": 72,
+   "stop_atr": 3.0
+  },
+  "secs": 1.1
+ },
+ {
+  "symbol": "ETH",
+  "strategy": "donchian_4h",
+  "name": "Trend breakout, 4h (Donchian)",
+  "source": "Classic channel breakout (Turtle-style)",
+  "metrics": {
+   "trades": 66,
+   "win_rate": 0.30303030303030304,
+   "avg_R": 0.17258053972646606,
+   "profit_factor": 1.289277914612959,
+   "avg_win_R": 2.538265389443091,
+   "avg_loss_R": -0.8559780905851098,
+   "longest_losing_streak": 11,
+   "avg_hours": 93.0618686868687,
+   "long_share": 0.5606060606060606,
+   "return": 0.10144937278593291,
+   "max_drawdown": 0.11655399924175278,
+   "days": 538.1840277777778,
+   "cagr": 0.06772799837685106,
+   "liquidations": 0,
+   "sharpe": 1.3978688097252299
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.15877509809936596,
+   "median_return": 0.09800042607740034,
+   "p95_drawdown": 0.21660780549155662
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    false,
+    66
+   ],
+   [
+    "profit factor >= 1.20",
+    true,
+    1.29
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    true,
+    "11.7%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "56%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-15.9%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "n": 20,
+    "stop_atr": 2.0
+   },
+   "trades": 94,
+   "avg_R": 0.2951795354653981
+  },
+  "params": {
+   "n": 20,
+   "stop_atr": 2.0
+  },
+  "secs": 1.0
+ },
+ {
+  "symbol": "ETH",
+  "strategy": "ema_pullback",
+  "name": "EMA pullback",
+  "source": "Common day-trader pullback setup",
+  "metrics": {
+   "trades": 1242,
+   "win_rate": 0.29790660225442833,
+   "avg_R": -0.21128428739203936,
+   "profit_factor": 0.7422771685022407,
+   "avg_win_R": 2.042679738331861,
+   "avg_loss_R": -1.1676681056464473,
+   "longest_losing_streak": 17,
+   "avg_hours": 6.4488727858292965,
+   "long_share": 0.5128824476650563,
+   "return": -0.9335556353265018,
+   "max_drawdown": 0.9415646054976629,
+   "days": 539.96875,
+   "cagr": -0.8400357723872198,
+   "liquidations": 0,
+   "sharpe": -3.8513648971641827
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.9723226669373487,
+   "median_return": -0.9343859002636399,
+   "p95_drawdown": 0.9741143246054839
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    1242
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.74
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "94.2%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "0%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-97.2%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "stop_atr": 2.0,
+    "tgt_r": 2.5
+   },
+   "trades": 1681,
+   "avg_R": -0.2141950287500005
+  },
+  "params": {
+   "stop_atr": 2.0,
+   "tgt_r": 2.5
+  },
+  "secs": 4.0
+ },
+ {
+  "symbol": "ETH",
+  "strategy": "ema_pullback_1h",
+  "name": "EMA pullback, 1h",
+  "source": "Common day-trader pullback setup",
+  "metrics": {
+   "trades": 385,
+   "win_rate": 0.2753246753246753,
+   "avg_R": -0.1853958999351848,
+   "profit_factor": 0.7597186201735491,
+   "avg_win_R": 2.129058737880586,
+   "avg_loss_R": -1.064722751578453,
+   "longest_losing_streak": 15,
+   "avg_hours": 18.314718614718593,
+   "long_share": 0.4909090909090909,
+   "return": -0.5320102665128088,
+   "max_drawdown": 0.5990271026485022,
+   "days": 540.0,
+   "cagr": -0.40144483433060607,
+   "liquidations": 0,
+   "sharpe": -2.4637671443204536
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.7110480655544325,
+   "median_return": -0.5306121571958384,
+   "p95_drawdown": 0.7292752663041114
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    385
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.76
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "59.9%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "22%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-71.1%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "stop_atr": 1.5,
+    "tgt_r": 3.0
+   },
+   "trades": 579,
+   "avg_R": -0.13245833412569602
+  },
+  "params": {
+   "stop_atr": 2.5,
+   "tgt_r": 3.0
+  },
+  "secs": 1.7
+ },
+ {
+  "symbol": "ETH",
+  "strategy": "vwap_reclaim",
+  "name": "VWAP reclaim",
+  "source": "Common intraday VWAP setup",
+  "metrics": {
+   "trades": 321,
+   "win_rate": 0.3177570093457944,
+   "avg_R": -0.3324890673982037,
+   "profit_factor": 0.5859521551112169,
+   "avg_win_R": 1.4807913126163188,
+   "avg_loss_R": -1.177030614254282,
+   "longest_losing_streak": 14,
+   "avg_hours": 2.2658359293873307,
+   "long_share": 0.48598130841121495,
+   "return": -0.6563551869036295,
+   "max_drawdown": 0.6563551869036296,
+   "days": 535.2777777777778,
+   "cagr": -0.5172987810475737,
+   "liquidations": 0,
+   "sharpe": -5.408836491926909
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.7645324296087344,
+   "median_return": -0.6552276862946604,
+   "p95_drawdown": 0.7722357354507098
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    321
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.59
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "65.6%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "0%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-76.5%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "stop_atr": 2.5,
+    "tgt_r": 2.5
+   },
+   "trades": 423,
+   "avg_R": -0.2139532752712746
+  },
+  "params": {
+   "stop_atr": 2.5,
+   "tgt_r": 2.5
+  },
+  "secs": 1.5
+ },
+ {
+  "symbol": "ETH",
+  "strategy": "rsi2_reversion",
+  "name": "RSI(2) reversion",
+  "source": "Connors-style short-term mean reversion",
+  "metrics": {
+   "trades": 1315,
+   "win_rate": 0.43346007604562736,
+   "avg_R": -0.1577370115000152,
+   "profit_factor": 0.3406555911257801,
+   "avg_win_R": 0.1880129220113954,
+   "avg_loss_R": -0.4222705176765308,
+   "longest_losing_streak": 14,
+   "avg_hours": 0.908681875792142,
+   "long_share": 0.4988593155893536,
+   "return": -0.8754118285738275,
+   "max_drawdown": 0.8754118285738274,
+   "days": 539.8368055555555,
+   "cagr": -0.7554179948993105,
+   "liquidations": 0,
+   "sharpe": -9.81437022950605
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.9059837596932143,
+   "median_return": -0.8760519694532001,
+   "p95_drawdown": 0.9065990154746888
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    1315
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.34
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "87.5%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "0%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-90.6%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "lo": 5,
+    "stop_atr": 3.0
+   },
+   "trades": 1791,
+   "avg_R": -0.14884487660079262
+  },
+  "params": {
+   "lo": 5,
+   "stop_atr": 3.0
+  },
+  "secs": 4.3
+ },
+ {
+  "symbol": "SOL",
+  "strategy": "mtf_quick",
+  "name": "4-TF alignment (quick)",
+  "source": "Owner's TradingView method; SuperTrend stands in for the unnamed indicator",
+  "metrics": {
+   "trades": 806,
+   "win_rate": 0.26054590570719605,
+   "avg_R": -0.2072435774683436,
+   "profit_factor": 0.712502680293124,
+   "avg_win_R": 1.9712855109421554,
+   "avg_loss_R": -0.9748461086196933,
+   "longest_losing_streak": 26,
+   "avg_hours": 6.465157154673278,
+   "long_share": 0.5099255583126551,
+   "return": -0.8017421545759094,
+   "max_drawdown": 0.812459308772995,
+   "days": 539.9583333333334,
+   "cagr": -0.6650784135316333,
+   "liquidations": 0,
+   "sharpe": -2.7911305174142798
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.9043879369492632,
+   "median_return": -0.7957058900585203,
+   "p95_drawdown": 0.9100871840114654
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    806
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.71
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "81.2%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "11%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-90.4%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "st_mult": 3.0,
+    "stop_atr": 2.5,
+    "vol_k": 0.0
+   },
+   "trades": 1063,
+   "avg_R": -0.09236645644701866
+  },
+  "params": {
+   "st_mult": 3.0,
+   "stop_atr": 2.5,
+   "vol_k": 0.0
+  },
+  "secs": 47.1
+ },
+ {
+  "symbol": "SOL",
+  "strategy": "mtf_swing",
+  "name": "1h + 30m alignment (swing)",
+  "source": "Owner's TradingView method; SuperTrend stands in for the unnamed indicator",
+  "metrics": {
+   "trades": 540,
+   "win_rate": 0.2796296296296296,
+   "avg_R": -0.050778851093894746,
+   "profit_factor": 0.9150478842210635,
+   "avg_win_R": 1.956002044828187,
+   "avg_loss_R": -0.8297606384569649,
+   "longest_losing_streak": 14,
+   "avg_hours": 13.83348765432098,
+   "long_share": 0.5037037037037037,
+   "return": -0.3745010381854984,
+   "max_drawdown": 0.5749223723670388,
+   "days": 539.7916666666666,
+   "cagr": -0.2718663332050947,
+   "liquidations": 0,
+   "sharpe": -0.5784597749333449
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.7035915168798395,
+   "median_return": -0.3893836136083879,
+   "p95_drawdown": 0.7352647853894723
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    540
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.92
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "57.5%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "33%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-70.4%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "st_mult": 3.0,
+    "stop_atr": 1.5
+   },
+   "trades": 634,
+   "avg_R": 0.021776216790572057
+  },
+  "params": {
+   "st_mult": 3.0,
+   "stop_atr": 1.5
+  },
+  "secs": 3.1
+ },
+ {
+  "symbol": "SOL",
+  "strategy": "mtf_trend",
+  "name": "4h + 1h alignment (trend)",
+  "source": "Owner's TradingView method; SuperTrend stands in for the unnamed indicator",
+  "metrics": {
+   "trades": 282,
+   "win_rate": 0.2978723404255319,
+   "avg_R": 0.047463990001330995,
+   "profit_factor": 1.0791575858776434,
+   "avg_win_R": 2.172332968117156,
+   "avg_loss_R": -0.8539955764720494,
+   "longest_losing_streak": 10,
+   "avg_hours": 24.520094562647753,
+   "long_share": 0.4787234042553192,
+   "return": 0.0666907908655221,
+   "max_drawdown": 0.20583686667546258,
+   "days": 538.6631944444445,
+   "cagr": 0.04471784556517311,
+   "liquidations": 0,
+   "sharpe": 0.40606033173369593
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.4030579786554722,
+   "median_return": 0.04771745221502033,
+   "p95_drawdown": 0.48833306697070517
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    282
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    1.08
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "20.6%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    true,
+    "67%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-40.3%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "st_mult": 2.0,
+    "stop_atr": 2.0
+   },
+   "trades": 479,
+   "avg_R": 0.02963229076384918
+  },
+  "params": {
+   "st_mult": 2.0,
+   "stop_atr": 2.0
+  },
+  "secs": 1.9
+ },
+ {
+  "symbol": "SOL",
+  "strategy": "donchian_breakout",
+  "name": "Trend breakout (Donchian)",
+  "source": "Classic channel breakout (Turtle-style)",
+  "metrics": {
+   "trades": 419,
+   "win_rate": 0.26730310262529833,
+   "avg_R": 0.008762104856903482,
+   "profit_factor": 1.012359965174398,
+   "avg_win_R": 2.6848631953053075,
+   "avg_loss_R": -0.9675353613653159,
+   "longest_losing_streak": 11,
+   "avg_hours": 9.96519490851234,
+   "long_share": 0.5011933174224343,
+   "return": -0.052602179966380946,
+   "max_drawdown": 0.2836001424298938,
+   "days": 538.3958333333334,
+   "cagr": -0.03597040742860125,
+   "liquidations": 0,
+   "sharpe": 0.12427158465416484
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.5595173323518314,
+   "median_return": -0.06387997891984876,
+   "p95_drawdown": 0.632261662120354
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    419
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    1.01
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "28.4%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "44%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-56.0%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "n": 48,
+    "stop_atr": 2.5
+   },
+   "trades": 550,
+   "avg_R": 0.04822875478025166
+  },
+  "params": {
+   "n": 48,
+   "stop_atr": 1.5
+  },
+  "secs": 2.2
+ },
+ {
+  "symbol": "SOL",
+  "strategy": "donchian_1h",
+  "name": "Trend breakout, 1h (Donchian)",
+  "source": "Classic channel breakout (Turtle-style)",
+  "metrics": {
+   "trades": 156,
+   "win_rate": 0.28846153846153844,
+   "avg_R": 0.1714215728664969,
+   "profit_factor": 1.265087036480639,
+   "avg_win_R": 2.836021217598094,
+   "avg_loss_R": -0.9088215263490154,
+   "longest_losing_streak": 15,
+   "avg_hours": 32.77777777777777,
+   "long_share": 0.42948717948717946,
+   "return": 0.21366832417530834,
+   "max_drawdown": 0.19903954622932943,
+   "days": 538.0,
+   "cagr": 0.1403986728099207,
+   "liquidations": 0,
+   "sharpe": 1.0107211740031514
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.29859825694839714,
+   "median_return": 0.1807346528352216,
+   "p95_drawdown": 0.37917160919845183
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    156
+   ],
+   [
+    "profit factor >= 1.20",
+    true,
+    1.27
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    true,
+    "19.9%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    true,
+    "67%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-29.9%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "n": 72,
+    "stop_atr": 2.0
+   },
+   "trades": 148,
+   "avg_R": 0.22193903597514983
+  },
+  "params": {
+   "n": 72,
+   "stop_atr": 2.0
+  },
+  "secs": 1.3
+ },
+ {
+  "symbol": "SOL",
+  "strategy": "donchian_4h",
+  "name": "Trend breakout, 4h (Donchian)",
+  "source": "Classic channel breakout (Turtle-style)",
+  "metrics": {
+   "trades": 74,
+   "win_rate": 0.32432432432432434,
+   "avg_R": 0.0001294064810821877,
+   "profit_factor": 1.0002422607064534,
+   "avg_win_R": 1.6473987273393094,
+   "avg_loss_R": -0.7905598675308667,
+   "longest_losing_streak": 8,
+   "avg_hours": 96.54954954954954,
+   "long_share": 0.5,
+   "return": -0.011544521308587186,
+   "max_drawdown": 0.14207528706583084,
+   "days": 538.0173611111111,
+   "cagr": -0.007846609526343196,
+   "liquidations": 0,
+   "sharpe": 0.002078632799145337
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.2114040264946323,
+   "median_return": -0.02506325249588104,
+   "p95_drawdown": 0.23888689123425133
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    false,
+    74
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    1.0
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    true,
+    "14.2%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "44%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-21.1%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "n": 55,
+    "stop_atr": 2.0
+   },
+   "trades": 55,
+   "avg_R": 0.3187676072113474
+  },
+  "params": {
+   "n": 55,
+   "stop_atr": 2.0
+  },
+  "secs": 1.0
+ },
+ {
+  "symbol": "SOL",
+  "strategy": "ema_pullback",
+  "name": "EMA pullback",
+  "source": "Common day-trader pullback setup",
+  "metrics": {
+   "trades": 1264,
+   "win_rate": 0.317246835443038,
+   "avg_R": -0.12343754465750292,
+   "profit_factor": 0.8426955446500065,
+   "avg_win_R": 2.0843932120510504,
+   "avg_loss_R": -1.149324141923006,
+   "longest_losing_streak": 22,
+   "avg_hours": 6.338607594936691,
+   "long_share": 0.49050632911392406,
+   "return": -0.8069020065729915,
+   "max_drawdown": 0.8328471929298755,
+   "days": 539.96875,
+   "cagr": -0.670988761897276,
+   "liquidations": 0,
+   "sharpe": -2.174659435909645
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.9210417793172951,
+   "median_return": -0.8120520891834385,
+   "p95_drawdown": 0.9302324192991283
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    1264
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.84
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "83.3%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "22%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-92.1%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "stop_atr": 2.0,
+    "tgt_r": 2.5
+   },
+   "trades": 1702,
+   "avg_R": -0.11633014380917615
+  },
+  "params": {
+   "stop_atr": 2.0,
+   "tgt_r": 2.5
+  },
+  "secs": 4.1
+ },
+ {
+  "symbol": "SOL",
+  "strategy": "ema_pullback_1h",
+  "name": "EMA pullback, 1h",
+  "source": "Common day-trader pullback setup",
+  "metrics": {
+   "trades": 389,
+   "win_rate": 0.33676092544987146,
+   "avg_R": -0.08205240497234235,
+   "profit_factor": 0.8827241651998013,
+   "avg_win_R": 1.8339441397290166,
+   "avg_loss_R": -1.0549033637160559,
+   "longest_losing_streak": 17,
+   "avg_hours": 18.085047129391587,
+   "long_share": 0.455012853470437,
+   "return": -0.30212237882537896,
+   "max_drawdown": 0.3543395254238392,
+   "days": 539.9583333333334,
+   "cagr": -0.2158516887057802,
+   "liquidations": 0,
+   "sharpe": -1.1810370810568431
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.5574648640464506,
+   "median_return": -0.3070171587856976,
+   "p95_drawdown": 0.5975213233516998
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    389
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.88
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "35.4%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "22%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-55.7%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "stop_atr": 2.5,
+    "tgt_r": 3.0
+   },
+   "trades": 412,
+   "avg_R": -0.05802207849476503
+  },
+  "params": {
+   "stop_atr": 2.5,
+   "tgt_r": 2.0
+  },
+  "secs": 1.7
+ },
+ {
+  "symbol": "SOL",
+  "strategy": "vwap_reclaim",
+  "name": "VWAP reclaim",
+  "source": "Common intraday VWAP setup",
+  "metrics": {
+   "trades": 301,
+   "win_rate": 0.3554817275747508,
+   "avg_R": -0.23830306598215817,
+   "profit_factor": 0.6887426281824616,
+   "avg_win_R": 1.483370593726479,
+   "avg_loss_R": -1.1878859607699122,
+   "longest_losing_streak": 12,
+   "avg_hours": 1.8712624584717608,
+   "long_share": 0.46511627906976744,
+   "return": -0.46454942606156,
+   "max_drawdown": 0.4776984085479578,
+   "days": 534.1006944444445,
+   "cagr": -0.3474570945710258,
+   "liquidations": 0,
+   "sharpe": -3.5592024708313255
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.6173099223307658,
+   "median_return": -0.4638422595912437,
+   "p95_drawdown": 0.6325052912245589
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    301
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.69
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "47.8%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "22%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-61.7%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "stop_atr": 2.5,
+    "tgt_r": 2.5
+   },
+   "trades": 377,
+   "avg_R": -0.1567328904992656
+  },
+  "params": {
+   "stop_atr": 2.5,
+   "tgt_r": 2.5
+  },
+  "secs": 1.5
+ },
+ {
+  "symbol": "SOL",
+  "strategy": "rsi2_reversion",
+  "name": "RSI(2) reversion",
+  "source": "Connors-style short-term mean reversion",
+  "metrics": {
+   "trades": 1326,
+   "win_rate": 0.4962292609351433,
+   "avg_R": -0.11058325329400527,
+   "profit_factor": 0.4603925650393859,
+   "avg_win_R": 0.19013294254353796,
+   "avg_loss_R": -0.4067977096729027,
+   "longest_losing_streak": 9,
+   "avg_hours": 0.9152840623428857,
+   "long_share": 0.4819004524886878,
+   "return": -0.7709961372470787,
+   "max_drawdown": 0.7721786480368364,
+   "days": 539.2361111111111,
+   "cagr": -0.6312872205140132,
+   "liquidations": 0,
+   "sharpe": -7.531491276935228
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.8249584422036125,
+   "median_return": -0.7697210097793977,
+   "p95_drawdown": 0.8265766840619612
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    1326
+   ],
+   [
+    "profit factor >= 1.20",
+    false,
+    0.46
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    false,
+    "77.2%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "0%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-82.5%"
+   ]
+  ],
+  "in_sample": {
+   "params": {
+    "lo": 5,
+    "stop_atr": 3.0
+   },
+   "trades": 1756,
+   "avg_R": -0.09902450203094318
+  },
+  "params": {
+   "lo": 5,
+   "stop_atr": 3.0
+  },
+  "secs": 4.4
+ }
+]

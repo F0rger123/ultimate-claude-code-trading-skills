@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-label="Ultimate Claude Code Trading Skills: backtest, forward test, paper, live with guardrails">
+  <style>
+    .c{animation:rise 2.4s cubic-bezier(.4,0,.2,1) both}
+    .w{fill:#fff}.b{fill:#0a0a0a;stroke:#fff;stroke-width:2}
+    .line{stroke:#1fa34a;stroke-width:3;fill:none;stroke-dasharray:1400;stroke-dashoffset:1400;animation:draw 3.2s .6s ease forwards}
+    .t{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#fff}
+    .m{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#a3a3a3}
+    @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+    @keyframes draw{to{stroke-dashoffset:0}}
+    @media (prefers-reduced-motion:reduce){.c,.line{animation:none;opacity:1;stroke-dashoffset:0}}
+  </style>
+  <rect width="1200" height="320" fill="#0a0a0a"/>
+  <g opacity=".9">
+    <g class="c" style="animation-delay:.00s"><rect class="w" x="640" y="210" width="2" height="60"/><rect class="w" x="634" y="222" width="14" height="30"/></g>
+    <g class="c" style="animation-delay:.08s"><rect class="w" x="672" y="190" width="2" height="62"/><rect class="b" x="666" y="200" width="14" height="34"/></g>
+    <g class="c" style="animation-delay:.16s"><rect class="w" x="704" y="196" width="2" height="66"/><rect class="w" x="698" y="206" width="14" height="40"/></g>
+    <g class="c" style="animation-delay:.24s"><rect class="w" x="736" y="170" width="2" height="60"/><rect class="w" x="730" y="180" width="14" height="36"/></g>
+    <g class="c" style="animation-delay:.32s"><rect class="w" x="768" y="160" width="2" height="54"/><rect class="b" x="762" y="170" width="14" height="28"/></g>
+    <g class="c" style="animation-delay:.40s"><rect class="w" x="800" y="150" width="2" height="70"/><rect class="w" x="794" y="164" width="14" height="40"/></g>
+    <g class="c" style="animation-delay:.48s"><rect class="w" x="832" y="128" width="2" height="62"/><rect class="w" x="826" y="138" width="14" height="38"/></g>
+    <g class="c" style="animation-delay:.56s"><rect class="w" x="864" y="120" width="2" height="56"/><rect class="b" x="858" y="128" width="14" height="30"/></g>
+    <g class="c" style="animation-delay:.64s"><rect class="w" x="896" y="132" width="2" height="60"/><rect class="b" x="890" y="140" width="14" height="40"/></g>
+    <g class="c" style="animation-delay:.72s"><rect class="w" x="928" y="112" width="2" height="66"/><rect class="w" x="922" y="124" width="14" height="42"/></g>
+    <g class="c" style="animation-delay:.80s"><rect class="w" x="960" y="92" width="2" height="60"/><rect class="w" x="954" y="100" width="14" height="40"/></g>
+    <g class="c" style="animation-delay:.88s"><rect class="w" x="992" y="80" width="2" height="54"/><rect class="b" x="986" y="88" width="14" height="28"/></g>
+    <g class="c" style="animation-delay:.96s"><rect class="w" x="1024" y="70" width="2" height="62"/><rect class="w" x="1018" y="80" width="14" height="40"/></g>
+    <g class="c" style="animation-delay:1.04s"><rect class="w" x="1056" y="56" width="2" height="58"/><rect class="w" x="1050" y="64" width="14" height="36"/></g>
+    <g class="c" style="animation-delay:1.12s"><rect class="w" x="1088" y="64" width="2" height="60"/><rect class="b" x="1082" y="72" width="14" height="34"/></g>
+    <g class="c" style="animation-delay:1.20s"><rect class="w" x="1120" y="44" width="2" height="60"/><rect class="w" x="1114" y="52" width="14" height="40"/></g>
+  </g>
+  <path class="line" d="M620 262 L700 236 L760 214 L830 176 L900 170 L960 128 L1030 104 L1090 96 L1150 66"/>
+  <text class="m" x="64" y="84" font-size="15" letter-spacing="3">BACKTEST  /  FORWARD  /  PAPER  /  LIVE</text>
+  <text class="t" x="62" y="150" font-size="54" font-weight="800" letter-spacing="-2">Ultimate Claude Code</text>
+  <text class="t" x="62" y="208" font-size="54" font-weight="800" letter-spacing="-2">Trading Skills</text>
+  <text class="m" x="64" y="256" font-size="16">honest tests · guardrails that stay on · learns from its own trades</text>
+</svg>
