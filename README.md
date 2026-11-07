@@ -4,7 +4,7 @@
   <img alt="License MIT" src="https://img.shields.io/badge/license-MIT-0a0a0a?style=flat-square">
   <img alt="Python 3.10+, no installs" src="https://img.shields.io/badge/python-3.10%2B%20%C2%B7%20stdlib%20only-0a0a0a?style=flat-square">
   <img alt="Claude Code plugin" src="https://img.shields.io/badge/Claude%20Code-8%20skills-0a0a0a?style=flat-square">
-  <img alt="Tests" src="https://img.shields.io/badge/tests-17%20passing-1fa34a?style=flat-square">
+  <img alt="Tests" src="https://img.shields.io/badge/tests-18%20passing-1fa34a?style=flat-square">
   <img alt="Venue" src="https://img.shields.io/badge/venue-Coinbase%20US%20perps-737373?style=flat-square">
 </p>
 
