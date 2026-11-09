@@ -223,7 +223,10 @@ def make_handler(api, token):
             fn = routes.get(u.path)
             if not fn:
                 return self._send(404, {"error": "not found"})
-            self._send(200, fn(parse_qs(u.query)))
+            try:
+                self._send(200, fn(parse_qs(u.query)))
+            except Exception as e:  # never drop the connection silently: the app shows "empty response"
+                self._send(503, {"error": "desk busy, retrying (%s)" % e.__class__.__name__})
 
         def do_POST(self):
             u = urlparse(self.path)

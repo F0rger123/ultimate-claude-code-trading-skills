@@ -312,7 +312,15 @@ def accounts(state_dir):
         bk = load_book(state_dir, b["id"])
         if not bk:
             continue
+        curve = bk["curve"]
+        step = max(1, len(curve) // 40)
+        spark = [round(e, 2) for _, e in curve[::step]] + ([round(curve[-1][1], 2)] if curve else [])
+        wins = [t for t in bk["trades"] if t["pnl"] > 0]
         out.append({"id": b["id"], "name": b["name"], "mode": b["mode"], "cadence": b["cadence"],
                     "note": b.get("note", ""), "start_equity": bk["start_equity"], "equity": bk["equity"],
-                    "pnl": bk["pnl"], "open": len(bk["open"]), "closed": bk["closed"], "updated": bk.get("updated")})
+                    "pnl": bk["pnl"], "pnl_pct": bk["pnl"] / bk["start_equity"] if bk["start_equity"] else 0.0,
+                    "open": len(bk["open"]), "closed": bk["closed"], "updated": bk.get("updated"),
+                    "unrealized": sum(o["unrealized"] for o in bk["open"]),
+                    "win_rate": len(wins) / len(bk["trades"]) if bk["trades"] else None,
+                    "spark": spark, "backtest": bk.get("backtest")})
     return out

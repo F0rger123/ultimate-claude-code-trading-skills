@@ -22,8 +22,11 @@ CREATE TABLE IF NOT EXISTS events (t INTEGER NOT NULL, level TEXT NOT NULL, msg 
 
 class Journal:
     def __init__(self, path):
-        self.db = sqlite3.connect(path, check_same_thread=False)
+        # WAL lets the phone API read while the desk writes; timeout waits for a lock instead of failing.
+        self.db = sqlite3.connect(path, check_same_thread=False, timeout=30)
         self.db.row_factory = sqlite3.Row
+        self.db.execute("PRAGMA journal_mode=WAL")
+        self.db.execute("PRAGMA busy_timeout=30000")
         self.lock = threading.Lock()
         with self.lock:
             self.db.executescript(SCHEMA)
