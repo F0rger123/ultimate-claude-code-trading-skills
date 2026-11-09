@@ -29,6 +29,7 @@ Check items off as they land. Every phase ends with its check passing. Blueprint
 - [x] Paper loop on live Coinbase perp candles (one live cycle verified)
 - [x] Phone API server with token
 - [ ] Run on the always-on PC as a scheduled task (owner's PC)
+- [x] Weekly paper shake-up: retire the bottom 3 accounts, start the best 3 tested candidates (`tradedesk/rotation.py`)
 
 ## Phase 4: Dashboard app (check: debug APK installs and shows demo data)
 - [x] Compose app: Home, Trades, Calendar, Strategies, Rules

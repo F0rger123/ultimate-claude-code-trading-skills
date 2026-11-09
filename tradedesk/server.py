@@ -40,6 +40,10 @@ class Api:
         return {"total_start": ps.get("total_start"), "total_equity": ps.get("total_equity"),
                 "kill_switch": rules["kill_switch"], "accounts": PAPER.accounts(self.dir)}
 
+    def rotation(self, q):
+        from . import rotation as ROT
+        return ROT.summary(self.dir)
+
     def summary(self, q):
         rules = R.load_rules(self.rules_path)
         bk = self._account(q)
@@ -84,7 +88,7 @@ class Api:
         mode = (q.get("mode") or [self.mode(rules)])[0]
         rows = self.j.open_trades(mode) if status == "open" else self.j.closed_trades(mode, limit=200)
         names = {s.id: s.name for s in S.ALL}
-        names.update(PAPER.NAMES)
+        names.update(PAPER.names(self.dir))
         for r in rows:
             r["strategy_name"] = names.get(r["strategy"], r["strategy"])
             r.pop("feat", None)
@@ -178,7 +182,7 @@ class Api:
 def make_handler(api, token):
     routes = {"/api/summary": api.summary, "/api/trades": api.trades, "/api/equity": api.equity,
               "/api/calendar": api.calendar, "/api/strategies": api.strategies, "/api/rules": api.get_rules,
-              "/api/accounts": api.accounts}
+              "/api/accounts": api.accounts, "/api/rotation": api.rotation}
 
     class H(BaseHTTPRequestHandler):
         def _auth(self):

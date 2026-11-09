@@ -7,6 +7,7 @@
   serve        phone API (needs TRADEDESK_API_TOKEN)
   check-live   read-only Coinbase check: balance, positions, an order preview (needs keys)
   status       ladder and journal summary
+  rotate       weekly paper shake-up: retire the bottom 3 accounts, start 3 new ones (--dry-run, --force)
 """
 import argparse
 import json
@@ -32,6 +33,8 @@ def main(argv=None):
     p.add_argument("--test-days", type=int, default=60)
     p.add_argument("--tag", default="latest")
     p.add_argument("--min-train-trades", type=int, default=15)
+    p.add_argument("--force", action="store_true", help="rotate: run even if this week already ran")
+    p.add_argument("--dry-run", action="store_true", help="rotate: rank and test, change nothing")
     a = p.parse_args(argv)
     syms = [s.strip().upper() for s in a.symbols.split(",") if s.strip()]
 
@@ -65,6 +68,11 @@ def main(argv=None):
         os.makedirs(a.reports, exist_ok=True)
         with open(os.path.join(a.reports, "learn-latest.json"), "w", encoding="utf-8") as f:
             json.dump(out, f, indent=1, default=str)
+    elif a.cmd == "rotate":
+        from . import rotation as ROT
+        from .journal import Journal
+        j = Journal(os.path.join(a.state, "journal.sqlite"))
+        ROT.run(a.state, j, force=a.force, dry=a.dry_run)
     elif a.cmd == "desk":
         from .desk import Desk
         Desk(a.state).run()

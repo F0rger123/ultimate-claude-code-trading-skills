@@ -124,9 +124,28 @@ flowchart LR
 | `tradedesk/desk.py` | 24/7 loop: shadow, forward, paper; live only behind three locks |
 | `tradedesk/broker_coinbase.py` | Coinbase adapter (written; never run with money) |
 | `tradedesk/learn.py` | improvement proposals, judged only on later data |
+| `tradedesk/rotation.py` | weekly paper shake-up: retire the bottom 3 accounts, test candidates, start the best 3 (paper only) |
 | `tradedesk/server.py` | token-protected phone API and app updates |
 | `research/` | reproducible studies, the corrected tournament, MNQ model, charts |
 | `pine/` | TradingView Pine v6 MNQ opening-range strategy |
+
+### Weekly shake-up (paper only)
+
+```mermaid
+flowchart LR
+  W1["Every Monday"] --> W2["Rank the paper accounts<br/>by their return"]
+  W2 --> W3["Retire the bottom 3<br/>(losses still counted)"]
+  W3 --> W4["Remember how each<br/>strategy family did"]
+  W4 --> W5["Test about 30 new setups<br/>on recent prices, with fees"]
+  W5 --> W6["Start the best 3<br/>with $10,000 pretend money"]
+  W6 --> W1
+  W6 -. "real money only with<br/>the owner's yes" .-> W7["Owner decides"]
+  style W3 fill:#0a0a0a,color:#ffffff,stroke:#0a0a0a
+  style W6 fill:#ffffff,stroke:#1fa34a,color:#0a0a0a
+```
+
+Accounts get a trial first (6 days fast, 27 days slow) and the $50 pilot mirror is never cut. Details:
+[`skills/trading-rotation/SKILL.md`](skills/trading-rotation/SKILL.md).
 
 ## 4. Strategy library
 
@@ -210,6 +229,7 @@ As a Claude Code plugin:
 | Paper desk (24/7) | `python -m tradedesk desk --state %USERPROFILE%\TradingDeskState` |
 | Phone API | `python -m tradedesk serve --state %USERPROFILE%\TradingDeskState --token-file ...` |
 | Learning proposals | `python -m tradedesk learn` |
+| Weekly shake-up preview | `python -m tradedesk rotate --state %USERPROFILE%\TradingDeskState --dry-run` |
 | Emergency stop | the app's **Stop all trading** button, or set `"kill_switch": true` in `rules.json` |
 
 ## 9. Research methodology (short)

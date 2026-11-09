@@ -20,6 +20,7 @@ Assumptions (label them in anything you publish):
 import glob
 import json
 import os
+import re
 import time
 
 from . import candidates as C
@@ -46,8 +47,8 @@ BOOKS = [
      "report": "weekly_strength_rotation-spot", "mode": "spot", "equity": 10000.0, "cadence": "slow",
      "note": "Holds the strongest coin, rebalanced Mondays"},
     {"id": "pb_pilot_spot50", "name": "$50 spot pilot mirror", "cls": S.TrendEnsemble, "report": "trend_ensemble-spot",
-     "mode": "spot", "equity": 50.0, "extra": {"long_only": 1}, "cadence": "slow",
-     "note": "What the real $50 pilot would do (buys only, spot fees)"},
+     "mode": "spot", "equity": 50.0, "extra": {"long_only": 1}, "cadence": "slow", "protected": True,
+     "note": "What the real $50 pilot would do (buys only, spot fees). Never rotated out"},
     {"id": "pb_fast_mtf", "name": "Fast: 4-timeframe alignment (5m)", "cls": S.MTFQuick, "mode": "perp",
      "equity": 10000.0, "cadence": "fast",
      "note": "Your 1h/30m/15m/5m method. Checked every 5 min, trades about once a day. Lost money after costs in backtests"},
@@ -63,9 +64,73 @@ BOOKS = [
      "note": "Trades about every 10 minutes, one coin at a time, small size. Fees make it lose in tests; "
              "expect it to hit its -10% stop in about a week"},
 ]
-NAMES = {b["id"]: b["name"] for b in BOOKS}
-BY_ID = {b["id"]: b for b in BOOKS}
+SEED_IDS = {b["id"] for b in BOOKS}
+REGISTRY = {c.id: c for c in S.ALL + [S.Scalp10] + C.ALL}
 FAST_WARMUP_DAYS = 30
+_SAFE_ID = re.compile(r"^pb_[a-z0-9_]{1,60}$")
+
+
+# ---------------- roster: the accounts running now (BOOKS is only the first roster)
+def _roster_path(state_dir):
+    return os.path.join(state_dir, "paper", "roster.json")
+
+
+def _spec(b):
+    d = {k: v for k, v in b.items() if k != "cls"}
+    d["cls"] = b["cls"].id if isinstance(b["cls"], type) else b["cls"]
+    return d
+
+
+def roster(state_dir):
+    """Active accounts: state/paper/roster.json once the weekly shake-up has written it, else BOOKS."""
+    p = _roster_path(state_dir)
+    specs = [_spec(b) for b in BOOKS]
+    if os.path.exists(p):
+        try:
+            with open(p, encoding="utf-8") as f:
+                specs = json.load(f)
+        except (OSError, ValueError):
+            pass  # a half-written file never stops the desk; the next read gets the new one
+    return [dict(d, cls=REGISTRY[d["cls"]]) for d in specs if d.get("cls") in REGISTRY]
+
+
+def save_roster(state_dir, books):
+    p = _roster_path(state_dir)
+    os.makedirs(os.path.dirname(p), exist_ok=True)
+    with open(p + ".tmp", "w", encoding="utf-8") as f:
+        json.dump([_spec(b) for b in books], f, indent=1)
+    os.replace(p + ".tmp", p)
+
+
+def retired_books(state_dir):
+    out = []
+    for p in sorted(glob.glob(os.path.join(state_dir, "paper", "retired", "pb_*.json"))):
+        try:
+            with open(p, encoding="utf-8") as f:
+                out.append(json.load(f))
+        except (OSError, ValueError):
+            continue
+    return out
+
+
+def retire(state_dir, book_id, reason, now=None):
+    """Move an account out of the roster into paper/retired/. Its result stays in the 'All accounts' total."""
+    bk = load_book(state_dir, book_id)
+    if bk is None:
+        return None
+    bk.update(retired=int(now or time.time()), retired_reason=reason, open=[], pending=[])
+    d = os.path.join(state_dir, "paper", "retired")
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, book_id + ".json"), "w", encoding="utf-8") as f:
+        json.dump(bk, f, default=str)
+    os.remove(os.path.join(state_dir, "paper", book_id + ".json"))
+    return bk
+
+
+def names(state_dir):
+    out = {b["id"]: b["name"] + " (retired)" for b in retired_books(state_dir)}
+    out.update({b["id"]: b["name"] for b in roster(state_dir)})
+    return out
 
 
 def latest_params(report):
@@ -102,16 +167,20 @@ def _variants(markets, book, params):
     return {s: [book["cls"](m, **p)] for s, m in markets.items()}
 
 
-def _state(pdir, now, rules):
+def _state(pdir, now, rules, active):
     sp = os.path.join(pdir, "start.json")
     st = {}
     if os.path.exists(sp):
         with open(sp, encoding="utf-8") as f:
             st = json.load(f)
     books = st.setdefault("books", {})
-    for b in BOOKS:  # the first five books started together; new books start now
+    for b in active:  # the first five books started together; every later book starts when it first runs
         if b["id"] not in books:
-            books[b["id"]] = st.get("start") if (st.get("start") and b["cadence"] == "slow") else now - now % 300
+            seed_slow = st.get("start") and b["id"] in SEED_IDS and b["cadence"] == "slow"
+            books[b["id"]] = st["start"] if seed_slow else now - now % (3600 if b["cadence"] == "slow" else 300)
+    ids = {b["id"] for b in active}
+    for k in [k for k in books if k not in ids]:
+        books.pop(k)  # retired by the weekly shake-up
     if rules.get("kill_switch") and not st.get("kill_at"):
         st["kill_at"] = now - now % 300
     elif not rules.get("kill_switch") and st.get("kill_at"):
@@ -164,15 +233,22 @@ def update(state_dir, journal, rules, log=print, now=None, fetch=True, cadence="
     now = int(now or time.time())
     pdir = os.path.join(state_dir, "paper")
     os.makedirs(pdir, exist_ok=True)
-    st = _state(pdir, now, rules)
-    books = [b for b in BOOKS if b["cadence"] == cadence]
+    active = roster(state_dir)
+    st = _state(pdir, now, rules, active)
+    books = [b for b in active if b["cadence"] == cadence]
+    if not books:
+        return rebuild(state_dir, journal, rules, now)
     gran = 3600 if cadence == "slow" else 300
     first = min(st["books"][b["id"]] for b in books)
     since = None if cadence == "slow" else first - FAST_WARMUP_DAYS * 86400
     markets, stale = _markets(gran, now, fetch, since)
     step = 1 if cadence == "slow" else 3  # stored curve resolution: hourly, or every 15 minutes
+    results = []
     for book in books:
-        params, bt = latest_params(book.get("report"))
+        if book.get("report"):
+            params, bt = latest_params(book["report"])
+        else:
+            params, bt = dict(book.get("params") or {}), None
         start = st["books"][book["id"]]
         r = P.run(markets, _variants(markets, book, params), _cfg(book), start_t=start, close_at_end=False,
                   kill_at=st.get("kill_at"))
@@ -185,17 +261,24 @@ def update(state_dir, journal, rules, log=print, now=None, fetch=True, cadence="
                "events": [list(e) for e in r["events"] if e[1] != "skip"][-20:],
                "skips": [list(e) for e in r["events"] if e[1] == "skip"][-10:],
                "curve": [[t, round(e, 2)] for t, e in curve[::step]] + [[curve[-1][0], round(curve[-1][1], 2)]],
-               "trades": r["trades"]}
-        with open(os.path.join(pdir, book["id"] + ".json"), "w", encoding="utf-8") as f:
-            json.dump(res, f, default=str)
+               "trades": r["trades"], "protected": bool(book.get("protected")), "added": book.get("added"),
+               "screen": book.get("screen")}
+        results.append(res)
+    live = {b["id"] for b in roster(state_dir)}  # the shake-up may have retired a book while this ran
+    for res in results:
+        if res["id"] in live:
+            with open(os.path.join(pdir, res["id"] + ".json"), "w", encoding="utf-8") as f:
+                json.dump(res, f, default=str)
     if stale:
         journal.event("warn", "paper (%s): stale data for %s; signals wait" % (cadence, ",".join(stale)))
     return rebuild(state_dir, journal, rules, now)
 
 
 def load_book(state_dir, book_id):
+    if not book_id or not _SAFE_ID.match(book_id):
+        return None
     p = os.path.join(state_dir, "paper", book_id + ".json")
-    if book_id not in BY_ID or not os.path.exists(p):
+    if not os.path.exists(p):
         return None
     with open(p, encoding="utf-8") as f:
         return json.load(f)
@@ -204,22 +287,28 @@ def load_book(state_dir, book_id):
 def rebuild(state_dir, journal, rules, now=None):
     """Aggregate all books into the journal (the app's 'All accounts' view) and the paper drawdown halt."""
     now = int(now or time.time())
-    books = [x for x in (load_book(state_dir, b["id"]) for b in BOOKS) if x]
+    books = [x for x in (load_book(state_dir, b["id"]) for b in roster(state_dir)) if x]
+    retired = retired_books(state_dir)
+    # Work in profit and loss so a retired account's result stays in the total: rotating a loser out
+    # never hides its loss. Balance = start money of the active accounts + every account's P&L ever.
     agg, rows = {}, []
-    for bk in books:
+    for bk in books + retired:
         for t, e in bk["curve"]:
-            agg.setdefault(int(t) - int(t) % 3600, {})[bk["id"]] = e
-        rows += [("closed", bk, x) for x in bk["trades"]] + [("open", bk, x) for x in bk["open"]]
-    last = {bk["id"]: bk["start_equity"] for bk in books}
-    series = []
+            agg.setdefault(int(t) - int(t) % 3600, {})[bk["id"]] = e - bk["start_equity"]
+        name = bk["name"] + (" (retired)" if bk.get("retired") else "")
+        rows += [("closed", dict(bk, name=name), x) for x in bk["trades"]]
+        rows += [("open", bk, x) for x in bk["open"]]
+    total0 = sum(bk["start_equity"] for bk in books)
+    banked = sum(bk["equity"] - bk["start_equity"] for bk in retired)
+    last, series = {}, []
     for t in sorted(agg):
         last.update(agg[t])
-        series.append((t, sum(last.values())))
-    total0 = sum(bk["start_equity"] for bk in books)
-    total = sum(bk["equity"] for bk in books)
+        series.append((t, total0 + sum(last.values())))
+    total = sum(bk["equity"] for bk in books) + banked
     peak = max([total0] + [e for _, e in series] + [total])
     out = {"t": now, "books": [{k: v for k, v in bk.items() if k not in ("curve", "trades")} for bk in books],
-           "total_start": total0, "total_equity": total, "drawdown": (peak - total) / peak if peak else 0.0}
+           "total_start": total0, "total_equity": total, "retired_pnl": banked, "retired_count": len(retired),
+           "drawdown": (peak - total) / peak if peak else 0.0}
     _write_journal(journal, series, rows)
     with open(os.path.join(state_dir, "paper", "summary.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, indent=1, default=str)
@@ -318,7 +407,7 @@ def account_equity(bk, secs):
 
 def accounts(state_dir):
     out = []
-    for b in BOOKS:
+    for b in roster(state_dir):
         bk = load_book(state_dir, b["id"])
         if not bk:
             continue
@@ -332,5 +421,6 @@ def accounts(state_dir):
                     "open": len(bk["open"]), "closed": bk["closed"], "updated": bk.get("updated"),
                     "unrealized": sum(o["unrealized"] for o in bk["open"]),
                     "win_rate": len(wins) / len(bk["trades"]) if bk["trades"] else None,
-                    "spark": spark, "backtest": bk.get("backtest")})
+                    "spark": spark, "backtest": bk.get("backtest"), "protected": bool(b.get("protected")),
+                    "added": b.get("added"), "start": bk.get("start")})
     return out

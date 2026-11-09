@@ -9,6 +9,8 @@ journals everything.
 - live:    real orders through broker_coinbase, only when all three live locks are open
 """
 import os
+import subprocess
+import sys
 import time
 import traceback
 
@@ -124,6 +126,41 @@ class Desk:
                 self.dd = s["drawdown"]
             except Exception as e:
                 self.j.event("error", "paper update (fast) failed: %s" % str(e)[:300])
+        self.maybe_rotate(t)
+
+    def maybe_rotate(self, t):
+        """Weekly paper shake-up (tradedesk/rotation.py) in its own process, so the desk never waits on it.
+        Paper accounts only: it cannot change rules, the ladder or anything that touches money."""
+        from . import rotation as ROT
+        proc = getattr(self, "_rot_proc", None)
+        if proc is not None:
+            if proc.poll() is None:
+                return
+            if proc.returncode:
+                self.j.event("error", "weekly shake-up failed (exit %s); it retries after the desk restarts"
+                             % proc.returncode)
+            self._rot_proc = None
+        wk = ROT.week_key(t)
+        if getattr(self, "_rot_week", None) == wk:
+            return
+        try:
+            if not ROT.due(self.dir, t):
+                return
+        except Exception as e:
+            self.j.event("error", "weekly shake-up check failed: %s" % str(e)[:200])
+            self._rot_week = wk
+            return
+        self._rot_week = wk  # one attempt per week per desk process
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        flags = 0x08000000 if os.name == "nt" else 0  # CREATE_NO_WINDOW
+        os.makedirs(os.path.join(self.dir, "paper"), exist_ok=True)
+        with open(os.path.join(self.dir, "paper", "rotation.log"), "a", encoding="utf-8") as out:
+            out.write("\n==== %s\n" % time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime(t)))
+            out.flush()
+            self._rot_proc = subprocess.Popen(
+                [sys.executable, "-m", "tradedesk", "rotate", "--state", os.path.abspath(self.dir)],
+                cwd=root, stdout=out, stderr=subprocess.STDOUT, creationflags=flags)
+        self.j.event("info", "weekly shake-up started")
 
     def drawdown_halt(self, rules, eq):
         """Owner's drawdown tiers on MARKED equity: >= dd_warn (7.5%) halves new risk, >= dd_block (10%)

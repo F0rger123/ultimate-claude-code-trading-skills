@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-11-09: weekly paper shake-up
+- `tradedesk/rotation.py`: every Monday the desk ranks the paper accounts, retires the bottom three
+  (after a 6-day fast / 27-day slow trial; the $50 pilot mirror is protected), tests up to three
+  settings of every strategy family on recent data with costs, and starts the best three as new paper
+  accounts. Retired results stay in the all-accounts total and feed a per-family memory.
+- Paper accounts now live in `state/paper/roster.json`; retired ones in `state/paper/retired/`.
+- `python -m tradedesk rotate` (`--dry-run`, `--force`), `GET /api/rotation`, skill `trading-rotation`.
+- New `pb_fast_scalp10` account (trades about every 10 minutes, small size). Fast-account notes now
+  state their real trade frequency.
+
 ## 2026-11-09: paper trading started
 - `tradedesk/paper.py`: five paper books on the research portfolio engine, replayed hourly from a fixed
   start (2026-11-09 07:00 UTC). Same code as the backtest.

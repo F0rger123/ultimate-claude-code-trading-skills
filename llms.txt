@@ -12,4 +12,5 @@
 - [Verified API facts](https://raw.githubusercontent.com/F0rger123/ultimate-claude-trading-skill/main/docs/VERIFIED_APIS.md)
 - [Strategies](https://raw.githubusercontent.com/F0rger123/ultimate-claude-trading-skill/main/docs/STRATEGIES.md)
 - [Latest tournament report](https://raw.githubusercontent.com/F0rger123/ultimate-claude-trading-skill/main/reports/legacy/tournament-latest.md)
+- [Weekly shake-up skill](https://raw.githubusercontent.com/F0rger123/ultimate-claude-trading-skill/main/skills/trading-rotation/SKILL.md): how the worst paper strategies get replaced each week
 - [Decisions](https://raw.githubusercontent.com/F0rger123/ultimate-claude-trading-skill/main/docs/DECISIONS.md)

@@ -42,6 +42,7 @@ In Claude Code you can also install the skills as a plugin:
 - **Paper trading:** `python -m tradedesk desk` keeps running and journals trades. Strategies only trade once they reach the forward stage.
 - **Phone dashboard API:** `python -m tradedesk serve --host <tailscale-ip>`. It needs `TRADEDESK_API_TOKEN` set as an environment variable on the PC.
 - **Learning loop:** `python -m tradedesk learn`.
+- **Weekly shake-up:** the desk retires the 3 worst paper accounts every Monday and starts 3 new ones (paper only). Preview with `python -m tradedesk rotate --dry-run`.
 - **Rules and kill switch:** in `state/rules.json` or the phone app.
 - The skills in `skills/` hold the details for each task. `docs/BLUEPRINT.md` is the source of truth.
 
