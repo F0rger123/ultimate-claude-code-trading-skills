@@ -318,6 +318,9 @@ def summary(state_dir, now=None):
            "cut_per_week": CUT, "trial_days": TRIAL_DAYS, "runs": len(led.get("runs", [])), "families": fams,
            "standings": [{k: r[k] for k in ("id", "name", "cadence", "days", "pnl_pct", "eligible")}
                          for r in reversed(rank(state_dir, now))]}
+    ps = PA.load_summary(state_dir) or {}
+    out["retired_pnl"] = ps.get("retired_pnl", 0.0)
+    out["retired_count"] = ps.get("retired_count", 0)
     if last:
         out["last"] = {"t": last["t"], "cut": [{"name": r["name"], "pnl_pct": r["pnl_pct"]} for r in last["cut"]],
                        "added": [{"name": s["name"], "note": s["note"]} for s in last["added"]],
