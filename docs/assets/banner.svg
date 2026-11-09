@@ -1,36 +1,84 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-label="Ultimate Claude Trading Skill: backtest, forward test, paper, live with guardrails">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="340" viewBox="0 0 1200 340" role="img" aria-label="Ultimate Claude Trading Skill: backtest, forward test, paper, live with guardrails">
+  <defs>
+    <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1fa34a" stop-opacity=".38"/>
+      <stop offset="1" stop-color="#1fa34a" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".78" cy=".35" r=".5">
+      <stop offset="0" stop-color="#1fa34a" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#1fa34a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0a0a0a"/>
+      <stop offset=".55" stop-color="#0a0a0a" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="chart"><rect x="690" y="24" width="480" height="292"/></clipPath>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#1f1f1f" stroke-width="1"/>
+    </pattern>
+  </defs>
   <style>
-    .c{animation:rise 2.4s cubic-bezier(.4,0,.2,1) both}
-    .w{fill:#fff}.b{fill:#0a0a0a;stroke:#fff;stroke-width:2}
-    .line{stroke:#1fa34a;stroke-width:3;fill:none;stroke-dasharray:1400;stroke-dashoffset:1400;animation:draw 3.2s .6s ease forwards}
-    .t{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;fill:#fff}
+    .t{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;fill:#fff}
     .m{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#a3a3a3}
-    @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+    .c{transform-box:fill-box;transform-origin:bottom;animation:rise .9s cubic-bezier(.2,.8,.2,1) both}
+    .up{fill:#fff}.dn{fill:#0a0a0a;stroke:#fff;stroke-width:2}
+    .line{fill:none;stroke:#1fa34a;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:900;stroke-dashoffset:900;animation:draw 2.6s .9s cubic-bezier(.4,0,.2,1) forwards}
+    .area{opacity:0;animation:show 1.2s 2.6s ease forwards}
+    .end{opacity:0;animation:show .3s 3.4s forwards}
+    .ping{transform-box:fill-box;transform-origin:center;animation:ping 1.8s 3.4s ease-out infinite;opacity:0}
+    .tag{opacity:0;animation:tagin .5s 3.5s cubic-bezier(.2,.8,.2,1) forwards}
+    .scan{animation:scan 5s 3.8s linear infinite;opacity:0}
+    .txt{opacity:0;animation:txt .8s cubic-bezier(.2,.8,.2,1) forwards}
+    @keyframes rise{from{transform:scaleY(0);opacity:0}to{transform:none;opacity:1}}
     @keyframes draw{to{stroke-dashoffset:0}}
-    @media (prefers-reduced-motion:reduce){.c,.line{animation:none;opacity:1;stroke-dashoffset:0}}
+    @keyframes show{to{opacity:1}}
+    @keyframes ping{0%{opacity:.7;transform:scale(1)}100%{opacity:0;transform:scale(3.2)}}
+    @keyframes tagin{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
+    @keyframes scan{0%{opacity:0;transform:translateX(0)}8%{opacity:.5}92%{opacity:.5}100%{opacity:0;transform:translateX(470px)}}
+    @keyframes txt{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion:reduce){.c,.line,.area,.end,.tag,.txt{animation:none;opacity:1;stroke-dashoffset:0}.ping,.scan{display:none}}
   </style>
-  <rect width="1200" height="320" fill="#0a0a0a"/>
-  <g opacity=".9">
-    <g class="c" style="animation-delay:.00s"><rect class="w" x="640" y="210" width="2" height="60"/><rect class="w" x="634" y="222" width="14" height="30"/></g>
-    <g class="c" style="animation-delay:.08s"><rect class="w" x="672" y="190" width="2" height="62"/><rect class="b" x="666" y="200" width="14" height="34"/></g>
-    <g class="c" style="animation-delay:.16s"><rect class="w" x="704" y="196" width="2" height="66"/><rect class="w" x="698" y="206" width="14" height="40"/></g>
-    <g class="c" style="animation-delay:.24s"><rect class="w" x="736" y="170" width="2" height="60"/><rect class="w" x="730" y="180" width="14" height="36"/></g>
-    <g class="c" style="animation-delay:.32s"><rect class="w" x="768" y="160" width="2" height="54"/><rect class="b" x="762" y="170" width="14" height="28"/></g>
-    <g class="c" style="animation-delay:.40s"><rect class="w" x="800" y="150" width="2" height="70"/><rect class="w" x="794" y="164" width="14" height="40"/></g>
-    <g class="c" style="animation-delay:.48s"><rect class="w" x="832" y="128" width="2" height="62"/><rect class="w" x="826" y="138" width="14" height="38"/></g>
-    <g class="c" style="animation-delay:.56s"><rect class="w" x="864" y="120" width="2" height="56"/><rect class="b" x="858" y="128" width="14" height="30"/></g>
-    <g class="c" style="animation-delay:.64s"><rect class="w" x="896" y="132" width="2" height="60"/><rect class="b" x="890" y="140" width="14" height="40"/></g>
-    <g class="c" style="animation-delay:.72s"><rect class="w" x="928" y="112" width="2" height="66"/><rect class="w" x="922" y="124" width="14" height="42"/></g>
-    <g class="c" style="animation-delay:.80s"><rect class="w" x="960" y="92" width="2" height="60"/><rect class="w" x="954" y="100" width="14" height="40"/></g>
-    <g class="c" style="animation-delay:.88s"><rect class="w" x="992" y="80" width="2" height="54"/><rect class="b" x="986" y="88" width="14" height="28"/></g>
-    <g class="c" style="animation-delay:.96s"><rect class="w" x="1024" y="70" width="2" height="62"/><rect class="w" x="1018" y="80" width="14" height="40"/></g>
-    <g class="c" style="animation-delay:1.04s"><rect class="w" x="1056" y="56" width="2" height="58"/><rect class="w" x="1050" y="64" width="14" height="36"/></g>
-    <g class="c" style="animation-delay:1.12s"><rect class="w" x="1088" y="64" width="2" height="60"/><rect class="b" x="1082" y="72" width="14" height="34"/></g>
-    <g class="c" style="animation-delay:1.20s"><rect class="w" x="1120" y="44" width="2" height="60"/><rect class="w" x="1114" y="52" width="14" height="40"/></g>
+
+  <rect width="1200" height="340" fill="#0a0a0a"/>
+  <rect width="1200" height="340" fill="url(#grid)"/>
+  <rect width="1200" height="340" fill="url(#glow)"/>
+  <rect width="1200" height="340" fill="url(#fade)"/>
+
+  <!-- chart lives only on the right, clipped so it can never cover the text -->
+  <g clip-path="url(#chart)">
+    <g opacity=".85">
+      <g class="c" style="animation-delay:.10s"><rect class="up" x="719" y="226" width="2" height="62"/><rect class="up" x="713" y="238" width="14" height="34"/></g>
+      <g class="c" style="animation-delay:.16s"><rect class="up" x="749" y="214" width="2" height="60"/><rect class="dn" x="743" y="224" width="14" height="32"/></g>
+      <g class="c" style="animation-delay:.22s"><rect class="up" x="779" y="208" width="2" height="66"/><rect class="up" x="773" y="218" width="14" height="40"/></g>
+      <g class="c" style="animation-delay:.28s"><rect class="up" x="809" y="186" width="2" height="60"/><rect class="up" x="803" y="196" width="14" height="36"/></g>
+      <g class="c" style="animation-delay:.34s"><rect class="up" x="839" y="178" width="2" height="54"/><rect class="dn" x="833" y="186" width="14" height="28"/></g>
+      <g class="c" style="animation-delay:.40s"><rect class="up" x="869" y="164" width="2" height="68"/><rect class="up" x="863" y="176" width="14" height="40"/></g>
+      <g class="c" style="animation-delay:.46s"><rect class="up" x="899" y="142" width="2" height="62"/><rect class="up" x="893" y="152" width="14" height="38"/></g>
+      <g class="c" style="animation-delay:.52s"><rect class="up" x="929" y="136" width="2" height="56"/><rect class="dn" x="923" y="144" width="14" height="30"/></g>
+      <g class="c" style="animation-delay:.58s"><rect class="up" x="959" y="146" width="2" height="60"/><rect class="dn" x="953" y="154" width="14" height="38"/></g>
+      <g class="c" style="animation-delay:.64s"><rect class="up" x="989" y="122" width="2" height="66"/><rect class="up" x="983" y="134" width="14" height="42"/></g>
+      <g class="c" style="animation-delay:.70s"><rect class="up" x="1019" y="102" width="2" height="60"/><rect class="up" x="1013" y="110" width="14" height="40"/></g>
+      <g class="c" style="animation-delay:.76s"><rect class="up" x="1049" y="92" width="2" height="54"/><rect class="dn" x="1043" y="100" width="14" height="28"/></g>
+      <g class="c" style="animation-delay:.82s"><rect class="up" x="1079" y="80" width="2" height="62"/><rect class="up" x="1073" y="90" width="14" height="40"/></g>
+      <g class="c" style="animation-delay:.88s"><rect class="up" x="1109" y="66" width="2" height="58"/><rect class="up" x="1103" y="74" width="14" height="36"/></g>
+    </g>
+    <path class="area" fill="url(#area)" d="M700 270 L760 248 L820 222 L880 196 L940 180 L1000 150 L1060 118 L1110 96 L1140 80 L1140 316 L700 316 Z"/>
+    <path class="line" d="M700 270 L760 248 L820 222 L880 196 L940 180 L1000 150 L1060 118 L1110 96 L1140 80"/>
+    <rect class="scan" x="692" y="30" width="2" height="282" fill="#1fa34a"/>
   </g>
-  <path class="line" d="M620 262 L700 236 L760 214 L830 176 L900 170 L960 128 L1030 104 L1090 96 L1150 66"/>
-  <text class="m" x="64" y="84" font-size="15" letter-spacing="3">BACKTEST  /  FORWARD  /  PAPER  /  LIVE</text>
-  <text class="t" x="62" y="150" font-size="54" font-weight="800" letter-spacing="-2">Ultimate Claude</text>
-  <text class="t" x="62" y="208" font-size="54" font-weight="800" letter-spacing="-2">Trading Skill</text>
-  <text class="m" x="64" y="256" font-size="16">honest tests · guardrails that stay on · learns from its own trades</text>
+  <g class="end">
+    <circle class="ping" cx="1140" cy="80" r="6" fill="#1fa34a"/>
+    <circle cx="1140" cy="80" r="6" fill="#1fa34a"/>
+  </g>
+  <g class="tag">
+    <rect x="1030" y="30" width="96" height="26" rx="13" fill="#1fa34a"/>
+    <text x="1078" y="48" text-anchor="middle" font-size="13" font-weight="700" fill="#0a0a0a" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">PAPER ▲</text>
+  </g>
+
+  <!-- text column: x 60 to 620, the chart never reaches it -->
+  <text class="m txt" x="64" y="78" font-size="14" letter-spacing="3" style="animation-delay:.1s">BACKTEST  /  FORWARD  /  PAPER  /  LIVE</text>
+  <text class="t txt" x="60" y="146" font-size="56" font-weight="800" letter-spacing="-2" style="animation-delay:.25s">Ultimate Claude</text>
+  <text class="t txt" x="60" y="206" font-size="56" font-weight="800" letter-spacing="-2" style="animation-delay:.4s">Trading <tspan fill="#1fa34a">Skill</tspan></text>
+  <text class="m txt" x="64" y="252" font-size="16" style="animation-delay:.6s">honest tests · guardrails that stay on</text>
+  <text class="m txt" x="64" y="278" font-size="16" style="animation-delay:.7s">learns from its own trades</text>
 </svg>
