@@ -111,11 +111,19 @@ class Desk:
         hour = t - t % 3600
         if getattr(self, "_paper_hour", None) != hour and t - hour >= 120:
             try:
-                s = PAPER.update(self.dir, self.j, rules, log=self.log)
+                s = PAPER.update(self.dir, self.j, rules, log=self.log, cadence="slow")
                 self._paper_hour = hour
                 self.dd = s["drawdown"]
             except Exception as e:  # fail closed: nothing trades on a failed update
-                self.j.event("error", "paper update failed: %s" % str(e)[:300])
+                self.j.event("error", "paper update (slow) failed: %s" % str(e)[:300])
+        five = t - t % 300
+        if getattr(self, "_paper_5m", None) != five and t - five >= 60:
+            try:
+                s = PAPER.update(self.dir, self.j, rules, log=self.log, cadence="fast")
+                self._paper_5m = five
+                self.dd = s["drawdown"]
+            except Exception as e:
+                self.j.event("error", "paper update (fast) failed: %s" % str(e)[:300])
 
     def drawdown_halt(self, rules, eq):
         """Owner's drawdown tiers on MARKED equity: >= dd_warn (7.5%) halves new risk, >= dd_block (10%)

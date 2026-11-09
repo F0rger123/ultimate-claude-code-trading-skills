@@ -29,8 +29,22 @@ class Api:
     def mode(self, rules):
         return "live" if rules["live_enabled"] and os.environ.get("TRADEDESK_LIVE") == "1" else "paper"
 
+    def _account(self, q):
+        """A paper account (book) selected in the app, or None for 'All accounts'."""
+        a = (q.get("account") or [""])[0]
+        return PAPER.load_book(self.dir, a) if a else None
+
+    def accounts(self, q):
+        rules = R.load_rules(self.rules_path)
+        ps = PAPER.load_summary(self.dir) or {}
+        return {"total_start": ps.get("total_start"), "total_equity": ps.get("total_equity"),
+                "kill_switch": rules["kill_switch"], "accounts": PAPER.accounts(self.dir)}
+
     def summary(self, q):
         rules = R.load_rules(self.rules_path)
+        bk = self._account(q)
+        if bk:
+            return PAPER.account_summary(bk, rules["kill_switch"])
         mode = self.mode(rules)
         closed = self.j.closed_trades(mode)
         pnl = sum(t["pnl_usd"] or 0 for t in closed)
@@ -63,6 +77,9 @@ class Api:
 
     def trades(self, q):
         status = (q.get("status") or ["closed"])[0]
+        bk = self._account(q)
+        if bk:
+            return {"mode": "paper", "status": status, "trades": PAPER.account_trades(bk, status)}
         rules = R.load_rules(self.rules_path)
         mode = (q.get("mode") or [self.mode(rules)])[0]
         rows = self.j.open_trades(mode) if status == "open" else self.j.closed_trades(mode, limit=200)
@@ -78,6 +95,9 @@ class Api:
         mode = self.mode(rules)
         rng = (q.get("range") or ["1M"])[0]
         secs = {"1D": 86400, "1W": 7 * 86400, "1M": 30 * 86400, "ALL": 10 ** 10}.get(rng.upper(), 30 * 86400)
+        bk = self._account(q)
+        if bk:
+            return {"mode": "paper", "range": rng, "points": PAPER.account_equity(bk, secs)}
         pts = self.j.equity_curve(mode, int(time.time()) - secs)
         step = max(1, len(pts) // 200)
         return {"mode": mode, "range": rng, "points": pts[::step] + (pts[-1:] if pts and len(pts) % step else [])}
@@ -90,8 +110,11 @@ class Api:
         a = calendar.timegm((y, m, 1, 0, 0, 0))
         b = calendar.timegm((y + (m == 12), m % 12 + 1, 1, 0, 0, 0))
         days = {}
-        for t in self.j.q("SELECT t1, pnl_usd, strategy FROM trades WHERE mode=? AND status='closed' AND t1>=? AND t1<?",
-                          (mode, a, b)):
+        bk = self._account(q)
+        src = ([{"t1": x["t1"], "pnl_usd": x["pnl"], "strategy": x["sym"]} for x in bk["trades"] if a <= x["t1"] < b]
+               if bk else self.j.q("SELECT t1, pnl_usd, strategy FROM trades WHERE mode=? AND status='closed' AND t1>=? "
+                                   "AND t1<?", (mode, a, b)))
+        for t in src:
             d = time.gmtime(t["t1"]).tm_mday
             e = days.setdefault(d, {"day": d, "pnl": 0.0, "trades": 0, "wins": 0, "by": {}})
             e["pnl"] += t["pnl_usd"] or 0
@@ -154,7 +177,8 @@ class Api:
 
 def make_handler(api, token):
     routes = {"/api/summary": api.summary, "/api/trades": api.trades, "/api/equity": api.equity,
-              "/api/calendar": api.calendar, "/api/strategies": api.strategies, "/api/rules": api.get_rules}
+              "/api/calendar": api.calendar, "/api/strategies": api.strategies, "/api/rules": api.get_rules,
+              "/api/accounts": api.accounts}
 
     class H(BaseHTTPRequestHandler):
         def _auth(self):
