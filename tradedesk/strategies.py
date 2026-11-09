@@ -334,6 +334,36 @@ class RSI2Reversion(Strategy):
         return c > self.s5[j] if pos["side"] == 1 else c < self.s5[j]
 
 
+class Scalp10(Strategy):
+    """10-minute scalper on 5m bars, built so the owner can watch frequent trading: when flat, follow
+    the 5m EMA(9/21) direction on any bar that closes the same way; exit after about 10 minutes, at a
+    1 x ATR target or a 1.5 x ATR stop. Taker fees on every trade make this a losing system in tests."""
+    id = "scalp10"
+    name = "10-minute scalper"
+    family = "intraday"
+    source = "Demonstration scalper (no claimed edge)"
+    defaults = {"stop_atr": 1.5, "tgt_atr": 1.0}
+    grid = {}
+    max_bars = 1  # the exit order goes in after one held bar: about a 10-minute hold
+
+    def prepare(self):
+        b = self.m.b
+        self.e9 = b.memo(("ema", 9), lambda: I.ema(b.c, 9))
+        self.e21 = b.memo(("ema", 21), lambda: I.ema(b.c, 21))
+        self.a = b.memo(("atr", 14), lambda: I.atr(b.h, b.l, b.c, 14))
+
+    def entry(self, i):
+        b = self.m.b
+        if i < 1 or self.e9[i] is None or self.e21[i] is None or not self.a[i]:
+            return None
+        up = self.e9[i] > self.e21[i]
+        side = 1 if (up and b.c[i] > b.o[i]) else -1 if (not up and b.c[i] < b.o[i]) else 0
+        if not side:
+            return None
+        c, a = b.c[i], self.a[i]
+        return {"side": side, "stop": c - side * self.p["stop_atr"] * a, "target": c + side * self.p["tgt_atr"] * a}
+
+
 H4 = 14400
 
 

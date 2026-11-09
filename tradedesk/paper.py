@@ -49,11 +49,19 @@ BOOKS = [
      "mode": "spot", "equity": 50.0, "extra": {"long_only": 1}, "cadence": "slow",
      "note": "What the real $50 pilot would do (buys only, spot fees)"},
     {"id": "pb_fast_mtf", "name": "Fast: 4-timeframe alignment (5m)", "cls": S.MTFQuick, "mode": "perp",
-     "equity": 10000.0, "cadence": "fast", "note": "Your 1h/30m/15m/5m method. Lost money after costs in backtests"},
+     "equity": 10000.0, "cadence": "fast",
+     "note": "Your 1h/30m/15m/5m method. Checked every 5 min, trades about once a day. Lost money after costs in backtests"},
     {"id": "pb_fast_vwap", "name": "Fast: VWAP reclaim (5m)", "cls": S.VWAPReclaim, "mode": "perp",
-     "equity": 10000.0, "cadence": "fast", "note": "US-session VWAP reclaims. Lost money after costs in backtests"},
+     "equity": 10000.0, "cadence": "fast",
+     "note": "US-session VWAP reclaims, 8 AM-3 PM ET only. About 1-2 trades a day. Lost money after costs in backtests"},
     {"id": "pb_fast_rsi2", "name": "Fast: RSI(2) dip-buy (15m)", "cls": S.RSI2Reversion, "mode": "perp",
-     "equity": 10000.0, "cadence": "fast", "note": "Short-term mean reversion. Lost money after costs in backtests"},
+     "equity": 10000.0, "cadence": "fast",
+     "note": "Short-term mean reversion. About 2-3 trades a day. Lost money after costs in backtests"},
+    # Small size and one position at a time, so fees drain it slowly; it still stops itself at -10% like every book.
+    {"id": "pb_fast_scalp10", "name": "Fast: 10-minute scalper (5m)", "cls": S.Scalp10, "mode": "perp",
+     "equity": 10000.0, "cadence": "fast", "risk": 0.0025, "pos_lev": 0.1, "gross_lev": 0.1,
+     "note": "Trades about every 10 minutes, one coin at a time, small size. Fees make it lose in tests; "
+             "expect it to hit its -10% stop in about a week"},
 ]
 NAMES = {b["id"]: b["name"] for b in BOOKS}
 BY_ID = {b["id"]: b for b in BOOKS}
@@ -80,8 +88,10 @@ def _cfg(book):
     if book["mode"] == "spot":
         return P.Config("spot", equity=book["equity"], risk=RISK, pos_lev=1.0, gross_lev=1.0, dd_policy=True,
                         resume_days=10 ** 6, min_notional=1.0)
-    return P.Config("perp", equity=book["equity"], risk=RISK, pos_lev=1.5, gross_lev=1.5, dd_policy=True,
-                    resume_days=10 ** 6, funding_per_h=FUNDING)
+    # a book may only set smaller risk or leverage than the defaults, never larger
+    return P.Config("perp", equity=book["equity"], risk=min(RISK, book.get("risk", RISK)),
+                    pos_lev=min(1.5, book.get("pos_lev", 1.5)), gross_lev=min(1.5, book.get("gross_lev", 1.5)),
+                    dd_policy=True, resume_days=10 ** 6, funding_per_h=FUNDING)
 
 
 def _variants(markets, book, params):
