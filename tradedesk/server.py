@@ -13,6 +13,7 @@ from urllib.parse import parse_qs, urlparse
 
 from . import ladder as L
 from . import risk as R
+from . import paper as PAPER
 from . import strategies as S
 from .journal import Journal
 
@@ -46,7 +47,15 @@ class Api:
             mdd = max(mdd, (peak - e) / peak if peak else 0)
         lad = L.Ladder(os.path.join(self.dir, "ladder.json"))
         running = sum(1 for v in lad.d.values() if v.get("stage") in ("shadow", "forward", "paper", "small_live", "scaled"))
-        return {"mode": mode, "balance": start + pnl, "pnl_all": pnl, "pnl_all_pct": pnl / start if start else 0,
+        ps = PAPER.load_summary(self.dir) if mode == "paper" else None
+        balance = start + pnl
+        if ps:
+            start, balance = ps["total_start"], ps["total_equity"]
+            pnl = balance - start
+            day0 = now - now % 86400
+            prior = [r["equity"] for r in self.j.q("SELECT equity FROM equity WHERE mode='paper' AND t<? ORDER BY t DESC LIMIT 1", (day0,))]
+            today = balance - prior[0] if prior else pnl
+        return {"mode": mode, "balance": balance, "pnl_all": pnl, "pnl_all_pct": pnl / start if start else 0,
                 "pnl_today": today, "win_rate": len(wins) / len(closed) if closed else None,
                 "profit_factor": (gw / gl) if gl > 0 else None, "max_drawdown": mdd,
                 "open_trades": self.trades({"status": ["open"]})["trades"], "strategies_running": running,
@@ -58,6 +67,7 @@ class Api:
         mode = (q.get("mode") or [self.mode(rules)])[0]
         rows = self.j.open_trades(mode) if status == "open" else self.j.closed_trades(mode, limit=200)
         names = {s.id: s.name for s in S.ALL}
+        names.update(PAPER.NAMES)
         for r in rows:
             r["strategy_name"] = names.get(r["strategy"], r["strategy"])
             r.pop("feat", None)
@@ -100,6 +110,12 @@ class Api:
     def strategies(self, q):
         lad = L.Ladder(os.path.join(self.dir, "ladder.json"))
         out = []
+        ps = PAPER.load_summary(self.dir)
+        for b in (ps or {}).get("books", []):
+            out.append({"id": b["id"], "symbol": "BTC/ETH/SOL", "name": b["name"], "family": b["mode"],
+                        "stage": "paper", "stage_index": 2, "backtest": b.get("backtest"),
+                        "tracked_trades": b["closed"] + len(b["open"]), "tracked_pnl": b["pnl"],
+                        "history": [], "params": b.get("params")})
         for cls in S.ALL:
             for k, v in sorted(lad.d.items()):
                 sid, sym = k.split(":")

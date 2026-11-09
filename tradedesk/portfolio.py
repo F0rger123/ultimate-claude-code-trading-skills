@@ -60,10 +60,12 @@ class Position:
             setattr(self, k, v)
 
 
-def run(markets, variants, cfg, start_t=None, end_t=None, active=None, log=None):
+def run(markets, variants, cfg, start_t=None, end_t=None, active=None, log=None, close_at_end=True, kill_at=None):
     """markets: {sym: Market}; variants: {sym: [strategy instance per variant]} (same base granularity).
     active(t) -> variant index allowed to open positions at t (default 0).
-    Returns dict(trades, curve=[(t, equity)], events, halts)."""
+    close_at_end=False keeps open positions open (live paper) and returns them under "open".
+    kill_at: from this time on, flatten everything at the next bar and open nothing (kill switch).
+    Returns dict(trades, curve=[(t, equity)], events, open)."""
     syms = sorted(markets)
     base = markets[syms[0]].base
     idx = {s: {t: i for i, t in enumerate(markets[s].b.t)} for s in syms}
@@ -115,7 +117,17 @@ def run(markets, variants, cfg, start_t=None, end_t=None, active=None, log=None)
                        "hours": (t - p.t0) / 3600.0, "mae": p.mae, "size_mult": p.size_mult, "feat": p.feat})
         del pos[p.sym]
 
+    killed = False
     for t in clock:
+        if kill_at is not None and t >= kill_at and not killed:
+            killed = True
+            for p in list(pos.values()):
+                s_ = p.sym
+                i_ = idx[s_].get(t)
+                close(p, markets[s_].b.o[i_] if i_ is not None else last_px.get(s_, p.entry), "kill_switch", t)
+            pending_entry.clear()
+            pending_exit.clear()
+            events.append((t, "kill", "*", "kill switch: flattened, no new entries"))
         # ---------------- opens: every pending exit first (frees cash), then pending entries
         for s in syms:
             i = idx[s].get(t)
@@ -129,7 +141,7 @@ def run(markets, variants, cfg, start_t=None, end_t=None, active=None, log=None)
                 continue
             o = markets[s].b.o[i]
             sig = pending_entry.pop(s, None)
-            if sig is not None and s not in pos and not halted_flat and t >= blocked_until:
+            if sig is not None and s not in pos and not halted_flat and t >= blocked_until and not killed:
                 side = sig["side"]
                 if cfg.mode == "spot" and side == -1:
                     events.append((t, "skip", s, "spot cannot short"))
@@ -240,8 +252,17 @@ def run(markets, variants, cfg, start_t=None, end_t=None, active=None, log=None)
             if sig is not None:
                 sig["variant"] = v
                 pending_entry[s] = sig
+    if not close_at_end:
+        opened = [{"sym": p.sym, "side": p.side, "qty": p.qty, "entry": p.entry, "stop": p.stop, "target": p.target,
+                   "t0": p.t0, "variant": p.variant, "risk_usd": p.risk_usd, "fees": p.fees, "funding": p.funding,
+                   "mark": last_px.get(p.sym, p.entry),
+                   "unrealized": (p.qty * (last_px.get(p.sym, p.entry) - p.entry) if cfg.mode == "spot"
+                                  else p.side * p.qty * (last_px.get(p.sym, p.entry) - p.entry)) - p.fees - p.funding}
+                  for p in pos.values()]
+        return {"trades": trades, "curve": curve, "events": events, "open": opened, "cash": cash,
+                "pending": sorted(pending_entry)}
     for p in list(pos.values()):  # mark-out at the end (counted as a closed trade for statistics)
         close(p, last_px[p.sym], "end", clock[-1] if clock else 0)
     if curve:
         curve[-1] = (curve[-1][0], cash)  # everything is closed out at the end
-    return {"trades": trades, "curve": curve, "events": events}
+    return {"trades": trades, "curve": curve, "events": events, "open": []}

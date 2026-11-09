@@ -16,6 +16,7 @@ from . import backtest as B
 from . import data as D
 from . import ladder as L
 from . import risk as R
+from . import paper as PAPER
 from . import strategies as S
 from .journal import Journal
 from .market import Market
@@ -105,9 +106,16 @@ class Desk:
                 continue
             self.last_bar[sym] = bars[-1][0]
             self.on_bar(sym, bars, age, rules, t)
-        eq = self.paper_equity(rules)
-        self.j.snap("paper", eq, t)
-        self.drawdown_halt(rules, eq)
+        # Paper books (the tournament candidates) run hourly on the research portfolio engine. They own the
+        # journal's paper rows and the paper drawdown halt (see tradedesk/paper.py).
+        hour = t - t % 3600
+        if getattr(self, "_paper_hour", None) != hour and t - hour >= 120:
+            try:
+                s = PAPER.update(self.dir, self.j, rules, log=self.log)
+                self._paper_hour = hour
+                self.dd = s["drawdown"]
+            except Exception as e:  # fail closed: nothing trades on a failed update
+                self.j.event("error", "paper update failed: %s" % str(e)[:300])
 
     def drawdown_halt(self, rules, eq):
         """Owner's drawdown tiers on MARKED equity: >= dd_warn (7.5%) halves new risk, >= dd_block (10%)

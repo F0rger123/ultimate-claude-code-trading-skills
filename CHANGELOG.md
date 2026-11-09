@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-09: paper trading started
+- `tradedesk/paper.py`: five paper books on the research portfolio engine, replayed hourly from a fixed
+  start (2026-11-09 07:00 UTC). Same code as the backtest.
+  - perp books ($10,000 each): trend ensemble, vol-managed trend, vol-filtered breakout
+  - spot books: weekly rotation ($10,000) and a $50 spot pilot mirror
+- `portfolio.run`: `close_at_end=False` keeps positions open for paper; `kill_at` flattens and blocks entries.
+- The desk runs the paper books every hour. The phone API shows total paper equity and each book.
+
 ## 2026-11-09: Ultimate Claude Trading Skill
 ### Added
 - **Accounting:** `tradedesk/portfolio.py`, a shared mark-to-market ledger (cash, positions, fees, signed
