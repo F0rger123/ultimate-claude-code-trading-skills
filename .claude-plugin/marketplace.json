@@ -1,15 +1,15 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "ultimate-claude-code-trading-skills",
-  "description": "Ultimate Claude Code Trading Skills",
+  "name": "ultimate-claude-trading-skill",
+  "description": "Ultimate Claude Trading Skill",
   "owner": { "name": "F0rger123", "url": "https://github.com/F0rger123" },
   "plugins": [
     {
-      "name": "ultimate-claude-code-trading-skills",
+      "name": "ultimate-claude-trading-skill",
       "description": "Backtest, forward test, paper and gated live trading for crypto perps, with guardrails and a self-learning loop.",
       "source": "./",
       "category": "productivity",
-      "homepage": "https://github.com/F0rger123/ultimate-claude-code-trading-skills"
+      "homepage": "https://github.com/F0rger123/ultimate-claude-trading-skill"
     }
   ]
 }

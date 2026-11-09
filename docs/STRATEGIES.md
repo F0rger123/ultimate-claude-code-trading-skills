@@ -1,7 +1,7 @@
 # Strategies
 
 All of them trade long and short on closed bars, and use the same cost model. Code: `tradedesk/strategies.py`.
-The entries are sorted by family. For the latest scores, see `reports/tournament-latest.md`.
+The entries are sorted by family. For the latest scores, see `reports/legacy/tournament-latest.md`.
 
 ## The owner's multi-timeframe alignment
 The owner reads one buy/sell indicator on the 1h, 30m, 15m and 5m charts, plus volume. The higher timeframes set the

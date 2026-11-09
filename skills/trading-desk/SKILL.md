@@ -1,6 +1,6 @@
 ---
 name: trading-desk
-description: Start here for the Ultimate Claude Code Trading Skills. Explains the whole desk (backtest, forward test, paper, live with guardrails, self-learning, phone dashboard), checks the setup and routes to the right skill. Use when the user says "set up the trading desk", "how does this work", "what's the status of my strategies", "trading bot", or "where do I start".
+description: Start here for the Ultimate Claude Trading Skill. Explains the whole desk (backtest, forward test, paper, live with guardrails, self-learning, phone dashboard), checks the setup and routes to the right skill. Use when the user says "set up the trading desk", "how does this work", "what's the status of my strategies", "trading bot", or "where do I start".
 ---
 
 # Trading desk
@@ -10,8 +10,8 @@ A trading desk that runs on the user's own PC. The source of truth is `docs/BLUE
 ## First run
 1. Check Python 3.10+: `python --version`. The engine uses the standard library only.
 2. From the repo root, run the offline tests: `python -m unittest discover -s tests`. All must pass.
-3. Download history (public Coinbase data, no key, about 10 minutes): `python -m tradedesk data`.
-4. Run the tournament with `python -m tradedesk tournament`, then explain `reports/tournament-latest.md` to the user in plain words.
+3. Download history (public Coinbase data, no key): `python -m tradedesk data --gran 3600 --days 2870`.
+4. Run `python research/corrected_tournament.py` then `python research/summarize_corrected.py`, and explain `reports/corrected/summary.md` to the user in plain words. (The older `python -m tradedesk tournament` uses the legacy closed-trade engine.)
 5. Show the ladder: `python -m tradedesk status`.
 
 ## Route

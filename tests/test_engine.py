@@ -167,6 +167,8 @@ class DrawdownHalt(unittest.TestCase):
             desk.j.snap("paper", 10000.0, 1)
             self.assertLess(desk.drawdown_halt(rules, 9000.0), 0.15)
             self.assertFalse(desk.rules()["kill_switch"])
+            self.assertGreaterEqual(desk.drawdown_halt(desk.rules(), 8900.0), 0.10)  # block tier, no kill yet
+            self.assertFalse(desk.rules()["kill_switch"])
             desk.drawdown_halt(desk.rules(), 8400.0)
             self.assertTrue(desk.rules()["kill_switch"])
             desk.j.db.close()

@@ -1,0 +1,204 @@
+//@version=6
+// MNQ opening-range breakout, 9:15-9:30 New York reference candle. RESEARCH HYPOTHESIS, paper only.
+// Part of Ultimate Claude Trading Skill (MIT). Python parity: research/mnq_opening_range.py
+// Status: written and statically reviewed; NOT yet compiled or run inside TradingView by the author.
+// Use on a 15-minute chart of a CME Nasdaq-100 micro future (chart MNQ1!; trade a real contract month).
+//
+// Rules (see docs/opening-range-breakout.md):
+//   Reference range = high/low of the 15m candle that opens 9:15 New York (complete at 9:30).
+//   Long: a later COMPLETED 15m candle closes strictly above the range high -> buy at the next bar open.
+//   Short: a later completed candle closes strictly below the range low -> sell at the next bar open.
+//   Stop = breakout candle low (long) / high (short). Target = fill +/- targetR x (fill - stop).
+//   R and the target use the ACTUAL fill price (calc_on_order_fills recalculates on the fill).
+//   One filled trade per session, no pyramiding, no reversal; entries only before the cutoff;
+//   flatten at 15:45 New York. Filters A-E are independent switches, all off by default.
+//   Break-even win rate with a 0.5R target and 1R loss is 66.7% before costs.
+strategy("MNQ ORB 9:15-9:30 NY (research)", overlay = true, pyramiding = 0,
+     initial_capital = 10000, default_qty_type = strategy.fixed, default_qty_value = 1,
+     commission_type = strategy.commission.cash_per_contract, commission_value = 0.62,
+     slippage = 1, calc_on_order_fills = true, process_orders_on_close = false,
+     max_bars_back = 2000)
+
+TZ = "America/New_York"
+
+// ---------------- inputs
+targetR      = input.float(0.5, "Target (R multiple of actual entry-to-stop distance)", options = [0.5, 0.75, 1.0])
+cutoffHour   = input.int(12, "Last entry hour (NY, entries must fill before HH:00)", minval = 10, maxval = 15)
+useBodyRule  = input.bool(false, "Separate experiment: whole candle body outside the range")
+fA = input.bool(false, "Filter A: 1h EMA50 vs EMA200 trend (confirmed 1h bars)")
+fB = input.bool(false, "Filter B: breakout close vs regular-session VWAP (reset 9:30)")
+fC = input.bool(false, "Filter C: range width percentile vs prior sessions")
+cLo = input.float(10, "Filter C: reject below percentile", minval = 0, maxval = 50)
+cHi = input.float(90, "Filter C: reject above percentile", minval = 50, maxval = 100)
+cLookback = input.int(60, "Filter C: prior sessions in the distribution", minval = 20, maxval = 250)
+fD = input.bool(false, "Filter D: skip when |overnight gap| exceeds the limit")
+dMaxGapPct = input.float(1.0, "Filter D: max |gap| % (prior 16:00 close to 9:30 open)", minval = 0.1)
+fE = input.bool(false, "Filter E: ADX(14) on 15m at or above threshold")
+eMin = input.float(20, "Filter E: ADX threshold", minval = 5)
+
+// ---------------- New York clock for the bar that is OPENING at `time`
+nyH = hour(time, TZ)
+nyM = minute(time, TZ)
+nyDay = dayofmonth(time, TZ)
+newSession = ta.change(nyDay) != 0
+isRangeBar = nyH == 9 and nyM == 15
+isRthOpenBar = nyH == 9 and nyM == 30
+isLastRthBar = nyH == 15 and nyM == 45   // bar 15:45-16:00; its close is the RTH close
+isFlattenSignalBar = nyH == 15 and nyM == 30   // closes at 15:45 -> flatten at the next open
+
+// ---------------- session state
+var float rangeHi = na
+var float rangeLo = na
+var bool rangeReady = false
+var bool tradedToday = false
+var float bkLo = na
+var float bkHi = na
+var float exitsFor = na
+var float prevRthClose = na
+var float rthOpen = na
+var float cumPV = 0.0
+var float cumV = 0.0
+var array<float> widths = array.new_float()
+var int rejA = 0
+var int rejB = 0
+var int rejC = 0
+var int rejD = 0
+var int rejE = 0
+var int sessions = 0
+
+if newSession
+    rangeHi := na
+    rangeLo := na
+    rangeReady := false
+    tradedToday := false
+    bkLo := na
+    bkHi := na
+    exitsFor := na
+    rthOpen := na
+    cumPV := 0.0
+    cumV := 0.0
+    sessions += 1
+
+// range completes when the 9:15 candle closes (confirmed bar)
+if isRangeBar and barstate.isconfirmed
+    rangeHi := high
+    rangeLo := low
+    rangeReady := true
+
+if isRthOpenBar
+    rthOpen := open
+    cumPV := 0.0
+    cumV := 0.0
+if not na(rthOpen) and (nyH < 16)
+    cumPV += hlc3 * volume
+    cumV += volume
+sessVwap = cumV > 0 ? cumPV / cumV : na
+
+// ---------------- filters (all causal)
+ema50h = request.security(syminfo.tickerid, "60", ta.ema(close, 50)[1], lookahead = barmerge.lookahead_on)
+ema200h = request.security(syminfo.tickerid, "60", ta.ema(close, 200)[1], lookahead = barmerge.lookahead_on)
+[diPlus, diMinus, adx] = ta.dmi(14, 14)
+width = rangeReady ? rangeHi - rangeLo : na
+pctLo = array.size(widths) >= 20 ? array.percentile_linear_interpolation(widths, cLo) : na
+pctHi = array.size(widths) >= 20 ? array.percentile_linear_interpolation(widths, cHi) : na
+gapPct = not na(rthOpen) and not na(prevRthClose) ? 100 * (rthOpen - prevRthClose) / prevRthClose : na
+
+// Pure functions (Pine functions may not modify globals); rejection counters update at global scope.
+passA(int dir) => not fA or (not na(ema50h) and not na(ema200h) and (dir == 1 ? ema50h > ema200h : ema50h < ema200h))
+passB(int dir) => not fB or (not na(sessVwap) and (dir == 1 ? close > sessVwap : close < sessVwap))
+passC() => not fC or (not na(pctLo) and not na(width) and width >= pctLo and width <= pctHi)
+passD() => not fD or (not na(gapPct) and math.abs(gapPct) <= dMaxGapPct)
+passE() => not fE or (not na(adx) and adx >= eMin)
+okFilters(int dir) => passA(dir) and passB(dir) and passC() and passD() and passE()
+
+// ---------------- signals on CONFIRMED bars after the range, before the cutoff
+afterRange = rangeReady and (nyH > 9 or (nyH == 9 and nyM >= 30))
+// the order fills at the next bar open; that open must be before the cutoff hour
+nextOpenBeforeCutoff = (nyH * 60 + nyM + 15) < cutoffHour * 60
+flat = strategy.position_size == 0
+canTrade = afterRange and nextOpenBeforeCutoff and flat and not tradedToday and barstate.isconfirmed
+
+longBreak = useBodyRule ? math.min(open, close) > rangeHi : close > rangeHi
+shortBreak = useBodyRule ? math.max(open, close) < rangeLo : close < rangeLo
+
+int sigDir = canTrade and longBreak ? 1 : canTrade and shortBreak ? -1 : 0
+if sigDir != 0
+    if okFilters(sigDir)
+        if sigDir == 1
+            bkLo := low
+            strategy.entry("L", strategy.long, comment = "ORB long")
+        else
+            bkHi := high
+            strategy.entry("S", strategy.short, comment = "ORB short")
+    else
+        // count the first filter that rejected this signal
+        if not passA(sigDir)
+            rejA += 1
+        else if not passB(sigDir)
+            rejB += 1
+        else if not passC()
+            rejC += 1
+        else if not passD()
+            rejD += 1
+        else
+            rejE += 1
+
+// ---------------- exits from the ACTUAL fill (recalculated on the fill via calc_on_order_fills)
+tick = syminfo.mintick
+if strategy.position_size > 0 and na(exitsFor)
+    fill = strategy.position_avg_price
+    if fill <= bkLo   // gap through the stop: invalid, leave immediately
+        strategy.close("L", comment = "gap invalidated stop")
+    else
+        r = fill - bkLo
+        tgt = math.ceil((fill + targetR * r) / tick) * tick
+        strategy.exit("XL", "L", stop = bkLo, limit = tgt)
+    exitsFor := fill
+    tradedToday := true
+if strategy.position_size < 0 and na(exitsFor)
+    fill = strategy.position_avg_price
+    if fill >= bkHi
+        strategy.close("S", comment = "gap invalidated stop")
+    else
+        r = bkHi - fill
+        tgt = math.floor((fill - targetR * r) / tick) * tick
+        strategy.exit("XS", "S", stop = bkHi, limit = tgt)
+    exitsFor := fill
+    tradedToday := true
+
+if isFlattenSignalBar and barstate.isconfirmed and strategy.position_size != 0
+    strategy.close_all(comment = "flatten 15:45 NY")
+
+// remember widths and the RTH close for tomorrow's filters (after today's decisions)
+if isLastRthBar and barstate.isconfirmed
+    prevRthClose := close
+    if not na(width)
+        array.push(widths, width)
+        if array.size(widths) > cLookback
+            array.shift(widths)
+
+// ---------------- visuals and alerts
+plot(rangeReady ? rangeHi : na, "Range high", color = color.new(color.white, 0), style = plot.style_linebr)
+plot(rangeReady ? rangeLo : na, "Range low", color = color.new(color.gray, 0), style = plot.style_linebr)
+plot(fB ? sessVwap : na, "Session VWAP", color = color.new(color.silver, 30))
+plotshape(canTrade and longBreak, "Long breakout", shape.triangleup, location.belowbar, color.new(color.green, 0))
+plotshape(canTrade and shortBreak, "Short breakout", shape.triangledown, location.abovebar, color.new(color.white, 0))
+alertcondition(canTrade and longBreak, "ORB long signal", "MNQ ORB long breakout (paper)")
+alertcondition(canTrade and shortBreak, "ORB short signal", "MNQ ORB short breakout (paper)")
+
+var table panel = table.new(position.top_right, 2, 7, bgcolor = color.new(color.black, 10))
+if barstate.islast
+    table.cell(panel, 0, 0, "Sessions", text_color = color.white)
+    table.cell(panel, 1, 0, str.tostring(sessions), text_color = color.white)
+    table.cell(panel, 0, 1, "Closed trades", text_color = color.white)
+    table.cell(panel, 1, 1, str.tostring(strategy.closedtrades), text_color = color.white)
+    table.cell(panel, 0, 2, "Win rate", text_color = color.white)
+    table.cell(panel, 1, 2, strategy.closedtrades > 0 ? str.tostring(100.0 * strategy.wintrades / strategy.closedtrades, "#.0") + "%" : "-", text_color = color.white)
+    table.cell(panel, 0, 3, "Break-even win rate", text_color = color.white)
+    table.cell(panel, 1, 3, str.tostring(100.0 / (1 + targetR), "#.0") + "% + costs", text_color = color.white)
+    table.cell(panel, 0, 4, "Rejected A/B/C/D/E", text_color = color.white)
+    table.cell(panel, 1, 4, str.format("{0}/{1}/{2}/{3}/{4}", rejA, rejB, rejC, rejD, rejE), text_color = color.white)
+    table.cell(panel, 0, 5, "Net profit", text_color = color.white)
+    table.cell(panel, 1, 5, str.tostring(strategy.netprofit, "#.00"), text_color = color.white)
+    table.cell(panel, 0, 6, "Status", text_color = color.white)
+    table.cell(panel, 1, 6, "RESEARCH / PAPER ONLY", text_color = color.white)

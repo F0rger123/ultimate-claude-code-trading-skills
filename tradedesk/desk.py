@@ -51,8 +51,14 @@ class Desk:
         return rules["live_enabled"] and os.environ.get("TRADEDESK_LIVE") == "1"
 
     def paper_equity(self, rules):
+        """Paper account equity MARKED TO MARKET: realized P&L plus open paper trades at the latest close."""
         s = self.j.q("SELECT COALESCE(SUM(pnl_usd),0) AS s FROM trades WHERE mode='paper' AND status='closed'")[0]["s"]
-        return rules["paper_equity_usd"] + s
+        unreal = 0.0
+        for tr in self.j.open_trades("paper"):
+            bars = self.bars.get(tr["symbol"])
+            if bars:
+                unreal += tr["side"] * (bars[-1][4] - tr["entry"]) * tr["contracts"] * D.PERPS[tr["symbol"]]["contract"]
+        return rules["paper_equity_usd"] + s + unreal
 
     def active(self, sym):
         """(strategy class, params, stage) for every strategy at forward or above on this symbol."""
@@ -104,7 +110,9 @@ class Desk:
         self.drawdown_halt(rules, eq)
 
     def drawdown_halt(self, rules, eq):
-        """Max drawdown halt (default 15%): turn the kill switch on and flatten. Only the owner resumes."""
+        """Owner's drawdown tiers on MARKED equity: >= dd_warn (7.5%) halves new risk, >= dd_block (10%)
+        blocks new entries, >= max_drawdown_pct (15%) flattens and turns the kill switch on. Only the owner
+        resumes."""
         peak = max([rules["paper_equity_usd"]] + [r["equity"] for r in self.j.equity_curve("paper")])
         dd = (peak - eq) / peak if peak > 0 else 0.0
         if dd >= rules["max_drawdown_pct"] and not rules["kill_switch"]:
@@ -113,6 +121,12 @@ class Desk:
             self.j.event("warn", "MAX DRAWDOWN HALT: %.1f%% from peak $%.2f (limit %.0f%%). Kill switch on." % (
                 100 * dd, peak, 100 * rules["max_drawdown_pct"]))
             self.flatten_all("max drawdown halt")
+        elif dd >= rules["dd_block_pct"] and not getattr(self, "_dd_block_logged", False):
+            self.j.event("warn", "DRAWDOWN %.1f%%: new entries blocked (limit %.1f%%)" % (100 * dd, 100 * rules["dd_block_pct"]))
+            self._dd_block_logged = True
+        elif dd < rules["dd_block_pct"]:
+            self._dd_block_logged = False
+        self.dd = dd
         return dd
 
     def on_bar(self, sym, bars, age, rules, t):
@@ -160,6 +174,12 @@ class Desk:
         entry = bar[4]
         contract = D.PERPS[sym]["contract"]
         equity = self.paper_equity(rules) if mode != "live" else self.live_equity()
+        dd = getattr(self, "dd", 0.0)
+        if mode != "forward" and dd >= rules["dd_block_pct"]:
+            self.j.event("info", "%s %s %s blocked: drawdown %.1f%% >= %.1f%%" % (mode, cls.id, sym, 100 * dd, 100 * rules["dd_block_pct"]))
+            return
+        if dd >= rules["dd_warn_pct"]:  # prospective risk reduction, never an increase
+            rules = dict(rules, risk_pct=rules["risk_pct"] * 0.5, max_loss_per_trade_usd=rules["max_loss_per_trade_usd"] * 0.5)
         n, loss, lev, limiter = R.size(rules, sym, equity, entry, sig["stop"], contract)
         ds = day_start(t)
         realized, _ = self.j.realized_since(mode, ds)

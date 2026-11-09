@@ -1,0 +1,123 @@
+[
+ {
+  "name": "control: trend_ensemble (unchanged)",
+  "mode": "perp",
+  "trials": 1,
+  "verdict": "PAPER CANDIDATE: not statistically proven",
+  "cagr": 0.06654456718430368,
+  "sharpe": 0.9292308393616808,
+  "max_dd": 0.08144580506463003,
+  "dsr_all": 0.7205167373092345,
+  "trades": 170
+ },
+ {
+  "name": "vol_managed_trend + halve-in-high-vol",
+  "mode": "perp",
+  "trials": 12,
+  "verdict": "PAPER CANDIDATE: not statistically proven",
+  "cagr": 0.04877199450087044,
+  "sharpe": 0.833854323765468,
+  "max_dd": 0.06285461849899834,
+  "dsr_all": 0.6474089518160435,
+  "trades": 164
+ },
+ {
+  "name": "vol_managed_trend",
+  "mode": "perp",
+  "trials": 12,
+  "verdict": "PAPER CANDIDATE: not statistically proven",
+  "cagr": 0.048741943815691524,
+  "sharpe": 0.8333418045604593,
+  "max_dd": 0.06285461849899834,
+  "dsr_all": 0.6470045466971878,
+  "trades": 165
+ },
+ {
+  "name": "weekly_strength_rotation",
+  "mode": "spot",
+  "trials": 3,
+  "verdict": "INSUFFICIENT EVIDENCE (trades)",
+  "cagr": 0.05808423005141705,
+  "sharpe": 0.8332848463406013,
+  "max_dd": 0.08185258318657133,
+  "dsr_all": 0.6489900384808307,
+  "trades": 27
+ },
+ {
+  "name": "vol_filtered_breakout",
+  "mode": "perp",
+  "trials": 8,
+  "verdict": "PAPER CANDIDATE: not statistically proven",
+  "cagr": 0.07649758887592539,
+  "sharpe": 0.770303190260676,
+  "max_dd": 0.10628083677927638,
+  "dsr_all": 0.5959309209692871,
+  "trades": 65
+ },
+ {
+  "name": "breakout, unfiltered baseline",
+  "mode": "perp",
+  "trials": 4,
+  "verdict": "PAPER CANDIDATE: not statistically proven",
+  "cagr": 0.07339088958737583,
+  "sharpe": 0.7107195850000934,
+  "max_dd": 0.1273071419280536,
+  "dsr_all": 0.5466931226176921,
+  "trades": 65
+ },
+ {
+  "name": "breakout, unfiltered baseline",
+  "mode": "spot",
+  "trials": 4,
+  "verdict": "INSUFFICIENT EVIDENCE (trades)",
+  "cagr": 0.06127882808170093,
+  "sharpe": 0.5882946464633644,
+  "max_dd": 0.1101255666367033,
+  "dsr_all": 0.4434665829929154,
+  "trades": 35
+ },
+ {
+  "name": "vol_filtered_breakout",
+  "mode": "spot",
+  "trials": 8,
+  "verdict": "INSUFFICIENT EVIDENCE (trades)",
+  "cagr": 0.04360943065730005,
+  "sharpe": 0.4452627424633316,
+  "max_dd": 0.14207754288969823,
+  "dsr_all": 0.3288509401352667,
+  "trades": 45
+ },
+ {
+  "name": "control: trend_ensemble (unchanged)",
+  "mode": "spot",
+  "trials": 1,
+  "verdict": "PAPER CANDIDATE: not statistically proven",
+  "cagr": 0.031216170408953303,
+  "sharpe": 0.4152178384969594,
+  "max_dd": 0.1132390473165386,
+  "dsr_all": 0.30487428598373045,
+  "trades": 137
+ },
+ {
+  "name": "vol_managed_trend + halve-in-high-vol",
+  "mode": "spot",
+  "trials": 12,
+  "verdict": "PAPER CANDIDATE: not statistically proven",
+  "cagr": 0.019554434615197902,
+  "sharpe": 0.3166943528079025,
+  "max_dd": 0.1244111091412012,
+  "dsr_all": 0.2375871495680037,
+  "trades": 135
+ },
+ {
+  "name": "vol_managed_trend",
+  "mode": "spot",
+  "trials": 12,
+  "verdict": "PAPER CANDIDATE: not statistically proven",
+  "cagr": 0.019310783696207423,
+  "sharpe": 0.28713791182103215,
+  "max_dd": 0.11363774022255473,
+  "dsr_all": 0.2181073908604968,
+  "trades": 135
+ }
+]

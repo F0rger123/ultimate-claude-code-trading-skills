@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-label="Ultimate Claude Code Trading Skills: backtest, forward test, paper, live with guardrails">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-label="Ultimate Claude Trading Skill: backtest, forward test, paper, live with guardrails">
   <style>
     .c{animation:rise 2.4s cubic-bezier(.4,0,.2,1) both}
     .w{fill:#fff}.b{fill:#0a0a0a;stroke:#fff;stroke-width:2}
@@ -30,7 +30,7 @@
   </g>
   <path class="line" d="M620 262 L700 236 L760 214 L830 176 L900 170 L960 128 L1030 104 L1090 96 L1150 66"/>
   <text class="m" x="64" y="84" font-size="15" letter-spacing="3">BACKTEST  /  FORWARD  /  PAPER  /  LIVE</text>
-  <text class="t" x="62" y="150" font-size="54" font-weight="800" letter-spacing="-2">Ultimate Claude Code</text>
-  <text class="t" x="62" y="208" font-size="54" font-weight="800" letter-spacing="-2">Trading Skills</text>
+  <text class="t" x="62" y="150" font-size="54" font-weight="800" letter-spacing="-2">Ultimate Claude</text>
+  <text class="t" x="62" y="208" font-size="54" font-weight="800" letter-spacing="-2">Trading Skill</text>
   <text class="m" x="64" y="256" font-size="16">honest tests · guardrails that stay on · learns from its own trades</text>
 </svg>

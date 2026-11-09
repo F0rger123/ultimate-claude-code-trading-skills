@@ -6,9 +6,11 @@ description: Backtest and walk-forward test trading strategies honestly with fee
 # Backtest and tournament
 
 ## Run
+- **Preferred (corrected engine):** `python research/corrected_tournament.py && python research/summarize_corrected.py`. It uses the shared mark-to-market ledger, leak-free 3-year/6-month walk-forward, block bootstrap and a deflated Sharpe across all registered trials. Output: `reports/corrected/summary.md`.
+- **Legacy engine (below)** writes `reports/tournament-latest.md`; old copies live in `reports/legacy/`.
 - All strategies, all coins: `python -m tradedesk tournament`
 - Some of them: `python -m tradedesk tournament --symbols ETH,SOL --strategies donchian_1h,mtf_trend`
-- Output: `reports/tournament-latest.md` (read it), `reports/tournament-latest.json`, `state/ladder.json`.
+- Output: `reports/tournament-latest.md`, `reports/tournament-latest.json`, `state/ladder.json`.
 
 ## How it scores (tell the user this)
 - **Walk-forward:** parameters are picked on 180 days, then scored on the next 60 days the strategy has not seen, stepping forward each time. Only these out-of-sample (OOS) trades count.

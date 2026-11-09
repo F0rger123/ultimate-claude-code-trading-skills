@@ -1,4 +1,4 @@
-# Blueprint: Ultimate Claude Code Trading Skills
+# Blueprint: Ultimate Claude Trading Skill
 
 This is the source of truth for the whole build. Every change gets checked against it, and
 `docs/ROADMAP.md` tracks progress against it. If the code and this file disagree, either the

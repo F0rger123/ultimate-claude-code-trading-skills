@@ -11,7 +11,7 @@ import time
 DEFAULT_RULES = {
     "live_enabled": False,
     "kill_switch": False,
-    "risk_pct": 0.01,
+    "risk_pct": 0.005,
     "max_loss_per_trade_usd": 30.0,
     "daily_loss_cap_usd": 150.0,
     "max_leverage": 5.0,
@@ -22,15 +22,17 @@ DEFAULT_RULES = {
     "symbols": ["BTC", "ETH", "SOL"],
     "paper_equity_usd": 10000.0,
     "max_drawdown_pct": 0.15,
+    "dd_warn_pct": 0.075,
+    "dd_block_pct": 0.10,
 }
 
 # Coinbase CFM overnight leverage (lowest of long/short, checked 2026-11-07 from the public product
 # endpoint). Sizing always uses the overnight figure, so a position never needs more margin at 4pm ET.
 EXCHANGE_MAX_LEV = {"BTC": 3.9, "ETH": 3.3, "SOL": 1.8}
 
-FLOORS = {"max_drawdown_pct": 0.02, "daily_loss_cap_usd": 1.0, "max_loss_per_trade_usd": 1.0, "max_leverage": 1.0,
+FLOORS = {"dd_warn_pct": 0.01, "dd_block_pct": 0.02, "max_drawdown_pct": 0.02, "daily_loss_cap_usd": 1.0, "max_loss_per_trade_usd": 1.0, "max_leverage": 1.0,
           "max_open_positions": 1, "max_trades_per_day": 1, "risk_pct": 0.0005}
-CEILINGS = {"max_drawdown_pct": 0.5, "risk_pct": 0.05, "max_open_positions": 10, "max_trades_per_day": 100, "max_leverage": 20.0}
+CEILINGS = {"dd_warn_pct": 0.5, "dd_block_pct": 0.5, "max_drawdown_pct": 0.5, "risk_pct": 0.05, "max_open_positions": 10, "max_trades_per_day": 100, "max_leverage": 20.0}
 
 
 def normalize(r):

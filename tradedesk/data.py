@@ -10,7 +10,7 @@ import time
 import urllib.error
 import urllib.request
 
-UA = "tradedesk/0.1 (+https://github.com/F0rger123/ultimate-claude-code-trading-skills)"
+UA = "tradedesk/0.1 (+https://github.com/F0rger123/ultimate-claude-trading-skill)"
 SPOT_URL = "https://api.exchange.coinbase.com/products/%s/candles?granularity=%d&start=%s&end=%s"
 PERP_URL = ("https://api.coinbase.com/api/v3/brokerage/market/products/%s/candles"
             "?granularity=%s&start=%d&end=%d&limit=300")

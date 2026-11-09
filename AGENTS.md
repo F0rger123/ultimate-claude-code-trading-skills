@@ -9,7 +9,7 @@ A trading "desk" that runs on the person's own computer:
 - It can trade real money on Coinbase's US crypto futures only after the person unlocks it, and it always uses safety limits.
 - It learns from its own trades, but a change is only used after it proves itself on data it has never seen.
 
-The project is honest about results. As of the first run, no strategy has passed the bar for paper trading yet.
+The project is honest about results. As of 2026-11-09, every tested candidate was positive out of sample but none is statistically proven; the best are paper-tested.
 It is not financial advice, and most people who trade with leverage lose money.
 
 ## 2. Ask the person first
@@ -21,20 +21,21 @@ It is not financial advice, and most people who trade with leverage lose money.
 
 ## 3. Set it up and check it worked
 ```bash
-git clone https://github.com/F0rger123/ultimate-claude-code-trading-skills
-cd ultimate-claude-code-trading-skills
+git clone https://github.com/F0rger123/ultimate-claude-trading-skill
+cd ultimate-claude-trading-skill
 python -m unittest discover -s tests      # expect: OK
-python -m tradedesk data                  # about 10 minutes, free public data, no account
-python -m tradedesk tournament            # writes reports/tournament-latest.md
+python -m tradedesk data --gran 3600 --days 2870   # hourly history since 2019, free public data, no account
+python research/corrected_tournament.py            # about 2 minutes
+python research/summarize_corrected.py             # writes reports/corrected/summary.md
 python -m tradedesk status
 ```
-It worked if the tests say OK and `reports/tournament-latest.md` exists. Read that report to them in plain words:
+It worked if the tests say OK and `reports/corrected/summary.md` exists. Read that report to them in plain words:
 what passed, what failed, and why.
 
 In Claude Code you can also install the skills as a plugin:
 ```
-/plugin marketplace add F0rger123/ultimate-claude-code-trading-skills
-/plugin install ultimate-claude-code-trading-skills@ultimate-claude-code-trading-skills
+/plugin marketplace add F0rger123/ultimate-claude-trading-skill
+/plugin install ultimate-claude-trading-skill@ultimate-claude-trading-skill
 ```
 
 ## 4. How to use it
