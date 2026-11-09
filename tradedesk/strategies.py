@@ -497,7 +497,82 @@ class EMACross4h(_Slow):
         return [None if a[k] is None or b[k] is None else (1 if a[k] > b[k] else -1) for k in range(len(c))]
 
 
-SLOW = [TSMOMDaily, TurtleDaily, EMACross4h]
+
+class TrendEnsemble(Strategy):
+    """Daily trend-following ensemble with a regime filter.
+
+    Edge: crypto trends persist (slow information diffusion, herding, leveraged momentum flows), and
+    time-series momentum has been documented across markets for a century. The other side is traders
+    who fade moves too early and late sellers who capitulate into trends.
+    Signal: for each look-back L in `lookbacks` (days), vote +1 if today's close is above the close
+    L days ago, else -1. Average the votes. Long at or above +thr, short at or below -thr, flat between.
+    Regime: no new entries in CRASH; half size in SIDEWAYS and JUMPY; full size in CALM_TREND.
+    Stop: `stop_atr` x 20-day ATR. Nothing here is fitted: look-backs are the usual 1-6 month horizons.
+    """
+    id = "trend_ensemble"
+    name = "Trend ensemble, daily (regime-filtered)"
+    family = "trend"
+    source = "Time-series momentum (Moskowitz, Ooi, Pedersen 2012; Hurst, Ooi, Pedersen 'A Century of Evidence on Trend-Following')"
+    defaults = {"lookbacks": (20, 40, 60, 90, 120), "thr": 0.6, "stop_atr": 3.0, "long_only": 0, "regime": 1}
+    grid = {}
+
+    def prepare(self):
+        from . import regime as RG
+        self.RG = RG
+        self.f = self.m.frame(D1)
+        self.a = self.atr_tf(D1, 20)
+        p = self.p
+        key = ("ens", tuple(p["lookbacks"]), p["thr"])
+        self.dirs = self.f.memo(key, self._dirs)
+        self.reg = self.f.memo(("regime",), lambda: RG.classify(self.f.c, self.f.h))
+
+    def _dirs(self):
+        c, lbs, thr = self.f.c, self.p["lookbacks"], self.p["thr"]
+        out = [None] * len(c)
+        for k in range(max(lbs), len(c)):
+            v = sum(1 if c[k] > c[k - L] else -1 for L in lbs) / len(lbs)
+            out[k] = 1 if v >= thr else -1 if v <= -thr else 0
+        return out
+
+    def _j(self, i):
+        if not self.m.closes_tf(D1, i):
+            return None
+        j = self.m.maps[D1][i]
+        return j if j >= 1 else None
+
+    def entry(self, i):
+        j = self._j(i)
+        if j is None or self.dirs[j] in (None, 0) or self.a[j] is None:
+            return None
+        d = self.dirs[j]
+        if d == self.dirs[j - 1]:
+            return None
+        if d == -1 and self.p["long_only"]:
+            return None
+        mult = 1.0
+        if self.p["regime"]:
+            r = self.reg[j]
+            if r is None:
+                return None
+            mult = self.RG.SIZE[r[0]]
+            if mult <= 0:
+                return None
+        c = self.f.c[j]
+        return {"side": d, "stop": c - d * self.p["stop_atr"] * self.a[j], "target": None, "size_mult": mult}
+
+    def exit(self, i, pos):
+        j = self._j(i)
+        return j is not None and self.dirs[j] is not None and self.dirs[j] != pos["side"]
+
+    def features(self, i):
+        f = Strategy.features(self, i)
+        j = self.m.maps[D1][i]
+        r = self.reg[j] if j >= 0 else None
+        f["regime"] = r[0] if r else None
+        return f
+
+
+SLOW = [TSMOMDaily, TurtleDaily, EMACross4h, TrendEnsemble]
 
 ALL = [MTFQuick, MTFSwing, MTFTrend, DonchianBreakout, Donchian1h, Donchian4h, EMAPullback, EMAPullback1h,
        VWAPReclaim, RSI2Reversion] + SLOW

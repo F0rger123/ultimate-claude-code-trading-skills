@@ -33,7 +33,8 @@ def run(strat, start=0, end=None, costs=None, entry_filter=None):
             if (side == 1 and stop < px and (tgt is None or tgt > px)) or \
                (side == -1 and stop > px and (tgt is None or tgt < px)):
                 pos = {"side": side, "entry": px, "stop": stop, "target": tgt, "i0": i,
-                       "t0": b.t[i], "mae": 0.0, "mfe": 0.0, "feat": sig.get("feat", {})}
+                       "t0": b.t[i], "mae": 0.0, "mfe": 0.0, "feat": sig.get("feat", {}),
+                       "size": sig.get("size_mult", 1.0)}
         if pos is not None:
             side, e = pos["side"], pos["entry"]
             xp = None
@@ -91,7 +92,7 @@ def _close(pos, xp, why, t1, k):
     ret = gross - cost
     return {"side": side, "t0": pos["t0"], "t1": t1, "entry": e, "exit": xp_eff, "stop": pos["stop"],
             "why": why, "d": d, "ret": ret, "R": ret / d if d > 0 else 0.0, "mae": pos["mae"],
-            "mfe": pos["mfe"], "hours": hours, "feat": pos["feat"]}
+            "mfe": pos["mfe"], "hours": hours, "feat": pos["feat"], "size": pos.get("size", 1.0)}
 
 
 def simulate(trades, equity=1000.0, risk=0.01, max_lev=10.0, mm=0.5):
@@ -102,7 +103,7 @@ def simulate(trades, equity=1000.0, risk=0.01, max_lev=10.0, mm=0.5):
     curve = [(trades[0]["t0"] if trades else 0, eq)]
     out = []
     for tr in sorted(trades, key=lambda x: x["t0"]):
-        notional = min(risk * eq / tr["d"], max_lev * eq) if tr["d"] > 0 else 0.0
+        notional = min(risk * tr.get("size", 1.0) * eq / tr["d"], max_lev * eq) if tr["d"] > 0 else 0.0
         lev = notional / eq if eq > 0 else 0.0
         liq = notional > 0 and tr["mae"] >= mm / max_lev
         pnl = -notional / max_lev if liq else notional * tr["ret"]

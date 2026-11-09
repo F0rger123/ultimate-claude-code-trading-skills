@@ -43,6 +43,15 @@ Check items off as they land. Every phase ends with its check passing. Blueprint
 - [ ] A strategy passes the paper gate
 - [ ] Owner unlocks live in the app
 
+## Phase 5b: Owner's 24/7 brief (2026-11-09)
+- [x] Regime classifier (CALM_TREND / SIDEWAYS / JUMPY / CRASH), tested against base rates
+- [x] Regime-filtered trend ensemble; 10 variants, buy-and-hold benchmark, 3x cost test (`reports/best-strategy.md`)
+- [x] 15% max-drawdown halt (kill switch on, owner resumes)
+- [ ] Gate drawdown: use mark-to-market drawdown, not closed-trade drawdown
+- [ ] Forward-gate minimums scaled for slow strategies (30 signals is about 6 months for one coin)
+- [ ] Nightly review report (suggestions only, never auto-applied)
+- [ ] API-error limit and a full decision log
+
 ## Phase 6: Learning and growth
 - [x] Journal analysis and filter proposals (`learn.py`), judged only on later unseen trades. First run: 0 of 10 ideas promoted
 - [ ] Monthly re-fit scheduled

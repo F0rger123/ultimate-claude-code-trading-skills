@@ -158,6 +158,20 @@ class Risk(unittest.TestCase):
         self.assertTrue(ok, why)
 
 
+class DrawdownHalt(unittest.TestCase):
+    def test_halt_turns_on_kill_switch(self):
+        from tradedesk.desk import Desk
+        with tempfile.TemporaryDirectory() as d:
+            desk = Desk(d, log=lambda *a: None, fetch=lambda *a: [])
+            rules = desk.rules()
+            desk.j.snap("paper", 10000.0, 1)
+            self.assertLess(desk.drawdown_halt(rules, 9000.0), 0.15)
+            self.assertFalse(desk.rules()["kill_switch"])
+            desk.drawdown_halt(desk.rules(), 8400.0)
+            self.assertTrue(desk.rules()["kill_switch"])
+            desk.j.db.close()
+
+
 class Ladder(unittest.TestCase):
     def test_backtest_gate(self):
         m = {"trades": 150, "profit_factor": 1.3, "max_drawdown": 0.1}

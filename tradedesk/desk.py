@@ -99,7 +99,21 @@ class Desk:
                 continue
             self.last_bar[sym] = bars[-1][0]
             self.on_bar(sym, bars, age, rules, t)
-        self.j.snap("paper", self.paper_equity(rules), t)
+        eq = self.paper_equity(rules)
+        self.j.snap("paper", eq, t)
+        self.drawdown_halt(rules, eq)
+
+    def drawdown_halt(self, rules, eq):
+        """Max drawdown halt (default 15%): turn the kill switch on and flatten. Only the owner resumes."""
+        peak = max([rules["paper_equity_usd"]] + [r["equity"] for r in self.j.equity_curve("paper")])
+        dd = (peak - eq) / peak if peak > 0 else 0.0
+        if dd >= rules["max_drawdown_pct"] and not rules["kill_switch"]:
+            rules["kill_switch"] = True
+            R.save_rules(self.rules_path, rules)
+            self.j.event("warn", "MAX DRAWDOWN HALT: %.1f%% from peak $%.2f (limit %.0f%%). Kill switch on." % (
+                100 * dd, peak, 100 * rules["max_drawdown_pct"]))
+            self.flatten_all("max drawdown halt")
+        return dd
 
     def on_bar(self, sym, bars, age, rules, t):
         mkt = Market(bars, sym)

@@ -1,0 +1,194 @@
+[
+ {
+  "symbol": "BTC",
+  "strategy": "trend_ensemble",
+  "name": "Trend ensemble, daily (regime-filtered)",
+  "source": "Time-series momentum (Moskowitz, Ooi, Pedersen 2012; Hurst, Ooi, Pedersen 'A Century of Evidence on Trend-Following')",
+  "metrics": {
+   "trades": 100,
+   "win_rate": 0.34,
+   "avg_R": 0.5490150036168487,
+   "profit_factor": 4.522000734341981,
+   "avg_win_R": 2.073225216191512,
+   "avg_loss_R": -0.23618419680040112,
+   "longest_losing_streak": 10,
+   "avg_hours": 350.61,
+   "long_share": 0.61,
+   "return": 0.5600805607873205,
+   "max_drawdown": 0.02747387765685401,
+   "days": 2344.0,
+   "cagr": 0.07170738146763123,
+   "liquidations": 0,
+   "sharpe": 2.277451381409676
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": 0.021065213543114636,
+   "median_return": 0.5556496129069055,
+   "p95_drawdown": 0.07188469635076435
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    100
+   ],
+   [
+    "profit factor >= 1.20",
+    true,
+    4.52
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    true,
+    "2.7%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "55%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    true,
+    "2.1%"
+   ]
+  ],
+  "in_sample": {
+   "params": {},
+   "trades": 126,
+   "avg_R": 0.4184799398175003
+  },
+  "params": {},
+  "secs": 20.6
+ },
+ {
+  "symbol": "ETH",
+  "strategy": "trend_ensemble",
+  "name": "Trend ensemble, daily (regime-filtered)",
+  "source": "Time-series momentum (Moskowitz, Ooi, Pedersen 2012; Hurst, Ooi, Pedersen 'A Century of Evidence on Trend-Following')",
+  "metrics": {
+   "trades": 119,
+   "win_rate": 0.36134453781512604,
+   "avg_R": 0.3112965882311205,
+   "profit_factor": 3.102222862079579,
+   "avg_win_R": 1.2712972454262579,
+   "avg_loss_R": -0.2318616783398129,
+   "longest_losing_streak": 17,
+   "avg_hours": 333.3781512605042,
+   "long_share": 0.6302521008403361,
+   "return": 0.20394295490403702,
+   "max_drawdown": 0.027899823924050177,
+   "days": 2366.0,
+   "cagr": 0.029046447272991216,
+   "liquidations": 2,
+   "sharpe": 2.6969484428293153
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": 0.023415941916426153,
+   "median_return": 0.35516504381839353,
+   "p95_drawdown": 0.07976387057287954
+  },
+  "passed": true,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    true,
+    119
+   ],
+   [
+    "profit factor >= 1.20",
+    true,
+    3.1
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    true,
+    "2.8%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    true,
+    "68%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    true,
+    "2.3%"
+   ]
+  ],
+  "in_sample": {
+   "params": {},
+   "trades": 128,
+   "avg_R": 0.279801312586788
+  },
+  "params": {},
+  "secs": 21.1
+ },
+ {
+  "symbol": "SOL",
+  "strategy": "trend_ensemble",
+  "name": "Trend ensemble, daily (regime-filtered)",
+  "source": "Time-series momentum (Moskowitz, Ooi, Pedersen 2012; Hurst, Ooi, Pedersen 'A Century of Evidence on Trend-Following')",
+  "metrics": {
+   "trades": 73,
+   "win_rate": 0.3150684931506849,
+   "avg_R": 0.25606042124650463,
+   "profit_factor": 2.4940574680488834,
+   "avg_win_R": 1.3566775339126547,
+   "avg_loss_R": -0.2502234505799244,
+   "longest_losing_streak": 9,
+   "avg_hours": 257.93150684931504,
+   "long_share": 0.5205479452054794,
+   "return": 0.17824924927820507,
+   "max_drawdown": 0.02886043343847638,
+   "days": 1347.0,
+   "cagr": 0.045450119898231556,
+   "liquidations": 0,
+   "sharpe": 1.946564047800091
+  },
+  "mc": {
+   "runs": 2000,
+   "p5_return": -0.06919980405542714,
+   "median_return": 0.15830768618630953,
+   "p95_drawdown": 0.08872350512314756
+  },
+  "passed": false,
+  "checks": [
+   [
+    "OOS trades >= 100",
+    false,
+    73
+   ],
+   [
+    "profit factor >= 1.20",
+    true,
+    2.49
+   ],
+   [
+    "max drawdown <= 20% at 1% risk",
+    true,
+    "2.9%"
+   ],
+   [
+    ">= 60% of OOS windows profitable",
+    false,
+    "40%"
+   ],
+   [
+    "bootstrap 5th-pct return > 0",
+    false,
+    "-6.9%"
+   ]
+  ],
+  "in_sample": {
+   "params": {},
+   "trades": 83,
+   "avg_R": 0.25203977103556285
+  },
+  "params": {},
+  "secs": 17.7
+ }
+]

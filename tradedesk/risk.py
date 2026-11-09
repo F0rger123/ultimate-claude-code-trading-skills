@@ -21,15 +21,16 @@ DEFAULT_RULES = {
     "news_blackout": [],
     "symbols": ["BTC", "ETH", "SOL"],
     "paper_equity_usd": 10000.0,
+    "max_drawdown_pct": 0.15,
 }
 
 # Coinbase CFM overnight leverage (lowest of long/short, checked 2026-11-07 from the public product
 # endpoint). Sizing always uses the overnight figure, so a position never needs more margin at 4pm ET.
 EXCHANGE_MAX_LEV = {"BTC": 3.9, "ETH": 3.3, "SOL": 1.8}
 
-FLOORS = {"daily_loss_cap_usd": 1.0, "max_loss_per_trade_usd": 1.0, "max_leverage": 1.0,
+FLOORS = {"max_drawdown_pct": 0.02, "daily_loss_cap_usd": 1.0, "max_loss_per_trade_usd": 1.0, "max_leverage": 1.0,
           "max_open_positions": 1, "max_trades_per_day": 1, "risk_pct": 0.0005}
-CEILINGS = {"risk_pct": 0.05, "max_open_positions": 10, "max_trades_per_day": 100, "max_leverage": 20.0}
+CEILINGS = {"max_drawdown_pct": 0.5, "risk_pct": 0.05, "max_open_positions": 10, "max_trades_per_day": 100, "max_leverage": 20.0}
 
 
 def normalize(r):
