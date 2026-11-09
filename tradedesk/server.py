@@ -159,6 +159,27 @@ def make_handler(api, token):
                 return self._send(200, {"ok": True})
             if not self._auth():
                 return self._send(401, {"error": "bad token"})
+            if u.path == "/app/latest":  # in-app updater: version info published by desk/publish-app.ps1
+                p = os.path.join(api.dir, "app", "latest.json")
+                if not os.path.exists(p):
+                    return self._send(404, {"error": "no app published"})
+                with open(p, encoding="utf-8-sig") as f:  # PowerShell 5 writes a BOM
+                    return self._send(200, json.load(f))
+            if u.path == "/app/apk":
+                p = os.path.join(api.dir, "app", "TradingDesk.apk")
+                if not os.path.exists(p):
+                    return self._send(404, {"error": "no app published"})
+                self.send_response(200)
+                self.send_header("Content-Type", "application/vnd.android.package-archive")
+                self.send_header("Content-Length", str(os.path.getsize(p)))
+                self.end_headers()
+                with open(p, "rb") as f:
+                    while True:
+                        chunk = f.read(1 << 16)
+                        if not chunk:
+                            break
+                        self.wfile.write(chunk)
+                return
             fn = routes.get(u.path)
             if not fn:
                 return self._send(404, {"error": "not found"})
