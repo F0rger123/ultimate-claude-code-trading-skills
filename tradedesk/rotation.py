@@ -224,7 +224,7 @@ def _label(params):
     return ", ".join("%s %s" % (k.replace("_", " "), v) for k, v in sorted(params.items()))[:40]
 
 
-def new_spec(r, now, taken):
+def new_spec(r, now, taken, manual=False):
     cls = PA.REGISTRY[r["cls"]]
     day = time.strftime("%y%m%d", time.gmtime(now))
     bid, k = "pb_%s_%s" % (cls.id, day), 2
@@ -233,8 +233,9 @@ def new_spec(r, now, taken):
     taken.add(bid)
     s = r["screen"]
     name = ("Fast: " if r["cadence"] == "fast" else "") + cls.name + (" (%s)" % _label(r["params"]) if r["params"] else "")
-    note = "Added by the weekly shake-up %s. Recent test: %+.1f%% over %d days, %d trades, worst drop %.1f%%. Paper only" % (
-        time.strftime("%b %d", time.gmtime(now)), s["ret_pct"], s["days"], s["trades"], s["max_dd_pct"])
+    how = "Replaced a losing account at your request" if manual else "Added by the weekly shake-up"
+    note = "%s %s. Recent test: %+.1f%% over %d days, %d trades, worst drop %.1f%%. Paper only" % (
+        how, time.strftime("%b %d", time.gmtime(now)), s["ret_pct"], s["days"], s["trades"], s["max_dd_pct"])
     spec = {"id": bid, "name": name, "cls": cls.id, "mode": "spot" if cls.id in SPOT_ONLY else "perp",
             "equity": 10000.0, "cadence": r["cadence"], "params": r["params"], "note": note, "added": now,
             "screen": dict(s, memory_pct=r["memory_pct"], total=r["total"])}
@@ -243,7 +244,9 @@ def new_spec(r, now, taken):
 
 
 # ---------------------------------------------------------------- the weekly run
-def run(state_dir, journal=None, now=None, force=False, dry=False, log=print, markets_for=None):
+def run(state_dir, journal=None, now=None, force=False, dry=False, log=print, markets_for=None, replace=None):
+    """replace: account ids the OWNER chose to retire now (skips the trial and the weekly slot; the Monday
+    run still happens). Protected accounts can never be replaced."""
     now = int(now or time.time())
     led = load_ledger(state_dir, now)
     wk = week_key(now)
@@ -251,14 +254,21 @@ def run(state_dir, journal=None, now=None, force=False, dry=False, log=print, ma
     if rules.get("kill_switch") and not force:
         log("kill switch is on: no shake-up this week (the owner halted trading)")
         return None
-    if led.get("last_week") == wk and not force:
+    if led.get("last_week") == wk and not force and not replace:
         log("already ran this week (%s)" % wk)
         return None
     ranks = rank(state_dir, now)
     for r in ranks:
         log("  rank %-24s %-5s %5.1f days  %+6.2f%%  %3d trades  %s" % (
             r["id"], r["cadence"], r["days"], r["pnl_pct"], r["trades"], "eligible" if r["eligible"] else "trial/protected"))
-    cut = [r for r in ranks if r["eligible"]][:CUT]
+    if replace:
+        prot = {b["id"] for b in PA.roster(state_dir) if b.get("protected")}
+        cut = [r for r in ranks if r["id"] in set(replace) and r["id"] not in prot]
+        missing = set(replace) - {r["id"] for r in cut}
+        if missing:
+            log("not replaced (unknown or protected): %s" % ", ".join(sorted(missing)))
+    else:
+        cut = [r for r in ranks if r["eligible"]][:CUT]
     need = {}
     for r in cut:
         need[r["cadence"]] = need.get(r["cadence"], 0) + 1
@@ -275,15 +285,15 @@ def run(state_dir, journal=None, now=None, force=False, dry=False, log=print, ma
             final_cut.append(r)
             used[r["cadence"]] = used.get(r["cadence"], 0) + 1
     taken = {b["id"] for b in roster} | {b["id"] for b in PA.retired_books(state_dir)}
-    specs = [new_spec(p, now, taken) for p in picks]
+    specs = [new_spec(p, now, taken, bool(replace)) for p in picks]
     entry = {"t": now, "week": wk, "ranked": ranks, "cut": final_cut, "added": specs,
              "tested": len(tested), "next": next_slot(now + 60)}
     if dry:
         log(json.dumps({"cut": [r["id"] for r in final_cut], "add": [s["id"] for s in specs]}))
         return entry
     for r in final_cut:
-        PA.retire(state_dir, r["id"], "weekly shake-up %s: bottom %d, %+.2f%% after %.0f days" % (
-            wk, CUT, r["pnl_pct"], r["days"]), now)
+        why = "replaced at the owner's request" if replace else "weekly shake-up %s: bottom %d" % (wk, CUT)
+        PA.retire(state_dir, r["id"], "%s, %+.2f%% after %.1f days" % (why, r["pnl_pct"], r["days"]), now)
     PA.save_roster(state_dir, [b for b in roster if b["id"] not in {r["id"] for r in final_cut}] + specs)
     fam = led.setdefault("families", {})
     for r in final_cut:
@@ -293,10 +303,12 @@ def run(state_dir, journal=None, now=None, force=False, dry=False, log=print, ma
         led.setdefault("tried", {})[key(r["cls"], r["params"])] = now
     for s in specs:
         led.setdefault("tried", {})[key(s["cls"], s["params"])] = now
-    led["last_week"] = wk
+    entry["manual"] = bool(replace)
+    if not replace:
+        led["last_week"] = wk
     led["runs"] = (led.get("runs", []) + [entry])[-52:]
     save_ledger(state_dir, led)
-    msg = "Weekly shake-up: retired %s; started %s" % (
+    msg = ("Owner replacement" if replace else "Weekly shake-up") + ": retired %s; started %s" % (
         ", ".join("%s (%+.1f%%)" % (r["name"], r["pnl_pct"]) for r in final_cut) or "none",
         ", ".join(s["name"] for s in specs) or "none")
     log(msg)

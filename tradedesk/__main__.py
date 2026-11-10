@@ -35,6 +35,7 @@ def main(argv=None):
     p.add_argument("--min-train-trades", type=int, default=15)
     p.add_argument("--force", action="store_true", help="rotate: run even if this week already ran")
     p.add_argument("--dry-run", action="store_true", help="rotate: rank and test, change nothing")
+    p.add_argument("--replace", default="", help="rotate: comma-separated account ids the owner wants replaced now")
     a = p.parse_args(argv)
     syms = [s.strip().upper() for s in a.symbols.split(",") if s.strip()]
 
@@ -72,7 +73,8 @@ def main(argv=None):
         from . import rotation as ROT
         from .journal import Journal
         j = Journal(os.path.join(a.state, "journal.sqlite"))
-        ROT.run(a.state, j, force=a.force, dry=a.dry_run)
+        ROT.run(a.state, j, force=a.force, dry=a.dry_run,
+                replace=[x.strip() for x in a.replace.split(",") if x.strip()] or None)
     elif a.cmd == "desk":
         from .desk import Desk
         Desk(a.state).run()

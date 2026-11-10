@@ -9,6 +9,7 @@ The engine is `tradedesk/rotation.py`. The desk runs it by itself every Monday a
 winter, 10 AM in summer). If the PC was asleep, it runs the next time the desk is awake that week.
 
 ## Commands
+- Replace accounts the owner names, now (skips the trial; Monday still runs): `python -m tradedesk rotate --state <state dir> --replace <id>,<id>`
 - Preview without changing anything: `python -m tradedesk rotate --state <state dir> --dry-run`
 - Run now even though this week already ran: `python -m tradedesk rotate --state <state dir> --force`
 - Phone API: `GET /api/rotation` returns the next run, the last cuts and picks, the standings and the

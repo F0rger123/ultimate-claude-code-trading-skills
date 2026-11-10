@@ -82,6 +82,13 @@ class RotationTest(unittest.TestCase):
         self.assertEqual(led["families"]["rsi2_reversion"]["paper_pct"], [-6.0])
         self.assertIn('rsi2_reversion|{}', led["tried"])  # the cut setting cools down for 8 weeks
 
+    def test_owner_replace_skips_trial_and_keeps_monday(self):
+        e = self.run_once(replace=["pb_fast_scalp10", "pb_fast_vwap", "pb_pilot_spot50"])
+        self.assertEqual(sorted(r["id"] for r in e["cut"]), ["pb_fast_scalp10", "pb_fast_vwap"])  # pilot protected
+        self.assertTrue(e["manual"])
+        self.assertNotEqual(R.load_ledger(self.dir).get("last_week"), R.week_key(self.now))  # Monday still runs
+        self.assertEqual(len(PA.roster(self.dir)), len(PA.BOOKS))
+
     def test_kill_switch_blocks_shake_up(self):
         rules = RK.load_rules(os.path.join(self.dir, "rules.json"))
         rules["kill_switch"] = True
