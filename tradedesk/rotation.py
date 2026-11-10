@@ -7,8 +7,8 @@ still needs the owner's explicit approval (BLUEPRINT: no automatic promotion bet
 Once a week (Monday 14:00 UTC, 9 AM Eastern in winter; later if the PC was asleep):
 1. Rank. Every account past its trial (fast 6 days, slow 27 days) is scored by its paper return since it
    started. An account that hit its own 10% drawdown block scores last. The $50 pilot mirror is never cut.
-2. Cut. The bottom three are retired to state/paper/retired/. Their profit or loss stays in the
-   'All accounts' total, so cutting a loser never hides the loss.
+2. Cut. The bottom three are retired to state/paper/retired/. The 'All accounts' balance shows
+   only accounts still running; the drawdown halt still counts retired losses.
 3. Learn. Each retired result is added to the memory of its strategy family (rotation.json). A family that
    keeps losing on paper gets a lower score next time, and the exact setting that was cut waits 8 weeks
    before it may return.

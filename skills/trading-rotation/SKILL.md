@@ -22,8 +22,8 @@ winter, 10 AM in summer). If the PC was asleep, it runs the next time the desk i
    (slow strategies trade a few times a month, so a week of them is noise). The score is the paper return
    since the account started. An account that hit its own 10% drawdown block ranks last.
 2. **Cut the bottom three.** The $50 pilot mirror is protected and never cut. Retired accounts move to
-   `paper/retired/`. Their profit or loss stays in the "All accounts" balance, so rotating a loser out
-   never hides the loss.
+   `paper/retired/`. The "All accounts" balance shows only accounts still running (owner's choice); retired results
+   are listed on the shake-up card, and the 15% paper drawdown halt still counts them.
 3. **Learn.** The retired account's return is added to its strategy family's memory. A family keeps the
    average of its last 10 retired results, and that average is added to its future test scores, so a
    family that keeps losing on paper sinks. The exact setting that was cut cannot return for 8 weeks.

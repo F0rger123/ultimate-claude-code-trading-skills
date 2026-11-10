@@ -289,26 +289,31 @@ def rebuild(state_dir, journal, rules, now=None):
     now = int(now or time.time())
     books = [x for x in (load_book(state_dir, b["id"]) for b in roster(state_dir)) if x]
     retired = retired_books(state_dir)
-    # Work in profit and loss so a retired account's result stays in the total: rotating a loser out
-    # never hides its loss. Balance = start money of the active accounts + every account's P&L ever.
-    agg, rows = {}, []
-    for bk in books + retired:
-        for t, e in bk["curve"]:
-            agg.setdefault(int(t) - int(t) % 3600, {})[bk["id"]] = e - bk["start_equity"]
-        name = bk["name"] + (" (retired)" if bk.get("retired") else "")
-        rows += [("closed", dict(bk, name=name), x) for x in bk["trades"]]
-        rows += [("open", bk, x) for x in bk["open"]]
+    # Owner's choice (2026-11-10): the 'All accounts' balance, chart and trade list show only the accounts
+    # still running; a retired account's result is reported separately (retired_pnl). The paper drawdown
+    # halt still uses the full record, retired losses included, so retiring a loser never loosens it.
+    def pnl_series(group):
+        agg = {}
+        for bk in group:
+            for t, e in bk["curve"]:
+                agg.setdefault(int(t) - int(t) % 3600, {})[bk["id"]] = e - bk["start_equity"]
+        last, out = {}, []
+        for t in sorted(agg):
+            last.update(agg[t])
+            out.append((t, total0 + sum(last.values())))
+        return out
+
     total0 = sum(bk["start_equity"] for bk in books)
     banked = sum(bk["equity"] - bk["start_equity"] for bk in retired)
-    last, series = {}, []
-    for t in sorted(agg):
-        last.update(agg[t])
-        series.append((t, total0 + sum(last.values())))
-    total = sum(bk["equity"] for bk in books) + banked
-    peak = max([total0] + [e for _, e in series] + [total])
+    rows = [("closed", bk, x) for bk in books for x in bk["trades"]] + [("open", bk, x) for bk in books for x in bk["open"]]
+    series = pnl_series(books)
+    total = sum(bk["equity"] for bk in books)
+    full = pnl_series(books + retired)
+    peak = max([total0] + [e for _, e in full] + [total + banked])
     out = {"t": now, "books": [{k: v for k, v in bk.items() if k not in ("curve", "trades")} for bk in books],
            "total_start": total0, "total_equity": total, "retired_pnl": banked, "retired_count": len(retired),
-           "drawdown": (peak - total) / peak if peak else 0.0}
+           "total_with_retired": total + banked,
+           "drawdown": (peak - (total + banked)) / peak if peak else 0.0}
     _write_journal(journal, series, rows)
     with open(os.path.join(state_dir, "paper", "summary.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, indent=1, default=str)

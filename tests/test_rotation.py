@@ -65,15 +65,15 @@ class RotationTest(unittest.TestCase):
         self.assertEqual(sorted(speeds), ["fast", "fast", "slow"])  # replacements keep the cut accounts' speed
         self.assertTrue(any(s["cls"] == "donchian_4h" for s in e["added"]))  # best test wins a fast slot
 
-    def test_retired_loss_stays_in_total(self):
+    def test_retired_loss_left_out_of_display_but_not_halt(self):
         before = PA.rebuild(self.dir, FakeJournalDB(), RK.load_rules(os.path.join(self.dir, "rules.json")), self.now)
         self.run_once()
         after = PA.rebuild(self.dir, FakeJournalDB(), RK.load_rules(os.path.join(self.dir, "rules.json")), self.now)
         cut_pnl = (-6.0 - 4.0 - 2.0) * 100  # the three retired $10,000 accounts
         self.assertAlmostEqual(after["retired_pnl"], cut_pnl, places=6)
-        # new accounts have no file until the desk first runs them, so the total is the old total minus
-        # the three retired starting balances: their losses are still in it
-        self.assertAlmostEqual(after["total_equity"], before["total_equity"] - 30000, places=6)
+        # the displayed total leaves retired accounts out; the drawdown halt still counts them
+        self.assertAlmostEqual(after["total_equity"], before["total_equity"] - 30000 - cut_pnl, places=6)
+        self.assertAlmostEqual(after["total_with_retired"], before["total_equity"] - 30000, places=6)
 
     def test_once_a_week_and_memory(self):
         self.run_once()
