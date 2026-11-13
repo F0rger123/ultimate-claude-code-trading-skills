@@ -36,6 +36,9 @@ FAST = [S.MTFQuick, S.MTFSwing, S.MTFTrend, S.DonchianBreakout, S.Donchian1h, S.
         S.EMAPullback1h, S.VWAPReclaim, S.RSI2Reversion, S.Scalp10]
 SLOW = [S.TSMOMDaily, S.TurtleDaily, S.EMACross4h, S.TrendEnsemble, C.VolManagedTrend, C.VolFilteredBreakout,
         C.WeeklyStrengthRotation]
+from . import library as LIB  # noqa: E402  strategies from the research bank join the pools
+FAST += [c for c in LIB.ALL if getattr(c, "cadence", "fast") == "fast"]
+SLOW += [c for c in LIB.ALL if getattr(c, "cadence", "fast") == "slow"]
 SPOT_ONLY = {C.WeeklyStrengthRotation.id}
 SIZE = {S.Scalp10.id: {"risk": 0.0025, "pos_lev": 0.1, "gross_lev": 0.1}}  # smaller than the defaults only
 CUT = 3
@@ -150,10 +153,12 @@ def _book(cls, params, cadence):
     return b
 
 
-def screen(cls, params, cadence, markets, now):
+def screen(cls, params, cadence, markets, now, skip=None):
     """Paper-style test on recent data with costs. Returns a dict, or None if the strategy cannot run."""
     days, min_trades = SCREEN[cadence]
     b = _book(cls, params, cadence)
+    if skip:
+        b["skip"] = skip
     try:
         r = P.run(markets, PA._variants(markets, b, params), PA._cfg(b), start_t=now - days * DAY, close_at_end=True)
     except Exception as e:  # a strategy that cannot run on this data is skipped, never fatal
@@ -171,14 +176,25 @@ def screen(cls, params, cadence, markets, now):
             "enough": n >= min_trades, "score": round(ret - 0.5 * 100 * mdd, 2)}
 
 
-def family_memory(led, cls_id):
+def family_memory(led, cls_id, live=None):
+    """Average paper return of this strategy family: its last 10 retired accounts plus the accounts of
+    that family running now (2+ days old), so families that win on paper rise and losers sink."""
     f = led.get("families", {}).get(cls_id) or {}
-    xs = f.get("paper_pct", [])[-10:]
+    xs = f.get("paper_pct", [])[-10:] + list((live or {}).get(cls_id, []))
     return sum(xs) / len(xs) if xs else 0.0
 
 
-def pick(need, keep, led, now, log=print, markets_for=None):
-    """need: {"fast": n, "slow": n}. keep: roster entries that stay. Returns (picks, tested)."""
+def live_memory(ranks):
+    out = {}
+    for r in ranks:
+        if r["days"] >= 2:
+            out.setdefault(r["cls"], []).append(r["pnl_pct"])
+    return out
+
+
+def pick(need, keep, led, now, log=print, markets_for=None, live=None, improved=None):
+    """need: {"fast": n, "slow": n}. keep: roster entries that stay. improved: qualified challengers from
+    tradedesk/study.py (improved versions of accounts that are winning). Returns (picks, tested)."""
     rng = random.Random(week_key(now))
     active = {b["cls"].id for b in keep}
     picks, tested = [], []
@@ -199,23 +215,41 @@ def pick(need, keep, led, now, log=print, markets_for=None):
             if not s or "error" in s:
                 log("  skip %s %s: %s" % (cls.id, params, (s or {}).get("error", "no data")))
                 continue
-            mem = family_memory(led, cls.id)
+            mem = family_memory(led, cls.id, live)
             row = {"cls": cls.id, "name": cls.name, "params": params, "cadence": cadence, "screen": s,
                    "memory_pct": round(mem, 2), "total": round(s["score"] + LEARN_WEIGHT * mem, 2)}
             rows.append(row)
             log("  test %-24s %-40s ret %+6.2f%%  dd %5.2f%%  %3d trades  memory %+.2f  -> %+.2f" % (
                 cls.id, json.dumps(params)[:40], s["ret_pct"], s["max_dd_pct"], s["trades"], mem, row["total"]))
+        # improved versions of winners: they already beat their parent on data the parent never paper
+        # traded; here they face the same recent test as everyone else so the scores compare fairly
+        for c in (improved or []):
+            if c["cadence"] != cadence or c["cls"] not in PA.REGISTRY:
+                continue
+            cls = PA.REGISTRY[c["cls"]]
+            s = screen(cls, c["params"], cadence, markets, now, c.get("skip"))
+            if not s or "error" in s:
+                continue
+            mem = family_memory(led, cls.id, live)
+            row = {"cls": cls.id, "name": cls.name, "params": c["params"], "cadence": cadence, "screen": s,
+                   "skip": c.get("skip") or [], "parent": c["parent"], "parent_name": c["parent_name"],
+                   "why": c["why"], "improved": True,
+                   "memory_pct": round(mem, 2), "total": round(s["score"] + LEARN_WEIGHT * mem, 2)}
+            rows.append(row)
+            log("  test improved %-18s %-40s ret %+6.2f%%  dd %5.2f%%  %3d trades  -> %+.2f" % (
+                c["parent"], c["why"][:40], s["ret_pct"], s["max_dd_pct"], s["trades"], row["total"]))
         tested += rows
         rows.sort(key=lambda r: (not r["screen"]["enough"], -r["total"]))
         chosen, used = [], set()
-        for pass_ in (0, 1):  # first pass: families not running now; second pass: anything left
+        for pass_ in (0, 1):  # first pass: families not running now (improved versions exempt); then anything
             for r in rows:
                 if len(chosen) >= n:
                     break
-                if r["cls"] in used or (pass_ == 0 and r["cls"] in active):
+                fam = r.get("parent") or r["cls"]
+                if fam in used or (pass_ == 0 and r["cls"] in active and not r.get("improved")):
                     continue
                 chosen.append(r)
-                used.add(r["cls"])
+                used.add(fam)
         picks += chosen
     return picks, tested
 
@@ -234,11 +268,16 @@ def new_spec(r, now, taken, manual=False):
     s = r["screen"]
     name = ("Fast: " if r["cadence"] == "fast" else "") + cls.name + (" (%s)" % _label(r["params"]) if r["params"] else "")
     how = "Replaced a losing account at your request" if manual else "Added by the weekly shake-up"
+    if r.get("improved"):
+        name = r["parent_name"] + " v2"
+        how = "Improved version of %s (%s)" % (r["parent_name"], r["why"])
     note = "%s %s. Recent test: %+.1f%% over %d days, %d trades, worst drop %.1f%%. Paper only" % (
         how, time.strftime("%b %d", time.gmtime(now)), s["ret_pct"], s["days"], s["trades"], s["max_dd_pct"])
     spec = {"id": bid, "name": name, "cls": cls.id, "mode": "spot" if cls.id in SPOT_ONLY else "perp",
             "equity": 10000.0, "cadence": r["cadence"], "params": r["params"], "note": note, "added": now,
             "screen": dict(s, memory_pct=r["memory_pct"], total=r["total"])}
+    if r.get("improved"):
+        spec.update(skip=r["skip"], parent=r["parent"], improved_why=r["why"])
     spec.update(SIZE.get(cls.id, {}))
     return spec
 
@@ -268,13 +307,21 @@ def run(state_dir, journal=None, now=None, force=False, dry=False, log=print, ma
         if missing:
             log("not replaced (unknown or protected): %s" % ", ".join(sorted(missing)))
     else:
-        cut = [r for r in ranks if r["eligible"]][:CUT]
+        # only losing accounts can be cut: a winner is never retired just to fill the bottom three
+        cut = [r for r in ranks if r["eligible"] and r["pnl_pct"] < 0][:CUT]
     need = {}
     for r in cut:
         need[r["cadence"]] = need.get(r["cadence"], 0) + 1
     roster = PA.roster(state_dir)
     keep = [b for b in roster if b["id"] not in {r["id"] for r in cut}]
-    picks, tested = pick(need, keep, led, now, log, markets_for) if cut else ([], [])
+    improved = []
+    if cut:
+        try:  # study first: why winners win, and improved versions of them to compete for the open slots
+            from . import study as ST
+            improved = ST.run(state_dir, now, log, markets_for)["challengers"]
+        except Exception as e:  # the study never blocks the shake-up
+            log("study failed: %s" % str(e)[:200])
+    picks, tested = pick(need, keep, led, now, log, markets_for, live_memory(ranks), improved) if cut else ([], [])
     # never shrink the roster: cut only as many per speed as there are replacements
     got = {}
     for p in picks:
@@ -330,6 +377,11 @@ def summary(state_dir, now=None):
            "cut_per_week": CUT, "trial_days": TRIAL_DAYS, "runs": len(led.get("runs", [])), "families": fams,
            "standings": [{k: r[k] for k in ("id", "name", "cadence", "days", "pnl_pct", "eligible")}
                          for r in reversed(rank(state_dir, now))]}
+    from . import study as ST
+    st = ST.load(state_dir) or {}
+    out["insights"] = st.get("insights", [])[:8]
+    out["improved_waiting"] = [{"name": c["parent_name"] + " v2", "why": c["why"]} for c in st.get("challengers", [])][:5]
+    out["studied"] = st.get("t")
     ps = PA.load_summary(state_dir) or {}
     out["retired_pnl"] = ps.get("retired_pnl", 0.0)
     out["retired_count"] = ps.get("retired_count", 0)

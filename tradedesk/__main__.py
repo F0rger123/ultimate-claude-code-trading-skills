@@ -7,6 +7,7 @@
   serve        phone API (needs TRADEDESK_API_TOKEN)
   check-live   read-only Coinbase check: balance, positions, an order preview (needs keys)
   status       ladder and journal summary
+  study        why paper accounts win or lose, and improved versions to test (writes paper/study.json)
   rotate       weekly paper shake-up: retire the bottom 3 accounts, start 3 new ones (--dry-run, --force)
 """
 import argparse
@@ -69,6 +70,9 @@ def main(argv=None):
         os.makedirs(a.reports, exist_ok=True)
         with open(os.path.join(a.reports, "learn-latest.json"), "w", encoding="utf-8") as f:
             json.dump(out, f, indent=1, default=str)
+    elif a.cmd == "study":
+        from . import study as ST
+        ST.run(a.state)
     elif a.cmd == "rotate":
         from . import rotation as ROT
         from .journal import Journal

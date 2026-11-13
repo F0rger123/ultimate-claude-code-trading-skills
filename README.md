@@ -124,6 +124,8 @@ flowchart LR
 | `tradedesk/desk.py` | 24/7 loop: shadow, forward, paper; live only behind three locks |
 | `tradedesk/broker_coinbase.py` | Coinbase adapter (written; never run with money) |
 | `tradedesk/learn.py` | improvement proposals, judged only on later data |
+| `tradedesk/study.py` | daily study: where each paper account makes and loses money, and tested improved versions of the winners |
+| `tradedesk/library.py` | strategy bank: researched strategies waiting to compete for a paper slot |
 | `tradedesk/rotation.py` | weekly paper shake-up: retire the bottom 3 accounts, test candidates, start the best 3 (paper only) |
 | `tradedesk/server.py` | token-protected phone API and app updates |
 | `research/` | reproducible studies, the corrected tournament, MNQ model, charts |
@@ -136,7 +138,7 @@ flowchart LR
   W1["Every Monday"] --> W2["Rank the paper accounts<br/>by their return"]
   W2 --> W3["Retire the bottom 3<br/>(losses still counted)"]
   W3 --> W4["Remember how each<br/>strategy family did"]
-  W4 --> W5["Test about 30 new setups<br/>on recent prices, with fees"]
+  W4 --> W5["Test about 30 new setups<br/>plus improved versions of winners,<br/>on recent prices, with fees"]
   W5 --> W6["Start the best 3<br/>with $10,000 pretend money"]
   W6 --> W1
   W6 -. "real money only with<br/>the owner's yes" .-> W7["Owner decides"]
@@ -144,7 +146,9 @@ flowchart LR
   style W6 fill:#ffffff,stroke:#1fa34a,color:#0a0a0a
 ```
 
-Accounts get a trial first (6 days fast, 27 days slow) and the $50 pilot mirror is never cut. Details:
+Only losing accounts are cut, after a trial (6 days fast, 27 days slow); the $50 pilot mirror is never cut.
+A daily study explains where each account makes and loses money and tests improved versions of the winners,
+which then compete for open slots as "v2" accounts beside their parents. Details:
 [`skills/trading-rotation/SKILL.md`](skills/trading-rotation/SKILL.md).
 
 ## 4. Strategy library

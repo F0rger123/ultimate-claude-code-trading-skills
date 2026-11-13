@@ -89,6 +89,11 @@ class RotationTest(unittest.TestCase):
         self.assertNotEqual(R.load_ledger(self.dir).get("last_week"), R.week_key(self.now))  # Monday still runs
         self.assertEqual(len(PA.roster(self.dir)), len(PA.BOOKS))
 
+    def test_winners_never_cut(self):
+        e = self.run_once()
+        self.assertTrue(all(r["pnl_pct"] < 0 for r in e["cut"]))
+        self.assertIn("pb_trend_perp", [b["id"] for b in PA.roster(self.dir)])  # +3%, past trial
+
     def test_kill_switch_blocks_shake_up(self):
         rules = RK.load_rules(os.path.join(self.dir, "rules.json"))
         rules["kill_switch"] = True

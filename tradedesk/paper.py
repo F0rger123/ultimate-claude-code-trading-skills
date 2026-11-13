@@ -65,7 +65,8 @@ BOOKS = [
              "expect it to hit its -10% stop in about a week"},
 ]
 SEED_IDS = {b["id"] for b in BOOKS}
-REGISTRY = {c.id: c for c in S.ALL + [S.Scalp10] + C.ALL}
+from . import library as LIB  # noqa: E402  strategies added from the research bank
+REGISTRY = {c.id: c for c in S.ALL + [S.Scalp10] + C.ALL + LIB.ALL}
 FAST_WARMUP_DAYS = 30
 _SAFE_ID = re.compile(r"^pb_[a-z0-9_]{1,60}$")
 
@@ -162,9 +163,14 @@ def _cfg(book):
 def _variants(markets, book, params):
     if book["cls"] is C.WeeklyStrengthRotation:
         coord = C.RotationCoordinator(markets, params.get("lookback", 90))
-        return {s: [book["cls"](m, coordinator=coord, **params)] for s, m in markets.items()}
-    p = dict(book.get("extra", {}), **params)
-    return {s: [book["cls"](m, **p)] for s, m in markets.items()}
+        out = {s: [book["cls"](m, coordinator=coord, **params)] for s, m in markets.items()}
+    else:
+        p = dict(book.get("extra", {}), **params)
+        out = {s: [book["cls"](m, **p)] for s, m in markets.items()}
+    if book.get("skip"):  # an improved version from tradedesk/study.py: same rules, skips some conditions
+        from .study import Filtered
+        out = {s: [Filtered(v[0], book["skip"], s)] for s, v in out.items()}
+    return out
 
 
 def _state(pdir, now, rules, active):

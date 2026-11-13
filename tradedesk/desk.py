@@ -127,6 +127,33 @@ class Desk:
             except Exception as e:
                 self.j.event("error", "paper update (fast) failed: %s" % str(e)[:300])
         self.maybe_rotate(t)
+        self.maybe_study(t)
+
+    def maybe_study(self, t):
+        """Once a day: study why the paper accounts win or lose (tradedesk/study.py), in its own process."""
+        from . import study as ST
+        proc = getattr(self, "_study_proc", None)
+        if proc is not None and proc.poll() is None:
+            return
+        self._study_proc = None
+        if getattr(self, "_rot_proc", None) is not None:
+            return  # the weekly run studies first anyway
+        last = getattr(self, "_study_t", None)
+        if last is None:
+            st = ST.load(self.dir)
+            last = st["t"] if st else 0
+        if t - last < 86400:
+            self._study_t = last
+            return
+        self._study_t = t
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        flags = 0x08000000 if os.name == "nt" else 0
+        with open(os.path.join(self.dir, "paper", "study.log"), "a", encoding="utf-8") as out:
+            out.write("\n==== %s\n" % time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime(t)))
+            out.flush()
+            self._study_proc = subprocess.Popen(
+                [sys.executable, "-m", "tradedesk", "study", "--state", os.path.abspath(self.dir)],
+                cwd=root, stdout=out, stderr=subprocess.STDOUT, creationflags=flags)
 
     def maybe_rotate(self, t):
         """Weekly paper shake-up (tradedesk/rotation.py) in its own process, so the desk never waits on it.

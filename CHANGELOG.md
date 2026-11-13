@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-13: study and improve
+- `tradedesk/study.py`: tags every paper trade with its market context (session, weekday, trend, volatility,
+  coin, side), reports where each account makes and loses money, and builds improved versions of winning
+  accounts (one setting changed, or skipping a losing group), judged on data the parent never paper-traded.
+- The weekly run studies first; qualified improvements compete for open slots as "v2" accounts.
+- Only losing accounts can be cut. Family memory now counts running accounts too.
+- `tradedesk/library.py` and `research/strategy_bank/` for researched strategies; `python -m tradedesk study`.
+
 ## 2026-11-09: weekly paper shake-up
 - `tradedesk/rotation.py`: every Monday the desk ranks the paper accounts, retires the bottom three
   (after a 6-day fast / 27-day slow trial; the $50 pilot mirror is protected), tests up to three

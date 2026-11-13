@@ -1,6 +1,6 @@
 ---
 name: trading-rotation
-description: The weekly paper shake-up. Every week the paper accounts are ranked, the bottom three are retired and three new strategies, picked by testing candidates on recent data plus what earlier paper accounts taught, start as fresh paper accounts. Use when the user says "knock out the worst strategies", "replace the losers", "rotate strategies", "shake up the accounts", "which strategies got cut", "what did it learn this week", or asks why an account disappeared.
+description: The weekly paper shake-up and the study loop. Every day the paper accounts are studied (where each one makes and loses money, and improved versions of the winners). Every week losing accounts are retired and three new strategies, picked by testing candidates on recent data plus what earlier paper accounts taught, start as fresh paper accounts. Use when the user says "knock out the worst strategies", "replace the losers", "rotate strategies", "shake up the accounts", "which strategies got cut", "what did it learn this week", "why is this strategy winning", "improve the winners", "add these strategies", or asks why an account disappeared.
 ---
 
 # Weekly paper shake-up
@@ -17,8 +17,31 @@ winter, 10 AM in summer). If the PC was asleep, it runs the next time the desk i
 - Files: `state/paper/rotation.json` (memory and run history), `state/paper/rotation.log` (each run's output),
   `state/paper/retired/` (every retired account, kept in full), `state/paper/roster.json` (accounts running now).
 
+## Study and improve (tradedesk/study.py)
+Runs once a day from the desk (`python -m tradedesk study`) and again at the start of every weekly run.
+- **Why accounts win or lose.** Every closed paper trade is tagged with its market context, using only data
+  known at the signal: session (Asia, Europe, US, late US), weekday or weekend, with or against the 1-hour
+  trend, calm/normal/jumpy volatility, coin and side. For accounts with 8+ closed trades it reports the group
+  that made the most and the group that lost the most (`state/paper/study.json`, and on the phone).
+- **Improved versions of winners.** For each account that is up, it builds challengers:
+  one setting changed (from the strategy's grid), or the same rules skipping a group where its paper trades
+  lost money. Each challenger is judged against its parent on the period BEFORE the parent started paper
+  trading, so an idea found in the paper trades is never scored on those same trades. It qualifies only if it
+  beats the parent by 1 score point and, for a filter, keeps 60% of the trades.
+- **Running accounts never change.** A qualified challenger becomes a candidate called "<parent> v2" in the
+  next weekly run, competing on the same recent test as everyone else. Parent and v2 then run side by side on
+  paper, which is the real test of the improvement.
+- **Family memory learns from winners too.** A family's score now includes its accounts running now
+  (2+ days old), not only the ones that were cut.
+
+## Strategy bank (tradedesk/library.py)
+New strategies from outside research go through `research/strategy_bank/README.md`: a written spec with
+exact rules, at most 3 parameters, the mechanism and a source. Claude codes usable specs as Strategy classes
+in `tradedesk/library.py` with `cadence = "fast"` or `"slow"`, adds unit tests, and they join the candidate
+pool. Specs that need data the desk lacks are parked, not faked.
+
 ## How one run decides
-1. **Rank.** An account can be cut only after its trial: 6 days for fast accounts, 27 days for slow ones
+1. **Rank.** Only losing accounts can be cut; a winner is never retired to fill the bottom three. An account can be cut only after its trial: 6 days for fast accounts, 27 days for slow ones
    (slow strategies trade a few times a month, so a week of them is noise). The score is the paper return
    since the account started. An account that hit its own 10% drawdown block ranks last.
 2. **Cut the bottom three.** The $50 pilot mirror is protected and never cut. Retired accounts move to
