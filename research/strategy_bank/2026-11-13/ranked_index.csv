@@ -1,0 +1,41 @@
+research_rank,name,family,cadence,markets,data_status,estimated_trades_per_week_per_coin,quality
+1,Daily ATR-stopped time-series momentum,trend,slow,"BTC, ETH, SOL",available,0.06 per coin (untested planning estimate),peer-reviewed
+2,Daily 20/60/120 return vote,momentum,slow,"BTC, ETH, SOL",available,0.06 per coin (untested planning estimate),peer-reviewed
+3,Four-hour Donchian 55 breakout,breakout,slow,"BTC, ETH, SOL",available,0.16 per coin (untested planning estimate),peer-reviewed
+4,EMA 50/200 hourly trend pullback,trend,slow,"BTC, ETH, SOL",available,1 per coin (untested planning estimate),peer-reviewed
+5,Four-timeframe SuperTrend confirmation,trend,fast,"BTC, ETH, SOL",available,1.5 per coin (untested planning estimate),peer-reviewed
+6,Daily 20/100 EMA cross with hold,trend,slow,"BTC, ETH, SOL",available,0.05 per coin (untested planning estimate),peer-reviewed
+7,Four-hour volume-confirmed Donchian,breakout,slow,"BTC, ETH, SOL",available,0.25 per coin (untested planning estimate),peer-reviewed
+8,Four-hour ATR trailing trend,trend,slow,"BTC, ETH, SOL",available,0.35 per coin (untested planning estimate),peer-reviewed
+9,Four-hour EMA50 reclaim,trend,slow,"BTC, ETH, SOL",available,0.6 per coin (untested planning estimate),peer-reviewed
+10,Hourly pullback RSI reset,trend,slow,"BTC, ETH, SOL",available,1.1 per coin (untested planning estimate),peer-reviewed
+11,Daily 20-day ROC with trend gate,momentum,slow,"BTC, ETH, SOL",available,0.15 per coin (untested planning estimate),peer-reviewed
+12,Weekly relative-strength leader,momentum,slow,"BTC, ETH, SOL",available,0.17 per coin (untested planning estimate),peer-reviewed
+13,Four-hour Bollinger squeeze expansion,volatility,slow,"BTC, ETH, SOL",available,0.32 per coin (untested planning estimate),peer-reviewed
+14,Hourly ATR expansion with 4h trend,volatility,slow,"BTC, ETH, SOL",available,1 per coin (untested planning estimate),peer-reviewed
+15,Fifteen-minute trend resumption with hourly gate,trend,fast,"BTC, ETH, SOL",available,2 per coin (untested planning estimate),peer-reviewed
+16,Hourly MACD with daily price gate,momentum,slow,"BTC, ETH, SOL",available,0.65 per coin (untested planning estimate),peer-reviewed
+17,Daily closing-range breakout,breakout,slow,"BTC, ETH, SOL",available,0.17 per coin (untested planning estimate),peer-reviewed
+18,Hourly ADX-gated trend crossing,trend,slow,"BTC, ETH, SOL",available,0.6 per coin (untested planning estimate),peer-reviewed
+19,Fifteen-minute range break with hourly EMA,breakout,fast,"BTC, ETH, SOL",available,2 per coin (untested planning estimate),peer-reviewed
+20,Five-minute impulse after hourly drift,momentum,fast,"BTC, ETH, SOL",available,1.6 per coin (untested planning estimate),peer-reviewed
+21,London/New York overlap range break,seasonality,fast,"BTC, ETH",available,1.1 per coin (untested planning estimate),peer-reviewed
+22,Weekday-only hourly EMA continuation,seasonality,slow,"BTC, ETH, SOL",available,0.5 per coin (untested planning estimate),peer-reviewed
+23,Three-coin breadth-gated hourly trend,trend,slow,"BTC, ETH, SOL",available,0.55 per coin (untested planning estimate),peer-reviewed
+24,Hourly price momentum with 4h volatility cap,volatility,slow,"BTC, ETH, SOL",available,0.55 per coin (untested planning estimate),peer-reviewed
+25,Daily tail-candle continuation,momentum,slow,"BTC, ETH, SOL",available,0.08 per coin (untested planning estimate),peer-reviewed
+26,Three-coin 7-day relative-strength spread,relative_value,slow,"BTC, ETH, SOL",available,0.4 per coin (untested planning estimate),none
+27,ETH/BTC ratio 4h breakout,relative_value,slow,"BTC, ETH",available,0.4 per coin (untested planning estimate),peer-reviewed
+28,SOL/ETH ratio 4h breakout,relative_value,slow,"SOL, ETH",available,0.3 per coin (untested planning estimate),peer-reviewed
+29,ETH/BTC rolling residual reversion,relative_value,slow,"ETH, BTC",available,0.35 per coin (untested planning estimate),peer-reviewed
+30,Weekend 4h compression break,seasonality,slow,"BTC, ETH, SOL",available,0.2 per coin (untested planning estimate),peer-reviewed
+31,Hourly RSI2 dip with daily trend,mean_reversion,slow,"BTC, ETH, SOL",available,1 per coin (untested planning estimate),peer-reviewed
+32,US-hour 4h follow-through,seasonality,slow,"BTC, ETH",available,1.4 per coin (untested planning estimate),peer-reviewed
+33,Five-minute high-volume range break,breakout,fast,"BTC, ETH, SOL",available,1.6 per coin (untested planning estimate),peer-reviewed
+34,Month-boundary daily continuation,seasonality,slow,"BTC, ETH, SOL",available,0.08 per coin (untested planning estimate),none
+35,Funding-extreme 4h trend filter,trend,slow,"BTC, ETH, SOL",parked,0.25 per coin (untested planning estimate),practitioner
+36,Open-interest supported 4h breakout,breakout,slow,"BTC, ETH, SOL",parked,0.3 per coin (untested planning estimate),anecdotal
+37,Extreme funding contrarian 1h,mean_reversion,slow,"BTC, ETH, SOL",parked,0.15 per coin (untested planning estimate),anecdotal
+38,Liquidation-shock hourly rebound,mean_reversion,slow,"BTC, ETH, SOL",parked,0.1 per coin (untested planning estimate),anecdotal
+39,On-chain valuation with daily momentum,momentum,slow,"BTC, ETH",parked,0.06 per coin (untested planning estimate),anecdotal
+40,Post-FOMC hourly price continuation,other,slow,"BTC, ETH",parked,0.01 per coin (untested planning estimate),none

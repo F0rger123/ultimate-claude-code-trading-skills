@@ -46,3 +46,21 @@ One entry per strategy, in this shape (JSON or the same fields as a list):
 - 5-minute and 15-minute setups lose to costs in backtests unless they trade rarely.
 - A 10-minute scalper lost to fees on paper in under a day (159 trades, -1.6%).
 - `tradedesk/study.py` writes `state/paper/study.json`: where each paper account makes and loses money.
+
+## Batch 2026-11-13 (ChatGPT deep research, files in `2026-11-13/`)
+40 designed strategies plus 10 one-change improvements for the two early winners. The research did not
+backtest them; it says so itself.
+- **Coded (26):** in `tradedesk/library.py`, all OHLCV-only single-coin rules. Tests check each runs and
+  never looks ahead (`tests/test_library.py`). They now compete in the weekly shake-up.
+- **Improvements (10):** added as switches on the running winners (`improve` on `EMAPullback` and
+  `MTFQuick`: ADX gate, ATR floor, daily trend agreement, longer target, weekday-only, delayed exit,
+  higher volume). All off by default, so running accounts are unchanged (verified: identical replay). The
+  daily study tests them as "v2" challengers; SOL-only comes from the study's coin filter.
+- **Parked:** pair trades ETH/BTC breakout, SOL/ETH breakout, ETH/BTC residual reversion and the 3-coin
+  spread (the engine trades one coin at a time); 3-coin breadth gate (needs cross-coin state);
+  duplicates of running strategies (4h Donchian 55, weekly strength leader, 4-timeframe SuperTrend); and
+  the six that need funding, open interest, liquidation, on-chain or FOMC data.
+- **First look on real data (2026-11-13, same test as the shake-up, defaults only):** daily momentum
+  with ATR stop +15.8% (26 trades, worst drop 3.1%) and the 20/60/120 return vote +15.5% (33 trades,
+  2.6%) over 365 days led; most hourly, 15-minute and 5-minute rules lost. Picking the best of 26 after the
+  fact flatters the winners: this is a lead for paper, not evidence of an edge.

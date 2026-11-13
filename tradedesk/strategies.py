@@ -61,6 +61,40 @@ class Strategy:
             "volume_ratio": None if not va[i] else round(m.b.v[i] / va[i], 2),
         }
 
+    def gates_ok(self, i, side, tf):
+        """Optional entry gates from the research bank's winner improvements. Each is off unless its
+        parameter is set: adx_min (Wilder ADX14 on tf), min_atr_frac (ATR14/close on tf),
+        daily_fast_ema (daily EMA n above/below daily EMA50 in the trade's direction), weekday_only
+        (Monday 00:00 to Friday 16:00 New York, winter offset)."""
+        p, m = self.p, self.m
+        if p.get("adx_min"):
+            f = m.frame(tf)
+            a = f.memo(("adx", 14), lambda: I.adx(f.h, f.l, f.c, 14))[0]
+            x = m.at(tf, a, i)
+            if x is None or x < p["adx_min"]:
+                return False
+        if p.get("min_atr_frac"):
+            f = m.frame(tf)
+            a = self.atr_tf(tf)
+            x, c = m.at(tf, a, i), m.at(tf, f.c, i)
+            if not x or not c or x / c < p["min_atr_frac"]:
+                return False
+        if p.get("daily_fast_ema"):
+            f = m.frame(86400)
+            n = p["daily_fast_ema"]
+            ef = f.memo(("ema", n), lambda: I.ema(f.c, n))
+            es = f.memo(("ema", 50), lambda: I.ema(f.c, 50))
+            x, y = m.at(86400, ef, i), m.at(86400, es, i)
+            if x is None or y is None or (x - y) * side <= 0:
+                return False
+        if p.get("weekday_only"):
+            t = m.b.t[i] + m.base
+            wd, h = (t // 86400 + 3) % 7, (t % 86400) / 3600.0
+            cut = p.get("friday_cutoff_utc", 21)
+            if not ((wd == 0 and h >= 5) or wd in (1, 2, 3) or (wd == 4 and h < cut)):
+                return False
+        return True
+
     def atr_tf(self, gran, n=14):
         f = self.m.frame(gran)
         return f.memo(("atr", n), lambda: I.atr(f.h, f.l, f.c, n))
@@ -73,8 +107,11 @@ class MTFQuick(Strategy):
     name = "4-TF alignment (quick)"
     family = "owner"
     source = "Owner's TradingView method; SuperTrend stands in for the unnamed indicator"
-    defaults = {"kind": "supertrend", "st_n": 10, "st_mult": 3.0, "vol_k": 1.0, "stop_atr": 1.5}
+    defaults = {"kind": "supertrend", "st_n": 10, "st_mult": 3.0, "vol_k": 1.0, "stop_atr": 1.5,
+                "adx_min": 0, "weekday_only": 0, "exit_confirm": 1}
     grid = {"st_mult": [2.0, 3.0], "vol_k": [0.0, 1.2], "stop_atr": [1.5, 2.5]}
+    # one-change improvements the study may test as "v2" (research bank 2026-11-13); never the defaults
+    improve = {"adx_min": [20, 25, 30], "weekday_only": [1], "exit_confirm": [2, 3], "vol_k": [1.3, 1.5, 1.8]}
     tfs = (H1, M30, M15, M5)
 
     def prepare(self):
@@ -103,14 +140,20 @@ class MTFQuick(Strategy):
         if self.p["vol_k"] > 0 and (not self.vavg[i] or self.m.b.v[i] < self.p["vol_k"] * self.vavg[i]):
             return None
         a = self.m.at(M15, self.a15, i)
-        if not a:
+        if not a or not self.gates_ok(i, s, H1):
             return None
         c = self.m.b.c[i]
         return {"side": s, "stop": c - s * self.p["stop_atr"] * a, "target": None}
 
     def exit(self, i, pos):
-        d = self.m.at(M15, self.sig[M15], i)
-        return d is not None and d != pos["side"]
+        n = int(self.p.get("exit_confirm", 1) or 1)
+        if n <= 1:
+            d = self.m.at(M15, self.sig[M15], i)
+            return d is not None and d != pos["side"]
+        j = self.m.maps[M15][i]  # exit only after n consecutive closed 15m bars against the position
+        if j < n - 1:
+            return False
+        return all(self.sig[M15][j - k] is not None and self.sig[M15][j - k] != pos["side"] for k in range(n))
 
     def features(self, i):
         f = Strategy.features(self, i)
@@ -213,8 +256,12 @@ class EMAPullback(Strategy):
     name = "EMA pullback"
     family = "trend"
     source = "Common day-trader pullback setup"
-    defaults = {"stop_atr": 1.5, "tgt_r": 2.0, "tf": M15}
+    defaults = {"stop_atr": 1.5, "tgt_r": 2.0, "tf": M15,
+                "adx_min": 0, "min_atr_frac": 0, "daily_fast_ema": 0, "weekday_only": 0}
     grid = {"stop_atr": [1.0, 2.0], "tgt_r": [1.5, 2.5]}
+    # one-change improvements the study may test as "v2" (research bank 2026-11-13); never the defaults
+    improve = {"adx_min": [20, 25, 30], "min_atr_frac": [0.003, 0.0035, 0.0045], "daily_fast_ema": [15, 20, 25],
+               "tgt_r": [2.5, 3.0, 3.5], "weekday_only": [1]}
     max_bars = 288
 
     def prepare(self):
@@ -240,7 +287,7 @@ class EMAPullback(Strategy):
             side = 1
         elif not up and f.h[j] >= e20 > f.c[j] and f.c[j] < f.o[j]:
             side = -1
-        if not side:
+        if not side or not self.gates_ok(i, side, self.tf):
             return None
         c = f.c[j]
         risk = self.p["stop_atr"] * self.a[j]

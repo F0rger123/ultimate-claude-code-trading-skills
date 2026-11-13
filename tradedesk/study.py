@@ -68,7 +68,7 @@ def context(m, i, side, sym):
     x50, x200, r = m.at(H1, e50, i), m.at(H1, e200, i), m.at(H1, rk, i)
     return {
         "session": "asia" if hr < 8 else "europe" if hr < 13 else "us" if hr < 21 else "late",
-        "day": "weekend" if (t // DAY + 4) % 7 >= 5 else "weekday",
+        "day": "weekend" if (t // DAY + 3) % 7 >= 5 else "weekday",  # 0 = Monday
         "trend": None if x50 is None or x200 is None else ("with" if (x50 > x200) == (side == 1) else "against"),
         "volatility": None if r is None else ("low" if r < 0.33 else "mid" if r < 0.67 else "high"),
         "coin": sym,
@@ -201,12 +201,14 @@ def challengers(spec, bk, tagged, markets, window_days, log=print):
         return [], parent
     out = []
     # neighbours: one setting changed
-    grid = getattr(cls, "grid", {}) or {}
+    grid = {k: list(v) for k, v in (getattr(cls, "grid", {}) or {}).items()}
+    for k, vs in (getattr(cls, "improve", {}) or {}).items():  # researched one-change improvements
+        grid[k] = list(dict.fromkeys(grid.get(k, []) + list(vs)))
     full = dict(getattr(cls, "defaults", {}), **params)
-    n = 0
+    n, cap = 0, MAX_NEIGHBOURS + 2 * len(getattr(cls, "improve", {}) or {})
     for k in sorted(grid):
         for v in grid[k]:
-            if full.get(k) == v or n >= MAX_NEIGHBOURS:
+            if full.get(k) == v or n >= cap:
                 continue
             p2 = dict(params, **{k: v})
             s = _score(cls, p2, cadence, markets, start, end, base_skip)

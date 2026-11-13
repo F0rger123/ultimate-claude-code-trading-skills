@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-13: strategy bank, first batch
+- `tradedesk/library.py`: 26 researched strategies (daily momentum, 4h breakouts and trails, hourly pullbacks,
+  volatility and seasonality rules, 15m/5m breakouts), untested until the desk tests them; they join the
+  weekly shake-up pool. Pair trades and data-dependent ideas are parked.
+- Winner improvements as off-by-default switches on EMA pullback and 4-timeframe alignment; the study tests
+  them as v2 challengers.
+- `indicators.py`: ADX, MACD. Fix: the study's weekday tag counted Fridays as weekends.
+
 ## 2026-11-13: study and improve
 - `tradedesk/study.py`: tags every paper trade with its market context (session, weekday, trend, volatility,
   coin, side), reports where each account makes and loses money, and builds improved versions of winning

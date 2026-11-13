@@ -159,3 +159,57 @@ def percentile_rank(xs, n):
         if w:
             out[i] = sum(1 for x in w if x <= xs[i]) / len(w)
     return out
+
+
+def ema_from(xs, n):
+    """EMA of a series whose first values may be None (seeded with the first n defined values)."""
+    out = [None] * len(xs)
+    start = next((i for i, x in enumerate(xs) if x is not None), None)
+    if start is None:
+        return out
+    sub = ema(xs[start:], n)
+    out[start:] = sub
+    return out
+
+
+def macd(c, fast=12, slow=26, sig=9):
+    """MACD line (EMA fast - EMA slow), its EMA signal line, and the histogram."""
+    f, s = ema(c, fast), ema(c, slow)
+    line = [None if a is None or b is None else a - b for a, b in zip(f, s)]
+    signal = ema_from(line, sig)
+    hist = [None if a is None or b is None else a - b for a, b in zip(line, signal)]
+    return line, signal, hist
+
+
+def adx(h, l, c, n=14):
+    """Wilder ADX with +DI and -DI."""
+    size = len(c)
+    pdi, mdi, out = [None] * size, [None] * size, [None] * size
+    if size <= 2 * n:
+        return out, pdi, mdi
+    tr = true_range(h, l, c)
+    pdm = [0.0] + [max(h[i] - h[i - 1], 0.0) if h[i] - h[i - 1] > l[i - 1] - l[i] else 0.0 for i in range(1, size)]
+    mdm = [0.0] + [max(l[i - 1] - l[i], 0.0) if l[i - 1] - l[i] > h[i] - h[i - 1] else 0.0 for i in range(1, size)]
+    str_, sp, sm = sum(tr[1:n + 1]), sum(pdm[1:n + 1]), sum(mdm[1:n + 1])
+    dx = [None] * size
+    for i in range(n, size):
+        if i > n:
+            str_ = str_ - str_ / n + tr[i]
+            sp = sp - sp / n + pdm[i]
+            sm = sm - sm / n + mdm[i]
+        if str_ <= 0:
+            continue
+        p, m = 100.0 * sp / str_, 100.0 * sm / str_
+        pdi[i], mdi[i] = p, m
+        dx[i] = 0.0 if p + m == 0 else 100.0 * abs(p - m) / (p + m)
+    a = None
+    for i in range(2 * n - 1, size):
+        if a is None:
+            vals = [x for x in dx[n:2 * n] if x is not None]
+            if len(vals) < n:
+                continue
+            a = sum(vals) / n
+        else:
+            a = (a * (n - 1) + (dx[i] or 0.0)) / n
+        out[i] = a
+    return out, pdi, mdi

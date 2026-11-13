@@ -1,0 +1,1655 @@
+[
+  {
+    "name": "Daily ATR-stopped time-series momentum",
+    "family": "trend",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At completed 00:00 UTC daily close, if C[d]/C[d-60]>1 and C[d]>SMA200(daily close), enter long next hourly open; one position per coin.",
+    "entry_short": "At daily close if C[d]/C[d-60]<1 and C[d]<SMA200(daily close), enter short next hourly open.",
+    "exit": "Exit next hourly open after daily momentum changes sign or after 30 completed days; no same-bar reversal.",
+    "stop": "At entry place stop 3.0*ATR14(daily) from entry; never widen; stop executes on real price path.",
+    "target": "none",
+    "params": {
+      "momentum_days": [
+        40,
+        60,
+        90
+      ],
+      "atr_stop_mult": [
+        2.5,
+        3.0,
+        3.5
+      ]
+    },
+    "expected_trades_per_week": "0.06 per coin (untested planning estimate)",
+    "why_it_should_work": "Underreaction may let large directional moves persist across weeks. ATR-defined stops adapt dollar risk to recent volatility. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      },
+      {
+        "source": "Time series momentum (Moskowitz, Ooi & Pedersen, 2012)",
+        "url": "https://doi.org/10.1016/j.jfineco.2011.11.003",
+        "what_it_found": "Documents multi-month momentum in traditional liquid futures, not these crypto-specific rules."
+      },
+      {
+        "source": "Volatility-Managed Portfolios (Moreira & Muir, 2017)",
+        "url": "https://doi.org/10.1111/jofi.12513",
+        "what_it_found": "Volatility scaling improved factor portfolios in conventional assets; does not validate a crypto trading signal."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Sideways months, sudden trend reversals, or long funding drag.",
+    "cost_sensitivity": "low: low turnover, but funding over weeks can dominate the fee; estimate per trade after carry",
+    "overlap_with": "none"
+  },
+  {
+    "name": "Daily 20/60/120 return vote",
+    "family": "momentum",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At daily close compute r20=C/C[-20]-1, r60=C/C[-60]-1, r120=C/C[-120]-1; enter long if at least 2 of 3 >0 and daily C>SMA200.",
+    "entry_short": "Enter short if at least 2 of 3 <0 and daily C<SMA200.",
+    "exit": "Exit at next hourly open when vote drops below 2 in position direction; maximum hold 45 days.",
+    "stop": "Initial stop 3.0*ATR14(daily); trail stop to max(previous stop, just-closed daily close-3*ATR14(daily)) for long, min(previous stop, just-closed daily close+3*ATR14(daily)) for short, each daily close.",
+    "target": "none",
+    "params": {
+      "votes_required": [
+        2,
+        3
+      ],
+      "trail_atr_mult": [
+        2.5,
+        3.0,
+        3.5
+      ]
+    },
+    "expected_trades_per_week": "0.06 per coin (untested planning estimate)",
+    "why_it_should_work": "Agreement among horizons may reduce reliance on a single noisy signal. Letting strong winners run is consistent with time-series momentum research. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      },
+      {
+        "source": "Time series momentum (Moskowitz, Ooi & Pedersen, 2012)",
+        "url": "https://doi.org/10.1016/j.jfineco.2011.11.003",
+        "what_it_found": "Documents multi-month momentum in traditional liquid futures, not these crypto-specific rules."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Alternating 20-day reversals or lagging signals after a crash.",
+    "cost_sensitivity": "low: long holds reduce fee turnover; hourly carry matters",
+    "overlap_with": "none"
+  },
+  {
+    "name": "Four-hour Donchian 55 breakout",
+    "family": "breakout",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "On closed 4h bar enter long if C4h > max(high of preceding 55 completed 4h bars) and C4h>EMA200(4h).",
+    "entry_short": "On closed 4h bar enter short if C4h < min(low of preceding 55 completed 4h bars) and C4h<EMA200(4h).",
+    "exit": "Exit at next 1h open after 4h close passes opposite 20-bar Donchian exit boundary; maximum hold 40 days.",
+    "stop": "Initial 3*ATR14(4h) stop; once per 4h close trail at best high since entry-3*ATR14 for long (lowest low+3*ATR14 for short), never loosen.",
+    "target": "none",
+    "params": {
+      "entry_lookback_4h": [
+        40,
+        55,
+        70
+      ],
+      "exit_lookback_4h": [
+        15,
+        20,
+        30
+      ]
+    },
+    "expected_trades_per_week": "0.16 per coin (untested planning estimate)",
+    "why_it_should_work": "Price channels enter only after a multi-day range breaks. In a persistent crypto trend, a few large follow-through moves could outweigh many stopped-out signals. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      },
+      {
+        "source": "Technical trading rules in the cryptocurrency market (2020)",
+        "url": "https://doi.org/10.1016/j.frl.2019.101396",
+        "what_it_found": "Finds a daily 20-day moving-average rule effective in an earlier 2016–2018 sample; costs and regime transfer remain uncertain."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Repeated range break fakes, crashes, insufficient trend after break.",
+    "cost_sensitivity": "low: occasional trades but stop-outs and carry remain meaningful",
+    "overlap_with": "none"
+  },
+  {
+    "name": "EMA 50/200 hourly trend pullback",
+    "family": "trend",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At 1h close, require EMA50>EMA200 and EMA50[t]>EMA50[t-4]; prior close[t-1]<=EMA50[t-1] and current C[t]>EMA50[t]; enter long next hourly open.",
+    "entry_short": "EMA50<EMA200 and EMA50[t]<EMA50[t-4]; prior close[t-1]>=EMA50[t-1] and current C[t]<EMA50[t]; enter short next hourly open.",
+    "exit": "Exit at a 2R limit or if hourly close crosses back below EMA50 for long (above for short), next hour; expire after 72 hours.",
+    "stop": "Initial 2.5*ATR14(1h) stop based on entry price; one position per coin.",
+    "target": "2R from entry price using initial stop distance",
+    "params": {
+      "ema_fast": [
+        34,
+        50,
+        65
+      ],
+      "stop_atr_mult": [
+        2.0,
+        2.5,
+        3.0
+      ]
+    },
+    "expected_trades_per_week": "1 per coin (untested planning estimate)",
+    "why_it_should_work": "Pullbacks may provide entry after a pause in an established directional move. Requiring a reclaim rather than buying a falling bar could reduce premature entries. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      },
+      {
+        "source": "Technical trading rules in the cryptocurrency market (2020)",
+        "url": "https://doi.org/10.1016/j.frl.2019.101396",
+        "what_it_found": "Finds a daily 20-day moving-average rule effective in an earlier 2016–2018 sample; costs and regime transfer remain uncertain."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "EMA crossovers whipsaw, shallow trend follow-through, and short holding relative to costs.",
+    "cost_sensitivity": "medium: 0.16% is relevant for frequent hourly flips",
+    "overlap_with": "none"
+  },
+  {
+    "name": "Four-timeframe SuperTrend confirmation",
+    "family": "trend",
+    "cadence": "fast",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "On completed 5m bar enter long if SuperTrend(ATR10,multiplier 3) is bullish on the latest completed 1h,30m,15m,5m bars and 5m V>SMA20(5m volume).",
+    "entry_short": "Enter short if all four SuperTrends bearish and 5m V>SMA20(5m volume).",
+    "exit": "Exit next 5m open after the most recently completed 15m SuperTrend flips against position; maximum hold 24 hours.",
+    "stop": "Stop 2.5*ATR14(15m) from fill, fixed until exit.",
+    "target": "none",
+    "params": {
+      "st_mult": [
+        2.5,
+        3.0,
+        3.5
+      ],
+      "volume_ratio": [
+        1.0,
+        1.3,
+        1.6
+      ]
+    },
+    "expected_trades_per_week": "1.5 per coin (untested planning estimate)",
+    "why_it_should_work": "Agreement may isolate short signals within a larger persistent trend. Occasional large moves could outweigh false starts if exits permit enough room. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Bitcoin intraday time series momentum (2022)",
+        "url": "https://doi.org/10.1111/fire.12290",
+        "what_it_found": "Reports intraday BTC momentum conditional on high-volume or high-volatility sessions; different execution assumptions."
+      },
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Flip clusters during noisy sideways action, low-liquidity weekends.",
+    "cost_sensitivity": "high: fast entries and small intraday edges face 0.16% round trip",
+    "overlap_with": "EMA 50/200 hourly trend pullback"
+  },
+  {
+    "name": "Daily 20/100 EMA cross with hold",
+    "family": "trend",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At daily close enter long if EMA20 crosses above EMA100, and daily C>SMA200; ignore repeated same-direction closes.",
+    "entry_short": "At daily close enter short if EMA20 crosses below EMA100 and daily C<SMA200.",
+    "exit": "Exit after cross back in opposite direction or 60 completed days, at next hourly open.",
+    "stop": "Initial stop 3.5*ATR14(daily) from entry; trail once per day at EMA20(daily) only if it tightens.",
+    "target": "none",
+    "params": {
+      "ema_fast": [
+        15,
+        20,
+        30
+      ],
+      "ema_slow": [
+        80,
+        100,
+        120
+      ]
+    },
+    "expected_trades_per_week": "0.05 per coin (untested planning estimate)",
+    "why_it_should_work": "Medium-run trend continuation is the intended payoff. Infrequent signals trade away rapid responsiveness for a larger potential move relative to fees. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      },
+      {
+        "source": "Technical trading rules in the cryptocurrency market (2020)",
+        "url": "https://doi.org/10.1016/j.frl.2019.101396",
+        "what_it_found": "Finds a daily 20-day moving-average rule effective in an earlier 2016–2018 sample; costs and regime transfer remain uncertain."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Crossovers lag at cycle ends and frequent re-crosses occur in range markets.",
+    "cost_sensitivity": "low: few executions; long duration incurs funding",
+    "overlap_with": "Daily ATR-stopped time-series momentum"
+  },
+  {
+    "name": "Four-hour volume-confirmed Donchian",
+    "family": "breakout",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At 4h close, if close>highest high of prior 30 completed 4h bars, volume>1.5*SMA20(4h volume), and EMA50(4h)>EMA200(4h), long.",
+    "entry_short": "If close<lowest low of prior 30 bars, volume>1.5*SMA20(4h volume), and EMA50<EMA200, short.",
+    "exit": "Exit long when a completed 4h close is below the lowest low of the 10 4h bars strictly preceding that close; exit short when close is above the prior 10-bar highest high. Exit at next available 1h open, or after 21 days.",
+    "stop": "Initial stop 2.8*ATR14(4h) from filled entry; after each completed 4h close trail at (highest high of 10 preceding bars + lowest low of 10 preceding bars)/2, only if this tightens.",
+    "target": "none",
+    "params": {
+      "breakout_lookback": [
+        20,
+        30,
+        40
+      ],
+      "volume_ratio": [
+        1.2,
+        1.5,
+        1.8
+      ]
+    },
+    "expected_trades_per_week": "0.25 per coin (untested planning estimate)",
+    "why_it_should_work": "High-volume price discovery may give a range break more persistent follow-through. Trend filtering aims to avoid fighting the prevailing direction. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Technical trading rules in the cryptocurrency market (2020)",
+        "url": "https://doi.org/10.1016/j.frl.2019.101396",
+        "what_it_found": "Finds a daily 20-day moving-average rule effective in an earlier 2016–2018 sample; costs and regime transfer remain uncertain."
+      },
+      {
+        "source": "Bitcoin intraday time series momentum (2022)",
+        "url": "https://doi.org/10.1111/fire.12290",
+        "what_it_found": "Reports intraday BTC momentum conditional on high-volume or high-volatility sessions; different execution assumptions."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Volume spikes mark exhaustion, breakout lacks continuation.",
+    "cost_sensitivity": "medium: relatively infrequent but many false entries can accumulate",
+    "overlap_with": "Four-hour Donchian 55 breakout"
+  },
+  {
+    "name": "Four-hour ATR trailing trend",
+    "family": "trend",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At 4h close enter long when C4h>EMA100(4h), EMA100[t]>EMA100[t-6], and 4h close crosses above highest close of prior 10 4h bars.",
+    "entry_short": "Short when C4h<EMA100, EMA100[t]<EMA100[t-6], and close crosses below lowest close of prior 10 4h bars.",
+    "exit": "Exit only at stop or when C4h crosses EMA100 against position; max 30 days.",
+    "stop": "At 4h close trail a Chandelier stop of highest high since entry-3*ATR14(4h) for long or lowest low+3*ATR14 for short; initial same distance.",
+    "target": "none",
+    "params": {
+      "trail_atr_mult": [
+        2.5,
+        3.0,
+        3.5
+      ],
+      "new_close_lookback": [
+        8,
+        10,
+        16
+      ]
+    },
+    "expected_trades_per_week": "0.35 per coin (untested planning estimate)",
+    "why_it_should_work": "Trailing stops turn sparse trend profits into possible right-tail payoffs. Adaptive range size can reduce stop clustering when volatility expands. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      },
+      {
+        "source": "Volatility-Managed Portfolios (Moreira & Muir, 2017)",
+        "url": "https://doi.org/10.1111/jofi.12513",
+        "what_it_found": "Volatility scaling improved factor portfolios in conventional assets; does not validate a crypto trading signal."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Sharp reversals and small oscillatory trends trigger repeated stops.",
+    "cost_sensitivity": "medium: modest turnover; trend length and carry determine net viability",
+    "overlap_with": "Four-hour Donchian 55 breakout"
+  },
+  {
+    "name": "Four-hour EMA50 reclaim",
+    "family": "trend",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At completed 4h close, require EMA50(4h)>EMA200(4h); prior C<EMA50, current C>EMA50 and low of current 4h bar<=EMA50; long.",
+    "entry_short": "Require EMA50<EMA200; prior C>EMA50, current C<EMA50 and high>=EMA50; short.",
+    "exit": "Exit when 4h close crosses EMA50 against position or 12 completed 4h bars after entry.",
+    "stop": "Stop 2.5*ATR14(4h) from fill.",
+    "target": "Target 3R from fill.",
+    "params": {
+      "ema_pullback": [
+        34,
+        50,
+        65
+      ],
+      "hold_4h_bars": [
+        12,
+        18,
+        24
+      ]
+    },
+    "expected_trades_per_week": "0.6 per coin (untested planning estimate)",
+    "why_it_should_work": "A moving-average reclaim attempts to buy continuation after a temporary retracement. Longer bars may filter noise present in five-minute reclaims. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Technical trading rules in the cryptocurrency market (2020)",
+        "url": "https://doi.org/10.1016/j.frl.2019.101396",
+        "what_it_found": "Finds a daily 20-day moving-average rule effective in an earlier 2016–2018 sample; costs and regime transfer remain uncertain."
+      },
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Trend loses momentum after reclaim and tight range recrossing.",
+    "cost_sensitivity": "medium: target distance may be ample but repeated false signals hurt",
+    "overlap_with": "EMA 50/200 hourly trend pullback"
+  },
+  {
+    "name": "Hourly pullback RSI reset",
+    "family": "trend",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "On 1h close, EMA50>EMA200 and RSI14 crosses upward through 45 after being <=45 on preceding bar, and C>EMA50; long.",
+    "entry_short": "EMA50<EMA200 and RSI14 crosses downward through 55 after being >=55 on preceding bar, and C<EMA50; short.",
+    "exit": "Exit when RSI14 reaches 70 long / 30 short or after 48 completed 1h bars, whichever first.",
+    "stop": "Initial stop 2.8*ATR14(1h) from fill.",
+    "target": "Target 2R from fill.",
+    "params": {
+      "rsi_long_reentry": [
+        40,
+        45,
+        50
+      ],
+      "rsi_short_reentry": [
+        50,
+        55,
+        60
+      ]
+    },
+    "expected_trades_per_week": "1.1 per coin (untested planning estimate)",
+    "why_it_should_work": "RSI can mark a temporary loss of momentum without abandoning the larger trend. Waiting for RSI recovery aims to distinguish pause from accelerating decline. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      },
+      {
+        "source": "Technical trading rules in the cryptocurrency market (2020)",
+        "url": "https://doi.org/10.1016/j.frl.2019.101396",
+        "what_it_found": "Finds a daily 20-day moving-average rule effective in an earlier 2016–2018 sample; costs and regime transfer remain uncertain."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Persistent downtrends, early RSI exits, or RSI bouncing in congestion.",
+    "cost_sensitivity": "medium: hourly trade frequency exposes the strategy to fees",
+    "overlap_with": "EMA 50/200 hourly trend pullback"
+  },
+  {
+    "name": "Daily 20-day ROC with trend gate",
+    "family": "momentum",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "Daily close: ROC20=(C/C[-20]-1); long if ROC20>+0.04 and C>EMA100(daily) and prior ROC20<=+0.04.",
+    "entry_short": "Short if ROC20<-0.04 and C<EMA100 and prior ROC20>=-0.04.",
+    "exit": "Exit if ROC20 changes sign or 25 daily candles elapse.",
+    "stop": "Initial stop 3*ATR14(daily), fixed.",
+    "target": "none",
+    "params": {
+      "roc_days": [
+        20,
+        30,
+        40
+      ],
+      "roc_threshold": [
+        0.03,
+        0.04,
+        0.06
+      ]
+    },
+    "expected_trades_per_week": "0.15 per coin (untested planning estimate)",
+    "why_it_should_work": "A significant recent price move can indicate repricing that extends beyond one day. A slow EMA filter tries to exclude opposite-regime bounces. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      },
+      {
+        "source": "Up or down? Short-term reversal, momentum, and liquidity effects in cryptocurrency markets (Zaremba et al., 2021)",
+        "url": "https://doi.org/10.1016/j.irfa.2021.101908",
+        "what_it_found": "Large illiquid coins show daily reversal, while the most liquid major coins show daily momentum."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Late entries following climactic runs and rapid reversal.",
+    "cost_sensitivity": "low: medium duration reduces fee turnover",
+    "overlap_with": "Daily ATR-stopped time-series momentum"
+  },
+  {
+    "name": "Weekly relative-strength leader",
+    "family": "momentum",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "Each Monday 00:00 UTC, rank BTC, ETH, SOL by prior 28 completed daily close-to-close return; long only the highest-ranked if its 28d return>0 and its daily C>EMA100.",
+    "entry_short": "none; otherwise cash. Ties BTC then ETH then SOL.",
+    "exit": "Exit at the next Monday rebalance if no longer top-qualified; otherwise hold max 28 days.",
+    "stop": "Fixed 3*ATR14(daily) per selected coin from fill; close if touched.",
+    "target": "none",
+    "params": {
+      "ranking_days": [
+        21,
+        28,
+        42
+      ]
+    },
+    "expected_trades_per_week": "0.17 per coin (untested planning estimate)",
+    "why_it_should_work": "Relative leadership may concentrate exposure in the asset with clearest directional follow-through. However three correlated coins provide very little cross-sectional diversification. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Common Risk Factors in Cryptocurrency (Liu, Tsyvinski & Wu, 2022)",
+        "url": "https://doi.org/10.1111/jofi.13119",
+        "what_it_found": "Identifies market, size and momentum factors across a broad crypto universe; not a three-coin strategy proof."
+      },
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      },
+      {
+        "source": "Cross-Sectional Momentum in Cryptocurrency: A Net-of-Costs Replication (Arefev, 2026, preprint)",
+        "url": "https://ssrn.com/abstract=7404139",
+        "what_it_found": "Finds specified recent perpetual-futures cross-sectional momentum spreads not distinguishable from zero after costs."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Leadership flips rapidly, all coins decline, or recent leaders mean-revert.",
+    "cost_sensitivity": "low: weekly turnover; cross-sectional edge is weakly supported",
+    "overlap_with": "Daily 20-day ROC with trend gate"
+  },
+  {
+    "name": "Four-hour Bollinger squeeze expansion",
+    "family": "volatility",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At 4h close compute Bollinger(20,2 sample sd, close), width=(upper-lower)/middle. Require width<10th percentile of preceding 120 completed 4h widths on previous bar, and current close>prior upper band; long.",
+    "entry_short": "Same squeeze on prior bar, current close<prior lower band; short.",
+    "exit": "Exit after 12 completed 4h bars or when close returns within the current bands.",
+    "stop": "Initial 2.7*ATR14(4h) stop.",
+    "target": "Target 3R.",
+    "params": {
+      "band_period": [
+        20,
+        25,
+        30
+      ],
+      "width_percentile": [
+        10,
+        15,
+        20
+      ]
+    },
+    "expected_trades_per_week": "0.32 per coin (untested planning estimate)",
+    "why_it_should_work": "Volatility clustering suggests compression can precede expansion, but not its direction. A close outside the prior band is a testable continuation trigger. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "More to cryptos than bitcoin: A GARCH modelling of heterogeneous cryptocurrencies (Fung et al., 2022)",
+        "url": "https://doi.org/10.1016/j.frl.2021.102544",
+        "what_it_found": "Documents volatility clustering, heavy tails, and persistent volatility across cryptoassets; not trading-rule profits."
+      },
+      {
+        "source": "Regime changes in Bitcoin GARCH volatility dynamics (2019)",
+        "url": "https://doi.org/10.1016/j.frl.2018.08.009",
+        "what_it_found": "Documents changing BTC volatility regimes and better one-day VaR forecasts from regime-switching GARCH."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Volatility expands without directional follow-through; low-volume weekends.",
+    "cost_sensitivity": "medium: breakout volume must be sufficient to overcome costs",
+    "overlap_with": "Four-hour Donchian 55 breakout"
+  },
+  {
+    "name": "Hourly ATR expansion with 4h trend",
+    "family": "volatility",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At 1h close if (high-low)>1.8*ATR14(1h)[t-1], C>O, C>highest high of prior 6 1h bars, EMA50(4h)>EMA200(4h) on last completed 4h bar, long.",
+    "entry_short": "If big bar bearish, C<lowest low of prior 6 bars and completed-4h EMA50<EMA200, short.",
+    "exit": "Exit on 1h close below EMA20(1h) for long, above for short; or 48-hour expiry.",
+    "stop": "Initial stop 2.6*ATR14(1h), fixed.",
+    "target": "Target 3R.",
+    "params": {
+      "expansion_ratio": [
+        1.5,
+        1.8,
+        2.2
+      ],
+      "range_lookback": [
+        6,
+        9,
+        12
+      ]
+    },
+    "expected_trades_per_week": "1 per coin (untested planning estimate)",
+    "why_it_should_work": "Sudden range expansion can signal new information being absorbed over several hours. The 4-hour trend filter attempts to distinguish continuation from a one-bar shock. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Intraday return predictability in the cryptocurrency markets: Momentum, reversal, or both (Wen et al., 2022)",
+        "url": "https://doi.org/10.1016/j.najef.2022.101733",
+        "what_it_found": "Reports regime-dependent intraday momentum and reversal; sensitive to jumps, liquidity, and events."
+      },
+      {
+        "source": "More to cryptos than bitcoin: A GARCH modelling of heterogeneous cryptocurrencies (Fung et al., 2022)",
+        "url": "https://doi.org/10.1016/j.frl.2021.102544",
+        "what_it_found": "Documents volatility clustering, heavy tails, and persistent volatility across cryptoassets; not trading-rule profits."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Single-bar liquidation sweeps reverse, extreme slippage or low volume.",
+    "cost_sensitivity": "medium: high volatility can pay for fees but may worsen slippage",
+    "overlap_with": "Four-hour Bollinger squeeze expansion"
+  },
+  {
+    "name": "Fifteen-minute trend resumption with hourly gate",
+    "family": "trend",
+    "cadence": "fast",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "On closed 15m bar, completed 1h EMA50>EMA200; prior 15m close<EMA20(15m), current close>EMA20 and RSI14(15m)>50; long.",
+    "entry_short": "Hourly EMA50<EMA200; prior 15m close>EMA20, current close<EMA20 and RSI14<50; short.",
+    "exit": "Exit at 15m close crossing EMA20 against trade, or 24h; use next 5m open.",
+    "stop": "Stop 2.8*ATR14(15m) from entry.",
+    "target": "Target 3R.",
+    "params": {
+      "ema_15m": [
+        15,
+        20,
+        30
+      ],
+      "rsi_gate": [
+        45,
+        50,
+        55
+      ]
+    },
+    "expected_trades_per_week": "2 per coin (untested planning estimate)",
+    "why_it_should_work": "A short pullback within a longer signal may avoid chasing. This only works if intraday continuation is large enough to overcome frequent false restarts. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Bitcoin intraday time series momentum (2022)",
+        "url": "https://doi.org/10.1111/fire.12290",
+        "what_it_found": "Reports intraday BTC momentum conditional on high-volume or high-volatility sessions; different execution assumptions."
+      },
+      {
+        "source": "Intraday return predictability in the cryptocurrency markets: Momentum, reversal, or both (Wen et al., 2022)",
+        "url": "https://doi.org/10.1016/j.najef.2022.101733",
+        "what_it_found": "Reports regime-dependent intraday momentum and reversal; sensitive to jumps, liquidity, and events."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Choppy intraday market; exit too quickly relative to fees.",
+    "cost_sensitivity": "high: frequent fast-bar activity; must beat 0.16% repeatedly",
+    "overlap_with": "EMA 50/200 hourly trend pullback"
+  },
+  {
+    "name": "Hourly MACD with daily price gate",
+    "family": "momentum",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At 1h close, MACD EMA12-EMA26 crosses above its EMA9 signal; latest completed daily close>SMA100(daily) and MACD histogram>0; long.",
+    "entry_short": "MACD crosses below signal with last completed daily C<SMA100, histogram<0; short.",
+    "exit": "Exit after hourly MACD crosses against position or 120 hours.",
+    "stop": "Initial 3*ATR14(1h) stop.",
+    "target": "Target 4R.",
+    "params": {
+      "macd_fast": [
+        10,
+        12,
+        15
+      ],
+      "macd_slow": [
+        24,
+        26,
+        30
+      ]
+    },
+    "expected_trades_per_week": "0.65 per coin (untested planning estimate)",
+    "why_it_should_work": "MACD uses smoothed price acceleration to detect trend initiation. Daily filtering may avoid signals that oppose the larger drift. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Technical trading rules in the cryptocurrency market (2020)",
+        "url": "https://doi.org/10.1016/j.frl.2019.101396",
+        "what_it_found": "Finds a daily 20-day moving-average rule effective in an earlier 2016–2018 sample; costs and regime transfer remain uncertain."
+      },
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Alternating trends and lag after violent moves.",
+    "cost_sensitivity": "medium: moderate trading frequency and long potential holds",
+    "overlap_with": "Hourly pullback RSI reset"
+  },
+  {
+    "name": "Daily closing-range breakout",
+    "family": "breakout",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "On completed UTC daily bar, if close>highest high of prior 20 daily bars and (close-low)/(high-low)>=0.8, long; skip zero-range bars.",
+    "entry_short": "If close<lowest low of prior 20 daily bars and (close-low)/(high-low)<=0.2, short.",
+    "exit": "Exit at daily close crossing EMA10(daily) against position or 20 days.",
+    "stop": "Initial 3*ATR14(daily) stop.",
+    "target": "Target 5R.",
+    "params": {
+      "lookback_days": [
+        15,
+        20,
+        30
+      ],
+      "close_position": [
+        0.7,
+        0.8,
+        0.9
+      ]
+    },
+    "expected_trades_per_week": "0.17 per coin (untested planning estimate)",
+    "why_it_should_work": "Closing near the daily extreme after a multiweek break may indicate directional demand. The exact daily close-location filter is a hypothesis, not a published rule. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Up or down? Short-term reversal, momentum, and liquidity effects in cryptocurrency markets (Zaremba et al., 2021)",
+        "url": "https://doi.org/10.1016/j.irfa.2021.101908",
+        "what_it_found": "Large illiquid coins show daily reversal, while the most liquid major coins show daily momentum."
+      },
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "One-day news overshoot, false breaks, overnight carry.",
+    "cost_sensitivity": "low: rare long-duration trades",
+    "overlap_with": "Four-hour Donchian 55 breakout"
+  },
+  {
+    "name": "Hourly ADX-gated trend crossing",
+    "family": "trend",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At 1h close, EMA20 crosses above EMA50; Wilder ADX14>25 and +DI14>-DI14; long.",
+    "entry_short": "EMA20 crosses below EMA50; ADX14>25 and -DI14>+DI14; short.",
+    "exit": "Exit hourly close on opposite EMA20/50 cross or after 120 hours.",
+    "stop": "Stop 3*ATR14(1h) from fill.",
+    "target": "Target 4R.",
+    "params": {
+      "adx_threshold": [
+        20,
+        25,
+        30
+      ],
+      "ema_fast": [
+        15,
+        20,
+        25
+      ]
+    },
+    "expected_trades_per_week": "0.6 per coin (untested planning estimate)",
+    "why_it_should_work": "ADX might screen out weak-trend crossovers and reduce churning. It can also enter late, so a net improvement requires testing. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Technical trading rules in the cryptocurrency market (2020)",
+        "url": "https://doi.org/10.1016/j.frl.2019.101396",
+        "what_it_found": "Finds a daily 20-day moving-average rule effective in an earlier 2016–2018 sample; costs and regime transfer remain uncertain."
+      },
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "ADX remains high after trend exhaustion; EMA signals lag.",
+    "cost_sensitivity": "medium: screening helps frequency but late trades may lack follow-through",
+    "overlap_with": "Hourly MACD with daily price gate"
+  },
+  {
+    "name": "Fifteen-minute range break with hourly EMA",
+    "family": "breakout",
+    "cadence": "fast",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At closed 15m bar, completed hourly EMA50>EMA200; current 15m close>highest high of prior 24 completed 15m bars and 15m volume>SMA20(15m volume)*1.3; long.",
+    "entry_short": "Hourly EMA50<EMA200; 15m close<prior 24-bar lowest low and volume>SMA20(15m volume)*1.3; short.",
+    "exit": "Exit after 16 completed 15m bars or 15m close crosses EMA20 against position.",
+    "stop": "Stop 2.8*ATR14(15m).",
+    "target": "Target 3R.",
+    "params": {
+      "breakout_bars": [
+        16,
+        24,
+        32
+      ],
+      "volume_ratio": [
+        1.2,
+        1.3,
+        1.5
+      ]
+    },
+    "expected_trades_per_week": "2 per coin (untested planning estimate)",
+    "why_it_should_work": "A multi-hour range break may lead to a larger intraday move when aligned with the hourly trend. Volume is a rough participation proxy, not evidence of aggressive order flow. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Bitcoin intraday time series momentum (2022)",
+        "url": "https://doi.org/10.1111/fire.12290",
+        "what_it_found": "Reports intraday BTC momentum conditional on high-volume or high-volatility sessions; different execution assumptions."
+      },
+      {
+        "source": "Intraday return predictability in the cryptocurrency markets: Momentum, reversal, or both (Wen et al., 2022)",
+        "url": "https://doi.org/10.1016/j.najef.2022.101733",
+        "what_it_found": "Reports regime-dependent intraday momentum and reversal; sensitive to jumps, liquidity, and events."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "False hourly breaks, short holding, low weekend volume.",
+    "cost_sensitivity": "high: frequent 15m trading and slippage",
+    "overlap_with": "Fifteen-minute trend resumption with hourly gate"
+  },
+  {
+    "name": "Five-minute impulse after hourly drift",
+    "family": "momentum",
+    "cadence": "fast",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At completed 5m close require last closed 1h EMA50>EMA200; 5m return over last 6 bars>+0.008, 5m volume>SMA20(volume)*1.5, and 5m C>EMA20(5m); long.",
+    "entry_short": "Hourly EMA50<EMA200; six-bar 5m return<-0.008, high volume, C<EMA20; short.",
+    "exit": "Exit after 24 completed 5m bars or first closed 5m C crossing EMA20 against position.",
+    "stop": "Initial stop 3*ATR14(5m) from fill.",
+    "target": "Target 3R.",
+    "params": {
+      "roc_30m_threshold": [
+        0.006,
+        0.008,
+        0.012
+      ],
+      "volume_ratio": [
+        1.3,
+        1.5,
+        2.0
+      ]
+    },
+    "expected_trades_per_week": "1.6 per coin (untested planning estimate)",
+    "why_it_should_work": "A sharp directional impulse may continue if it corresponds to genuine information absorption. The strategy deliberately requires a substantial move to leave room above costs. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Bitcoin intraday time series momentum (2022)",
+        "url": "https://doi.org/10.1111/fire.12290",
+        "what_it_found": "Reports intraday BTC momentum conditional on high-volume or high-volatility sessions; different execution assumptions."
+      },
+      {
+        "source": "Intraday return predictability in the cryptocurrency markets: Momentum, reversal, or both (Wen et al., 2022)",
+        "url": "https://doi.org/10.1016/j.najef.2022.101733",
+        "what_it_found": "Reports regime-dependent intraday momentum and reversal; sensitive to jumps, liquidity, and events."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Panic spikes that reverse immediately and 5m noise dominates execution.",
+    "cost_sensitivity": "high: 0.16% round trip plus intrabar adverse selection",
+    "overlap_with": "Fifteen-minute range break with hourly EMA"
+  },
+  {
+    "name": "London/New York overlap range break",
+    "family": "seasonality",
+    "cadence": "fast",
+    "markets": "BTC, ETH",
+    "data_needed": "OHLCV only",
+    "entry_long": "UTC trading window only: at 14:00 UTC define high/low of fully closed 12:00–14:00 UTC 15m bars. Between 14:00–17:00 UTC enter long if a closed 15m bar closes above this high and hourly EMA50>EMA200.",
+    "entry_short": "Same window: enter short on 15m close below stored range low, hourly EMA50<EMA200.",
+    "exit": "Exit no later than 20:00 UTC same day or when 15m close crosses EMA20 against position.",
+    "stop": "Initial stop max(2*ATR14(15m), half prewindow high-low) from fill.",
+    "target": "Target 2.5R.",
+    "params": {
+      "window_start_utc": [
+        13,
+        14,
+        15
+      ],
+      "opening_range_hours": [
+        1,
+        2,
+        3
+      ]
+    },
+    "expected_trades_per_week": "1.1 per coin (untested planning estimate)",
+    "why_it_should_work": "Trading activity often increases around global session overlap. Whether that produces continuation after range breaks is a separately unverified return hypothesis. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "The crypto world trades at tea time (2024)",
+        "url": "https://doi.org/10.1007/s11156-024-01304-1",
+        "what_it_found": "Documents an intraday 16:00–17:00 UTC activity/volatility peak, not reliably predictable returns."
+      },
+      {
+        "source": "Bitcoin intraday time series momentum (2022)",
+        "url": "https://doi.org/10.1111/fire.12290",
+        "what_it_found": "Reports intraday BTC momentum conditional on high-volume or high-volatility sessions; different execution assumptions."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Clock effects shift with DST, concentrated activity reverses, trades cannot cover costs.",
+    "cost_sensitivity": "high: relatively short active window and possible false breaks",
+    "overlap_with": "Fifteen-minute range break with hourly EMA"
+  },
+  {
+    "name": "Weekday-only hourly EMA continuation",
+    "family": "seasonality",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At 1h close Monday 00:00–Friday 16:00 America/New_York only, if EMA50>EMA200 and current C crosses above highest high of preceding 12 completed 1h bars, long.",
+    "entry_short": "Within same allowed entry window EMA50<EMA200 and C crosses below lowest low of preceding 12 completed 1h bars, short.",
+    "exit": "Exit at 1h EMA20 close reversal or after 72 hours; position can remain over weekend, subject to risk controls.",
+    "stop": "Initial stop 3*ATR14(1h) from fill.",
+    "target": "Target 3R.",
+    "params": {
+      "price_channel_hours": [
+        8,
+        12,
+        16
+      ]
+    },
+    "expected_trades_per_week": "0.5 per coin (untested planning estimate)",
+    "why_it_should_work": "Lower weekend activity may affect breakout quality and fills. Calendar exclusions should be treated as risk filters rather than proof that weekday returns are higher. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Revisiting seasonality in cryptocurrencies (2024)",
+        "url": "https://doi.org/10.1016/j.frl.2024.105429",
+        "what_it_found": "Finds no robust directional return seasonality but consistently lower weekend activity."
+      },
+      {
+        "source": "Periodicity in Cryptocurrency Volatility and Liquidity (Hansen, Kim & Kimbrough, 2024)",
+        "url": "https://doi.org/10.1093/jjfinec/nbac034",
+        "what_it_found": "Finds recurrent hourly, weekly and intrahour volatility/volume patterns in BTC and ETH, not directional alpha."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Weekday entries are also noisy; a missed weekend trend biases selection.",
+    "cost_sensitivity": "medium: slower signals but entry timing alone is weak evidence",
+    "overlap_with": "Hourly ADX-gated trend crossing"
+  },
+  {
+    "name": "Three-coin breadth-gated hourly trend",
+    "family": "trend",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At each closed 1h bar compute EMA50>EMA200 for BTC, ETH and SOL; enter long in a coin when its EMA20 crosses above EMA50, at least 2 of 3 coins show EMA50>EMA200 and its Wilder ADX14>20.",
+    "entry_short": "Short on EMA20 crossing below EMA50 with at least 2 of 3 coins EMA50<EMA200 and coin ADX14>20.",
+    "exit": "Exit at opposite EMA20/50 cross or 96 hours.",
+    "stop": "Stop 3*ATR14(1h).",
+    "target": "Target 4R.",
+    "params": {
+      "breadth_count": [
+        2,
+        3
+      ],
+      "adx_min": [
+        18,
+        20,
+        25
+      ]
+    },
+    "expected_trades_per_week": "0.55 per coin (untested planning estimate)",
+    "why_it_should_work": "Crypto market-wide risk appetite may support correlated trending moves. Breadth gating attempts to avoid isolated price spikes with no market confirmation. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Common Risk Factors in Cryptocurrency (Liu, Tsyvinski & Wu, 2022)",
+        "url": "https://doi.org/10.1111/jofi.13119",
+        "what_it_found": "Identifies market, size and momentum factors across a broad crypto universe; not a three-coin strategy proof."
+      },
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Broad market turns together; high coin correlation removes diversification.",
+    "cost_sensitivity": "medium: infrequent signal, but correlated simultaneous losses possible",
+    "overlap_with": "Hourly ADX-gated trend crossing"
+  },
+  {
+    "name": "Hourly price momentum with 4h volatility cap",
+    "family": "volatility",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At 1h close 20h ROC>+0.025, EMA50(4h)>EMA200(4h), and current 4h ATR14/C below its 180-bar rolling 75th percentile; long.",
+    "entry_short": "20h ROC<-0.025, 4h EMA50<EMA200 and 4h ATR ratio below 75th percentile; short.",
+    "exit": "Exit when 1h 20h ROC changes sign or after 120h.",
+    "stop": "Stop 3.2*ATR14(4h) from fill, not widened.",
+    "target": "Target 4R.",
+    "params": {
+      "roc_threshold": [
+        0.02,
+        0.025,
+        0.035
+      ],
+      "vol_percentile_cap": [
+        65,
+        75,
+        85
+      ]
+    },
+    "expected_trades_per_week": "0.55 per coin (untested planning estimate)",
+    "why_it_should_work": "Directional trends sometimes continue under moderate realized volatility. Excluding the highest-volatility regimes may avoid the most disorderly moves but can also remove the best winners. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      },
+      {
+        "source": "Regime changes in Bitcoin GARCH volatility dynamics (2019)",
+        "url": "https://doi.org/10.1016/j.frl.2018.08.009",
+        "what_it_found": "Documents changing BTC volatility regimes and better one-day VaR forecasts from regime-switching GARCH."
+      },
+      {
+        "source": "Volatility-Managed Portfolios (Moreira & Muir, 2017)",
+        "url": "https://doi.org/10.1111/jofi.12513",
+        "what_it_found": "Volatility scaling improved factor portfolios in conventional assets; does not validate a crypto trading signal."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Volatility spikes at profitable breakout onset or crashes quickly reverse.",
+    "cost_sensitivity": "medium: time in trade and funding can erode the edge",
+    "overlap_with": "Hourly ADX-gated trend crossing"
+  },
+  {
+    "name": "Daily tail-candle continuation",
+    "family": "momentum",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At UTC daily close, daily log return>+2*sd of prior 30 completed daily log returns and close at least 80% up daily high-low range; long if EMA50(daily)>EMA200.",
+    "entry_short": "Return<-2*prior 30d sd and close in bottom 20% of range; short if EMA50<EMA200.",
+    "exit": "Exit after 3 completed daily closes or earlier when daily close moves below midpoint of signal candle (long) / above (short).",
+    "stop": "Stop 2.5*ATR14(daily), fixed.",
+    "target": "Target 3R.",
+    "params": {
+      "shock_z": [
+        1.5,
+        2.0,
+        2.5
+      ],
+      "hold_days": [
+        2,
+        3,
+        5
+      ]
+    },
+    "expected_trades_per_week": "0.08 per coin (untested planning estimate)",
+    "why_it_should_work": "A rare abnormal return may reflect information being incorporated across several days. There is also documented short-term reversal, so continuation is expressly uncertain. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Up or down? Short-term reversal, momentum, and liquidity effects in cryptocurrency markets (Zaremba et al., 2021)",
+        "url": "https://doi.org/10.1016/j.irfa.2021.101908",
+        "what_it_found": "Large illiquid coins show daily reversal, while the most liquid major coins show daily momentum."
+      },
+      {
+        "source": "Intraday return predictability in the cryptocurrency markets: Momentum, reversal, or both (Wen et al., 2022)",
+        "url": "https://doi.org/10.1016/j.najef.2022.101733",
+        "what_it_found": "Reports regime-dependent intraday momentum and reversal; sensitive to jumps, liquidity, and events."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Climactic daily moves reverse and event news is digested immediately.",
+    "cost_sensitivity": "low: rare trades with potentially large excursions",
+    "overlap_with": "Daily closing-range breakout"
+  },
+  {
+    "name": "Three-coin 7-day relative-strength spread",
+    "family": "relative_value",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At each Monday 00:00 UTC, rank 7d returns among BTC,ETH,SOL; if leader return - laggard return>0.05 AND BTC daily C>SMA100, long leader and short laggard simultaneously, dollar-neutral.",
+    "entry_short": "The short leg is the lowest 7d-return coin in the same entry; no standalone short. Tie BTC then ETH then SOL.",
+    "exit": "Exit both legs after 7 days or when leader/laggard ranks reverse on daily close.",
+    "stop": "If sum of both legs marked-to-market P&L reaches -1% of account flatten both; cap combined notional at 1.5x equity.",
+    "target": "Target spread P&L +2% account or none if stop first.",
+    "params": {
+      "rank_days": [
+        7,
+        14,
+        21
+      ],
+      "min_return_gap": [
+        0.04,
+        0.05,
+        0.07
+      ]
+    },
+    "expected_trades_per_week": "0.4 per coin (untested planning estimate)",
+    "why_it_should_work": "Relative strength might persist even when market direction is unstable. Recent realistic crypto research finds little robust cross-sectional alpha, so this is a low-priority falsification test. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      },
+      {
+        "source": "Cross-Sectional Momentum in Cryptocurrency: A Net-of-Costs Replication (Arefev, 2026, preprint)",
+        "url": "https://ssrn.com/abstract=7404139",
+        "what_it_found": "Finds specified recent perpetual-futures cross-sectional momentum spreads not distinguishable from zero after costs."
+      }
+    ],
+    "evidence_quality": "none",
+    "fails_when": "Relative spread snaps back; the three-asset sample overfits; hedges are imperfect.",
+    "cost_sensitivity": "high: two full round trips (~0.32% notionals in two legs) plus differential funding",
+    "overlap_with": "Weekly relative-strength leader"
+  },
+  {
+    "name": "ETH/BTC ratio 4h breakout",
+    "family": "relative_value",
+    "cadence": "slow",
+    "markets": "BTC, ETH",
+    "data_needed": "OHLCV only",
+    "entry_long": "Compute R=ETH-USD spot close/BTC-USD spot close on aligned completed 4h bars. If R closes above prior 30-bar maximum and ETH 4h EMA50[t]>EMA50[t-1], long ETH future and short equal-USD BTC future.",
+    "entry_short": "If R closes below prior 30-bar minimum and ETH 4h EMA50[t]<EMA50[t-1], short ETH and long equal-USD BTC.",
+    "exit": "Exit both if ratio crosses its EMA20(4h) against position or after 14 days.",
+    "stop": "Stop both legs when completed 4h log(ETH/BTC) moves 2.5*mean(abs(delta log(ETH/BTC)), prior 14 completed 4h bars) against entry; stop uses close-only synthetic series, not fabricated intrabar ratio highs.",
+    "target": "none",
+    "params": {
+      "ratio_breakout_4h": [
+        20,
+        30,
+        40
+      ],
+      "ratio_stop_logatr": [
+        2.0,
+        2.5,
+        3.0
+      ]
+    },
+    "expected_trades_per_week": "0.4 per coin (untested planning estimate)",
+    "why_it_should_work": "ETH leadership relative to BTC may persist during crypto rotation. Futures basis and two-leg expenses make spot-ratio evidence unreliable until checked on actual futures. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Pair trading strategies in the cryptoassets market: a cointegration framework (2026)",
+        "url": "https://doi.org/10.1080/14697688.2026.2653663",
+        "what_it_found": "Finds some cointegrated crypto pairs profitable OOS; does not establish that BTC/ETH or SOL/ETH are stable pairs."
+      },
+      {
+        "source": "Common Risk Factors in Cryptocurrency (Liu, Tsyvinski & Wu, 2022)",
+        "url": "https://doi.org/10.1111/jofi.13119",
+        "what_it_found": "Identifies market, size and momentum factors across a broad crypto universe; not a three-coin strategy proof."
+      },
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Ratio regimes change, funding basis diverges, correlation breaks.",
+    "cost_sensitivity": "high: two futures legs and nonstationary spread",
+    "overlap_with": "Three-coin 7-day relative-strength spread"
+  },
+  {
+    "name": "SOL/ETH ratio 4h breakout",
+    "family": "relative_value",
+    "cadence": "slow",
+    "markets": "SOL, ETH",
+    "data_needed": "OHLCV only",
+    "entry_long": "At 4h close compute log(SOL close/ETH close). Long SOL and short equal-USD ETH if log-ratio closes above prior 40-bar maximum and SOL 4h EMA50>EMA200.",
+    "entry_short": "Short SOL and long ETH if log-ratio closes below prior 40-bar minimum and SOL 4h EMA50<EMA200.",
+    "exit": "Exit both if log-ratio crosses EMA20(log-ratio 4h) against position or after 14 days.",
+    "stop": "Stop both legs if ratio log-price falls/rises 3*Wilder ATR14 of log ratio (ATR built from aligned 4h log closes using absolute close-to-close changes).",
+    "target": "none",
+    "params": {
+      "ratio_channel_4h": [
+        30,
+        40,
+        55
+      ],
+      "ratio_stop_mult": [
+        2.5,
+        3.0,
+        3.5
+      ]
+    },
+    "expected_trades_per_week": "0.3 per coin (untested planning estimate)",
+    "why_it_should_work": "Relative leadership may track differences in adoption or beta for stretches of time. SOL may be more volatile, so hedging by equal dollars does not eliminate market risk. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Pair trading strategies in the cryptoassets market: a cointegration framework (2026)",
+        "url": "https://doi.org/10.1080/14697688.2026.2653663",
+        "what_it_found": "Finds some cointegrated crypto pairs profitable OOS; does not establish that BTC/ETH or SOL/ETH are stable pairs."
+      },
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "SOL beta shock, broad market squeeze, funding costs on both legs.",
+    "cost_sensitivity": "high: two legs, substantial relative volatility, divergent basis",
+    "overlap_with": "ETH/BTC ratio 4h breakout"
+  },
+  {
+    "name": "ETH/BTC rolling residual reversion",
+    "family": "relative_value",
+    "cadence": "slow",
+    "markets": "ETH, BTC",
+    "data_needed": "OHLCV only",
+    "entry_long": "Every closed 4h bar fit OLS log(ETH)=a+b*log(BTC) using preceding 180 completed 4h bars only; compute current residual and z=(residual-mean(training residual))/sd(training residual). If z<-2 and ADF test (constant included, 1 lag, 5% critical value) of the 180 preceding training residuals p<0.05 estimated before signal, long ETH and short b beta-adjusted BTC.",
+    "entry_short": "If z>+2 with same pre-signal ADF test, short ETH and long b beta-adjusted BTC.",
+    "exit": "Exit both at |z|<0.5 on a completed 4h bar or after 7 days.",
+    "stop": "Flatten both if |z|>3.5 or pair P&L<-1% account; no stop loosening.",
+    "target": "Target z magnitude below 0.5.",
+    "params": {
+      "entry_z": [
+        1.8,
+        2.0,
+        2.4
+      ],
+      "exit_z": [
+        0.3,
+        0.5,
+        0.8
+      ]
+    },
+    "expected_trades_per_week": "0.35 per coin (untested planning estimate)",
+    "why_it_should_work": "A statistically stationary residual might revert when the spread deviates substantially. Neither cointegration nor an economic return is established for this pair without point-in-time tests. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Pair trading strategies in the cryptoassets market: a cointegration framework (2026)",
+        "url": "https://doi.org/10.1080/14697688.2026.2653663",
+        "what_it_found": "Finds some cointegrated crypto pairs profitable OOS; does not establish that BTC/ETH or SOL/ETH are stable pairs."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Cointegration fails, spread trends, model refit repaints historical trades.",
+    "cost_sensitivity": "high: two legs, higher round-trip fee burden; stationary assumption fragile",
+    "overlap_with": "ETH/BTC ratio 4h breakout"
+  },
+  {
+    "name": "Weekend 4h compression break",
+    "family": "seasonality",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At Sunday 23:59 UTC use completed Saturday 00:00–Sunday 23:59 UTC high/low; at Monday closed 4h bar long if close>weekend high and 4h EMA50>EMA200.",
+    "entry_short": "At Monday closed 4h bar short if close<weekend low and EMA50<EMA200.",
+    "exit": "Exit Friday 16:00 America/New_York or 4h close back inside weekend range, whichever first.",
+    "stop": "Stop min(3*ATR14(4h), 0.75*(weekend high-weekend low)) away from fill.",
+    "target": "Target 3R.",
+    "params": {
+      "weekend_range_frac": [
+        0.5,
+        0.75,
+        1.0
+      ]
+    },
+    "expected_trades_per_week": "0.2 per coin (untested planning estimate)",
+    "why_it_should_work": "Weekend liquidity and activity often decline, possibly creating narrower reference ranges. Breakout profits after weekends are not supported by a stable documented directional anomaly. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Revisiting seasonality in cryptocurrencies (2024)",
+        "url": "https://doi.org/10.1016/j.frl.2024.105429",
+        "what_it_found": "Finds no robust directional return seasonality but consistently lower weekend activity."
+      },
+      {
+        "source": "Bitcoin on Wall Street Time (2026)",
+        "url": "https://doi.org/10.3390/jrfm19090707",
+        "what_it_found": "Finds growing US-session concentration and quieter weekends in BTC activity."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Monday range breaks reverse or weekend range is unusually wide.",
+    "cost_sensitivity": "medium: sparse weekly entries; transaction costs still matter",
+    "overlap_with": "London/New York overlap range break"
+  },
+  {
+    "name": "Hourly RSI2 dip with daily trend",
+    "family": "mean_reversion",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At 1h close, last completed daily EMA50>EMA200, 1h RSI2<5 for 2 consecutive completed bars, and 1h ATR14/C>0.003; long next hourly open.",
+    "entry_short": "Daily EMA50<EMA200, 1h RSI2>95 twice and ATR14/C>0.003; short.",
+    "exit": "Exit if RSI2 crosses 60 long / 40 short or 12 completed hours, whichever first.",
+    "stop": "Initial 3*ATR14(1h), fixed.",
+    "target": "Target 2R.",
+    "params": {
+      "rsi_extreme": [
+        5,
+        8,
+        10
+      ],
+      "max_hold_hours": [
+        12,
+        18,
+        24
+      ]
+    },
+    "expected_trades_per_week": "1 per coin (untested planning estimate)",
+    "why_it_should_work": "Short-term overreaction can rebound within a durable trend. Prior paper losses show a high win rate does not imply positive expectancy after fees. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Intraday return predictability in the cryptocurrency markets: Momentum, reversal, or both (Wen et al., 2022)",
+        "url": "https://doi.org/10.1016/j.najef.2022.101733",
+        "what_it_found": "Reports regime-dependent intraday momentum and reversal; sensitive to jumps, liquidity, and events."
+      },
+      {
+        "source": "Up or down? Short-term reversal, momentum, and liquidity effects in cryptocurrency markets (Zaremba et al., 2021)",
+        "url": "https://doi.org/10.1016/j.irfa.2021.101908",
+        "what_it_found": "Large illiquid coins show daily reversal, while the most liquid major coins show daily momentum."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Persistent falling knife, weekend inactivity, many small wins versus large stops.",
+    "cost_sensitivity": "high: short holds and narrow profit opportunity relative to 0.16%",
+    "overlap_with": "Hourly pullback RSI reset"
+  },
+  {
+    "name": "US-hour 4h follow-through",
+    "family": "seasonality",
+    "cadence": "slow",
+    "markets": "BTC, ETH",
+    "data_needed": "OHLCV only",
+    "entry_long": "At 16:00 UTC daily on latest fully closed hourly bars, compute 12:00–16:00 UTC log return. Long if return>+0.01 and completed 4h EMA50>EMA200.",
+    "entry_short": "Short if return<-0.01 and 4h EMA50<EMA200.",
+    "exit": "Exit at 00:00 UTC next day or if completed 1h close crosses EMA20(1h) against trade.",
+    "stop": "Stop 2.5*ATR14(1h).",
+    "target": "Target 2.5R.",
+    "params": {
+      "session_move_threshold": [
+        0.008,
+        0.01,
+        0.015
+      ]
+    },
+    "expected_trades_per_week": "1.4 per coin (untested planning estimate)",
+    "why_it_should_work": "Some published intraday continuation evidence concentrates in more active sessions. A specified fixed-time entry prevents post-hoc selection, but the chosen hours may not replicate. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Bitcoin intraday time series momentum (2022)",
+        "url": "https://doi.org/10.1111/fire.12290",
+        "what_it_found": "Reports intraday BTC momentum conditional on high-volume or high-volatility sessions; different execution assumptions."
+      },
+      {
+        "source": "Periodicity in Cryptocurrency Volatility and Liquidity (Hansen, Kim & Kimbrough, 2024)",
+        "url": "https://doi.org/10.1093/jjfinec/nbac034",
+        "what_it_found": "Finds recurrent hourly, weekly and intrahour volatility/volume patterns in BTC and ETH, not directional alpha."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Activity peaks without predictable direction; long signal is a late move.",
+    "cost_sensitivity": "high: day-trade horizon makes all-in fees material",
+    "overlap_with": "London/New York overlap range break"
+  },
+  {
+    "name": "Five-minute high-volume range break",
+    "family": "breakout",
+    "cadence": "fast",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "At completed 5m close, if C>prior 36-bar high, V>2*SMA20(volume), completed 1h EMA50>EMA200 and ATR14(5m)/C>0.002, long.",
+    "entry_short": "If C<prior 36-bar low, V>2*SMA20(volume), completed 1h EMA50<EMA200 and ATR14/C>0.002, short.",
+    "exit": "Exit after 24 completed 5m bars or on 5m close crossing EMA20 against trade.",
+    "stop": "Stop 3*ATR14(5m).",
+    "target": "Target 3R.",
+    "params": {
+      "lookback_5m": [
+        24,
+        36,
+        48
+      ],
+      "volume_ratio": [
+        1.7,
+        2.0,
+        2.5
+      ]
+    },
+    "expected_trades_per_week": "1.6 per coin (untested planning estimate)",
+    "why_it_should_work": "High participation on a multi-hour breakout may sustain follow-through. Volume from spot candles remains an imperfect proxy for futures liquidity. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Bitcoin intraday time series momentum (2022)",
+        "url": "https://doi.org/10.1111/fire.12290",
+        "what_it_found": "Reports intraday BTC momentum conditional on high-volume or high-volatility sessions; different execution assumptions."
+      },
+      {
+        "source": "Intraday return predictability in the cryptocurrency markets: Momentum, reversal, or both (Wen et al., 2022)",
+        "url": "https://doi.org/10.1016/j.najef.2022.101733",
+        "what_it_found": "Reports regime-dependent intraday momentum and reversal; sensitive to jumps, liquidity, and events."
+      }
+    ],
+    "evidence_quality": "peer-reviewed",
+    "fails_when": "Breakout is a stop-run, spread widens, or 5m ATR is too small.",
+    "cost_sensitivity": "high: one of the most cost-sensitive allowed hypotheses",
+    "overlap_with": "Five-minute impulse after hourly drift"
+  },
+  {
+    "name": "Month-boundary daily continuation",
+    "family": "seasonality",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV only",
+    "entry_long": "On UTC day 1 of each month after 00:00 daily close, long if prior calendar-month return>+0.05 and daily C>EMA100.",
+    "entry_short": "Short if prior calendar-month return<-0.05 and daily C<EMA100.",
+    "exit": "Exit on UTC day 8 at 00:00 or if daily C crosses EMA20 against trade.",
+    "stop": "Stop 3*ATR14(daily).",
+    "target": "Target 3R.",
+    "params": {
+      "prior_month_threshold": [
+        0.04,
+        0.05,
+        0.07
+      ]
+    },
+    "expected_trades_per_week": "0.08 per coin (untested planning estimate)",
+    "why_it_should_work": "Month boundaries could coincide with periodic reallocations, but crypto calendar return anomalies are generally unstable. This is primarily a negative-control seasonal hypothesis. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Revisiting seasonality in cryptocurrencies (2024)",
+        "url": "https://doi.org/10.1016/j.frl.2024.105429",
+        "what_it_found": "Finds no robust directional return seasonality but consistently lower weekend activity."
+      },
+      {
+        "source": "Are day-of-the-week effects in cryptocurrencies real? (Aalipour et al., 2026)",
+        "url": "https://doi.org/10.1016/j.frl.2026.110634",
+        "what_it_found": "Finds calendar-return anomalies localized to a few hours and assets, not persistent day-level effects."
+      }
+    ],
+    "evidence_quality": "none",
+    "fails_when": "A calendar label does not predict directional follow-through; tiny sample count.",
+    "cost_sensitivity": "low: sparse trades, but no established gross positive expectancy",
+    "overlap_with": "US-hour 4h follow-through"
+  },
+  {
+    "name": "Funding-extreme 4h trend filter",
+    "family": "trend",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV + historical per-product hourly CFM funding rates + actual futures bars",
+    "entry_long": "When completed 4h EMA50>EMA200 and last published hourly US-perp funding rate is <=+0.00005 (decimal fraction per hour, equivalent to +0.005%), long.",
+    "entry_short": "When 4h EMA50<EMA200 and last published funding rate >=-0.00005, short.",
+    "exit": "Exit after completed 4h EMA50/EMA200 cross against position or 7 days.",
+    "stop": "Stop 3*ATR14(4h futures candles; if not available, spot proxy with execution validation).",
+    "target": "Target 4R.",
+    "params": {
+      "max_funding_long": [
+        0.0,
+        5e-05,
+        0.0001
+      ]
+    },
+    "expected_trades_per_week": "0.25 per coin (untested planning estimate)",
+    "why_it_should_work": "Avoiding expensive carry may improve the net result of an otherwise valid trend. Funding is also an endogenous measure of crowding and may vary rapidly. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Coinbase US perpetual-style futures funding rate mechanism",
+        "url": "https://help.coinbase.com/en/derivatives/perpetual-style-futures/funding-rate",
+        "what_it_found": "Funding is calculated hourly from the futures/spot premium; its direction varies."
+      },
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      }
+    ],
+    "evidence_quality": "practitioner",
+    "fails_when": "Funding flips between hourly observations; restrictive entry eliminates winning moves.",
+    "cost_sensitivity": "medium: may save carry, but requires actual historical hourly funding",
+    "overlap_with": "Four-hour Donchian 55 breakout"
+  },
+  {
+    "name": "Open-interest supported 4h breakout",
+    "family": "breakout",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV + point-in-time hourly open interest for each CFM contract",
+    "entry_long": "At closed 4h bar, C exceeds high of prior 30 completed 4h bars and total futures open interest has risen >=5% over prior 24h using last published point-in-time observations; long.",
+    "entry_short": "At 4h C below prior 30-bar low and 24h futures open interest rises >=5%; short.",
+    "exit": "Exit on 4h close crossing EMA20 against trade or 10 days.",
+    "stop": "Stop 3*ATR14(4h) from fill.",
+    "target": "Target 3.5R.",
+    "params": {
+      "oi_change_24h": [
+        0.03,
+        0.05,
+        0.08
+      ],
+      "channel_4h": [
+        20,
+        30,
+        40
+      ]
+    },
+    "expected_trades_per_week": "0.3 per coin (untested planning estimate)",
+    "why_it_should_work": "Open-interest expansion might distinguish new futures positioning from forced position closing. Whether that indicates continuation depends on venue coverage and direction of subsequent liquidation. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      },
+      {
+        "source": "More to cryptos than bitcoin: A GARCH modelling of heterogeneous cryptocurrencies (Fung et al., 2022)",
+        "url": "https://doi.org/10.1016/j.frl.2021.102544",
+        "what_it_found": "Documents volatility clustering, heavy tails, and persistent volatility across cryptoassets; not trading-rule profits."
+      }
+    ],
+    "evidence_quality": "anecdotal",
+    "fails_when": "Open interest surges at tops; OI aggregate has publication lag or inconsistent coverage.",
+    "cost_sensitivity": "medium: longer moves might justify fees, but new data and carry are essential",
+    "overlap_with": "Four-hour volume-confirmed Donchian"
+  },
+  {
+    "name": "Extreme funding contrarian 1h",
+    "family": "mean_reversion",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV + historical hourly per-product CFM funding",
+    "entry_long": "At 1h close, if funding percentile of last published CFM hourly funding among previous 720 published hours >=95 AND hourly RSI14>=75, enter short.",
+    "entry_short": "If funding percentile <=5 AND hourly RSI14<=25, enter long.",
+    "exit": "Exit on hourly RSI14 returning to 50 or after 48h.",
+    "stop": "Stop 3*ATR14(1h) fixed.",
+    "target": "Target 3R.",
+    "params": {
+      "funding_pct": [
+        90,
+        95,
+        98
+      ],
+      "rsi_extreme": [
+        70,
+        75,
+        80
+      ]
+    },
+    "expected_trades_per_week": "0.15 per coin (untested planning estimate)",
+    "why_it_should_work": "Extreme carry may signal crowded directional positions that unwind. Reversals against strong momentum are risky and the empirical edge for these thresholds is unverified. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Coinbase US perpetual-style futures funding rate mechanism",
+        "url": "https://help.coinbase.com/en/derivatives/perpetual-style-futures/funding-rate",
+        "what_it_found": "Funding is calculated hourly from the futures/spot premium; its direction varies."
+      },
+      {
+        "source": "Intraday return predictability in the cryptocurrency markets: Momentum, reversal, or both (Wen et al., 2022)",
+        "url": "https://doi.org/10.1016/j.najef.2022.101733",
+        "what_it_found": "Reports regime-dependent intraday momentum and reversal; sensitive to jumps, liquidity, and events."
+      }
+    ],
+    "evidence_quality": "anecdotal",
+    "fails_when": "Crowded trends persist, funding stays extreme, stop repeatedly hit.",
+    "cost_sensitivity": "high: 1–2 day countertrend trades and funding uncertainty",
+    "overlap_with": "Hourly RSI2 dip with daily trend"
+  },
+  {
+    "name": "Liquidation-shock hourly rebound",
+    "family": "mean_reversion",
+    "cadence": "slow",
+    "markets": "BTC, ETH, SOL",
+    "data_needed": "OHLCV + timestamped historical futures liquidation volume by long/short direction (not currently available)",
+    "entry_long": "At closed 1h bar, long if timestamped aggregate hourly long liquidations across designated CFM contracts exceed 95th percentile of prior 180d and daily EMA50>EMA200 and hourly RSI14<30.",
+    "entry_short": "Short if aggregate hourly short liquidations exceed 95th percentile and daily EMA50<EMA200 and RSI14>70.",
+    "exit": "Exit after RSI14 returns to 50 or after 24 hours.",
+    "stop": "Stop 3.5*ATR14(1h).",
+    "target": "Target 3R.",
+    "params": {
+      "liquidation_pct": [
+        90,
+        95,
+        98
+      ]
+    },
+    "expected_trades_per_week": "0.1 per coin (untested planning estimate)",
+    "why_it_should_work": "Forced positioning unwinds could create short-term price dislocations. Reliable contract-specific liquidation timestamps and volumes are necessary before this is testable. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Intraday return predictability in the cryptocurrency markets: Momentum, reversal, or both (Wen et al., 2022)",
+        "url": "https://doi.org/10.1016/j.najef.2022.101733",
+        "what_it_found": "Reports regime-dependent intraday momentum and reversal; sensitive to jumps, liquidity, and events."
+      },
+      {
+        "source": "More to cryptos than bitcoin: A GARCH modelling of heterogeneous cryptocurrencies (Fung et al., 2022)",
+        "url": "https://doi.org/10.1016/j.frl.2021.102544",
+        "what_it_found": "Documents volatility clustering, heavy tails, and persistent volatility across cryptoassets; not trading-rule profits."
+      }
+    ],
+    "evidence_quality": "anecdotal",
+    "fails_when": "Continued forced selling, liquidation data incomplete, publication lag.",
+    "cost_sensitivity": "high: crisis slippage and frequent stop-outs can exceed the baseline",
+    "overlap_with": "Extreme funding contrarian 1h"
+  },
+  {
+    "name": "On-chain valuation with daily momentum",
+    "family": "momentum",
+    "cadence": "slow",
+    "markets": "BTC, ETH",
+    "data_needed": "OHLCV + point-in-time asset-specific MVRV histories with revision timestamps",
+    "entry_long": "Daily close: long BTC or ETH only when latest point-in-time 7d-average MVRV z-score<0 and daily 20d return>0 and daily C>SMA100.",
+    "entry_short": "Short only when MVRV z-score>2 and daily 20d return<0 and C<SMA100.",
+    "exit": "Exit when daily 20d return sign flips or after 45 days.",
+    "stop": "Stop 4*ATR14(daily).",
+    "target": "none",
+    "params": {
+      "mvrv_low_cutoff": [
+        -0.5,
+        0,
+        0.5
+      ],
+      "mvrv_high_cutoff": [
+        1.5,
+        2.0,
+        2.5
+      ]
+    },
+    "expected_trades_per_week": "0.06 per coin (untested planning estimate)",
+    "why_it_should_work": "On-chain valuation may indicate market stress or euphoria when combined with price direction. Historical MVRV series may be revised and the signal requires point-in-time chain data. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions (Han, Kang & Ryu, 2026)",
+        "url": "https://doi.org/10.1093/rapstu/raag011",
+        "what_it_found": "Finds strong time-series but almost no cross-sectional crypto momentum under more realistic assumptions."
+      },
+      {
+        "source": "Time series momentum (Moskowitz, Ooi & Pedersen, 2012)",
+        "url": "https://doi.org/10.1016/j.jfineco.2011.11.003",
+        "what_it_found": "Documents multi-month momentum in traditional liquid futures, not these crypto-specific rules."
+      }
+    ],
+    "evidence_quality": "anecdotal",
+    "fails_when": "Valuation decouples from price or on-chain metric is revised.",
+    "cost_sensitivity": "low: infrequent; funding over weeks is the principal cost",
+    "overlap_with": "Daily ATR-stopped time-series momentum"
+  },
+  {
+    "name": "Post-FOMC hourly price continuation",
+    "family": "other",
+    "cadence": "slow",
+    "markets": "BTC, ETH",
+    "data_needed": "OHLCV + official point-in-time scheduled FOMC announcement calendar",
+    "entry_long": "For a scheduled FOMC rate statement on official calendar at 14:00 America/New_York, at end of first completed 14:00–15:00 ET hourly candle go long if its return>+1%, hourly volume>2*SMA20(1h volume), daily EMA50>EMA200.",
+    "entry_short": "At same bar go short if return<-1%, hourly volume threshold met and daily EMA50<EMA200.",
+    "exit": "Exit after 4 closed hourly bars or upon 1h EMA20 crossing against position.",
+    "stop": "Stop 3*ATR14(1h), but reject trade if signal-bar range>6*ATR14(1h) due to extraordinary jump.",
+    "target": "Target 3R.",
+    "params": {
+      "event_move_threshold": [
+        0.008,
+        0.01,
+        0.015
+      ],
+      "vol_ratio": [
+        1.5,
+        2.0,
+        2.5
+      ]
+    },
+    "expected_trades_per_week": "0.01 per coin (untested planning estimate)",
+    "why_it_should_work": "Scheduled Fed announcements materially increase BTC/ETH volatility, creating a potential follow-through setting. The referenced study does not demonstrate predictable post-event direction or profitable trading. This exact rule is unverified.",
+    "evidence": [
+      {
+        "source": "Scheduled FOMC statements and intraday macro event risk in cryptocurrency markets (2026)",
+        "url": "https://doi.org/10.1016/j.frl.2026.110073",
+        "what_it_found": "Finds markedly greater absolute BTC and ETH price moves and volume around scheduled FOMC statements; not directional predictability."
+      }
+    ],
+    "evidence_quality": "none",
+    "fails_when": "Initial surge immediately reverses, bid/ask widens, tiny annual sample.",
+    "cost_sensitivity": "high: event spreads and slippage likely exceed normal assumption",
+    "overlap_with": "Hourly ATR expansion with 4h trend"
+  }
+]
