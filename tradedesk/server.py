@@ -106,6 +106,25 @@ class Api:
         step = max(1, len(pts) // 200)
         return {"mode": mode, "range": rng, "points": pts[::step] + (pts[-1:] if pts and len(pts) % step else [])}
 
+    def charts(self, q):
+        """Every chart in one reply, so the phone can switch account and range without waiting:
+        {"all": {"1D": [...], ...}, "<account id>": {...}}, plus the all-accounts projection."""
+        out = {"all": {r: self.equity({"range": [r]})["points"] for r in PAPER.RANGES}}
+        proj = {"per_day": 0.0, "month": 0.0, "year": 0.0}
+        start = 0.0
+        for b in PAPER.roster(self.dir):
+            bk = PAPER.load_book(self.dir, b["id"])
+            if not bk:
+                continue
+            out[b["id"]] = {r: PAPER.account_equity(bk, s, 150) for r, s in PAPER.RANGES.items()}
+            p = PAPER.projection(bk)
+            start += bk["start_equity"]
+            for k in proj:
+                proj[k] += p[k]
+        if start:
+            proj.update(month_pct=proj["month"] / start, year_pct=proj["year"] / start)
+        return {"charts": out, "projection": proj}
+
     def calendar(self, q):
         rules = R.load_rules(self.rules_path)
         mode = self.mode(rules)
@@ -182,7 +201,8 @@ class Api:
 def make_handler(api, token):
     routes = {"/api/summary": api.summary, "/api/trades": api.trades, "/api/equity": api.equity,
               "/api/calendar": api.calendar, "/api/strategies": api.strategies, "/api/rules": api.get_rules,
-              "/api/accounts": api.accounts, "/api/rotation": api.rotation}
+              "/api/accounts": api.accounts, "/api/rotation": api.rotation,
+              "/api/charts": api.charts}
 
     class H(BaseHTTPRequestHandler):
         def _auth(self):

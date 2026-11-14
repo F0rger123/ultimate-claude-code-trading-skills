@@ -409,11 +409,38 @@ def account_summary(bk, kill_switch):
             "updated": bk.get("updated"), "events": []}
 
 
-def account_equity(bk, secs):
+RANGES = {"1D": 86400, "1W": 7 * 86400, "1M": 30 * 86400, "ALL": 10 ** 10}
+
+
+def account_equity(bk, secs, max_points=300):
     cut = int(time.time()) - secs
     pts = [{"t": int(t), "equity": e} for t, e in bk["curve"] if t >= cut]
-    step = max(1, len(pts) // 300)
+    step = max(1, len(pts) // max_points)
     return pts[::step] + (pts[-1:] if pts and (len(pts) - 1) % step else [])
+
+
+EARLY_DAYS = 7
+
+
+def projection(bk, now=None):
+    """Straight-line pace: average dollars per day since the account started, times 30 and 365 days.
+    No compounding, and labelled early under 7 days. Plus the pre-start test pace when there is one.
+    A pace is not a forecast: most strategies regress toward their costs."""
+    now = int(now or time.time())
+    days = max((now - int(bk["start"])) / 86400.0, 1e-9)
+    per_day = bk["pnl"] / days
+    eq0 = bk["start_equity"] or 1.0
+    out = {"days": round(days, 1), "early": days < EARLY_DAYS, "per_day": round(per_day, 2),
+           "month": round(per_day * 30, 2), "year": round(per_day * 365, 2),
+           "month_pct": round(per_day * 30 / eq0, 4), "year_pct": round(per_day * 365 / eq0, 4)}
+    s = bk.get("screen") or {}
+    if s.get("days"):
+        out["test_month_pct"] = round(s["ret_pct"] / 100.0 / s["days"] * 30, 4)
+        out["test_year_pct"] = round(s["ret_pct"] / 100.0 / s["days"] * 365, 4)
+    bt = bk.get("backtest") or {}
+    if bt.get("cagr") is not None:
+        out["backtest_year_pct"] = bt["cagr"]
+    return out
 
 
 def accounts(state_dir):
@@ -433,5 +460,5 @@ def accounts(state_dir):
                     "unrealized": sum(o["unrealized"] for o in bk["open"]),
                     "win_rate": len(wins) / len(bk["trades"]) if bk["trades"] else None,
                     "spark": spark, "backtest": bk.get("backtest"), "protected": bool(b.get("protected")),
-                    "added": b.get("added"), "start": bk.get("start")})
+                    "added": b.get("added"), "start": bk.get("start"), "projection": projection(bk)})
     return out
